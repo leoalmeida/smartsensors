@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <base href="/">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="google-signin-client_id" content="998257253122-evvu36lsui6qmia24glq1tg8i70t05ik.apps.googleusercontent.com">
+
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="lib/angular-material.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <title>Smart Sensors</title>
+</head>
+<body>
+﻿﻿<!--navbar directive that stays at the top of every page-->
+    <as-navbar></as-navbar>
+
+    <!--Main content that changes based on route-->
+    <div data-ng-view></div>
+
+    <script src="lib/socket.io.js"></script>
+
+    <!-- Angular Material requires Angular.js Libraries -->
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/angular-route.min.js"></script>
+    <script src="lib/angular-animate.min.js"></script>
+    <script src="lib/angular-aria.min.js"></script>
+    <script src="lib/angular-messages.min.js"></script>
+
+    <script src="lib/socket.min.js"></script>
+
+    <!-- Angular Material Library -->
+    <script src="lib/angular-material.min.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="lib/firebase.js"></script>
+
+    <!-- AngularFire -->
+    <script src="lib/angularfire.min.js"></script>
+
+
+    <script>
+        // Initialize the Firebase SDK
+        const config = {
+            apiKey: 'AIzaSyCCO7zMiZZTav3eDQlD6JnVoEcEVXkodns',
+            authDomain: 'guifragmentos.firebaseapp.com',
+            databaseURL: 'https://guifragmentos.firebaseio.com',
+            storageBucket: 'guifragmentos.appspot.com',
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <!-- Angular Maps Library -->
+    <script src='lib/lodash.min.js'></script>
+    <script src='lib/angular-simple-logger.light.min.js'></script>
+    <script src="lib/angular-google-maps_dev_mapped.js"></script>
+
+    <!--main app module-->
+    <script src="app/app.module.js"></script>
+
+    <!--core module-->
+    <script src="app/core/core.module.js"></script>
+    <script src="app/core/config/constants.config.js"></script>
+    <script src="app/core/services/auth.service.js"></script>
+    <script src="app/core/services/firebaseData.service.js"></script>
+    <script src="app/core/directives/auth-cards.directive.js"></script>
+    <script src="app/core/directives/navbar.directive.js"></script>
+
+    <!--Auth module-->
+    <script src="app/auth/auth.module.js"></script>
+    <script src="app/auth/route.config.js"></script>
+    <script src="app/auth/auth.controller.js"></script>
+
+    <!--Home module-->
+    <script src="app/home/home.module.js"></script>
+    <script src="app/home/route.config.js"></script>
+    <script src="app/home/home.controller.js"></script>
+
+    <!--notifications module-->
+    <script src="app/notifications/notifications.module.js"></script>
+    <script src="app/notifications/interceptor.config.js"></script>
+    <script src="app/notifications/toast.service.js"></script>
+    <script src="app/notifications/toast.controller.js"></script>
+    <script src="app/notifications/toast.interceptor.js"></script>
+
+    <!--friends module-->
+    <script src="app/friends/friends.module.js"></script>
+    <script src="app/friends/route.config.js"></script>
+    <script src="app/friends/friends.service.js"></script>
+    <script src="app/friends/friends-list.controller.js"></script>
+    <script src="app/friends/friends-editor.controller.js"></script>
+
+    <!--alerts module-->
+    <script src="app/alerts/alerts.module.js"></script>
+    <script src="app/alerts/route.config.js"></script>
+    <script src="app/alerts/alert.service.js"></script>
+    <script src="app/alerts/alert.controller.js"></script>
+    <script src="app/alerts/map.controller.js"></script>
+
+    <!--sensors module-->
+    <script src="app/sensors/sensors.module.js"></script>
+    <script src="app/sensors/route.config.js"></script>
+    <script src="app/sensors/sensors-readings.service.js"></script>
+    <script src="app/sensors/sensors-info.service.js"></script>
+    <script src="app/sensors/sensors-list.controller.js"></script>
+    <script src="app/sensors/sensors-details.controller.js"></script>
+
+  </body>
+</html>

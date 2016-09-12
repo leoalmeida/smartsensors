@@ -1,0 +1,16 @@
+<div>
+    <ui-gmap-google-map
+                        center="vm.map.center"
+                        zoom="vm.map.zoom"
+                        draggable="true"
+                        options="vm.map.options"
+                        events="vm.map.events">
+        <ui-gmap-markers
+                doCluster="vm.map.doCluster"
+                models="vm.searchResults.results"
+                coords="'coords'"
+                idkey="'key'"
+                chunk="200"
+        ></ui-gmap-markers>
+    </ui-gmap-google-map>
+</div>

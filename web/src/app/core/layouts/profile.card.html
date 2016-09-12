@@ -1,0 +1,33 @@
+<md-card md-theme-watch width="4" class="profilecard quickstart-user-details-container" >
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline">{{vm.user.displayName}}</span>
+            <span class="md-subhead">{{vm.user.email}}</span>
+            <span class="md-subhead">
+                status:
+                <span ng-if="vm.user">Signed in</span>
+                <span ng-if="!vm.user">Signed out</span>
+            </span>
+        </md-card-title-text>
+        <md-card-title-media layout-padding>
+            <img ng-src="{{vm.user.photoURL}}" class="md-media-sm card-media" alt="Profile" />
+        </md-card-title-media>
+    </md-card-title>
+
+    <md-card-actions layout="row" layout-align="end center">
+        <md-content >
+            <md-button ng-click="vm.toggleNotifications()" class="md-icon-button" >
+                <md-icon md-svg-src="{{vm.user.isAnonymous ? 'assets/icons/social/ic_notifications_off_24px.svg' : 'assets/icons/social/ic_notifications_active_24px.svg'}}" aria-label="Send Msg "></md-icon>
+            </md-button>
+            <md-button ng-click="vm.changeMood()" class="md-icon-button" >
+                <md-icon md-svg-src="{{vm.selectedMood}}" class="md-secondary " aria-label="Send Msg "></md-icon>
+            </md-button>
+            <md-button ng-click="vm.login()" class="md-icon-button" >
+                <md-icon md-svg-src="assets/icons/action/ic_settings_24px.svg" class="md-secondary " aria-label="Send Msg "></md-icon>
+            </md-button>
+            <md-button ng-click="vm.navigateTo('/home/profile')" class="md-primary" aria-label="Open Profile">
+                Perfil
+            </md-button>
+        </md-content>
+    </md-card-actions>
+</md-card>

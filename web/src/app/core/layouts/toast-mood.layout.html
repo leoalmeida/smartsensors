@@ -1,0 +1,5 @@
+<md-toast >
+    <md-button ng-click="vmToast.setValue($index)" class="md-button md-fab md-mini md-primary" ng-repeat="item in vmToast.values track by $index">
+        <md-icon md-svg-src="{{item.link}}"></md-icon>
+    </md-button>
+</md-toast>

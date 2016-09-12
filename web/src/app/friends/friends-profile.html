@@ -1,0 +1,25 @@
+<div>
+     <form data-ng-submit="save(userCtrl.user)">
+
+        <md-input-container>
+          <label>Name</label>
+          <input ng-model="userCtrl.user.name">
+        </md-input-container>
+
+
+        <md-input-container>
+          <label>Password</label>
+          <input ng-model="userCtrl.user.password" type="password">
+        </md-input-container>
+
+        <md-input-container>
+          <label>Password</label>
+          <input ng-model="userCtrl.user.confirmPassword" required type="password">
+        </md-input-container>
+
+        <md-button ng-click="toggleLeft()" name="save">
+          Save
+        </md-button>
+       <br>
+     </form>
+</div>

@@ -1,0 +1,48 @@
+<div flex-gt-sm="50" flex>
+  <md-toolbar layout="row" class="md-hue-3">
+    <div class="md-toolbar-tools">
+      <span>Lista de Sensores</span>
+    </div>
+  </md-toolbar>
+
+  <md-content>
+    <md-list ng-cloak data-ng-init="vm.initList()">
+      <md-divider></md-divider>
+      <md-subheader class="md-no-sticky">Covered Sensors</md-subheader>
+      <md-list-item ng-click="navigateTo(setting.extraScreen, $event)" ng-repeat="sensor in vm.sensors">
+        <md-icon md-svg-icon="assets/icons/{{sensor.icon}}"></md-icon>
+        <p> {{ sensor.name }} </p>
+        <span flex></span>
+        <p> {{ sensor.readings.value }} {{ sensor.readings.unit }} </p>
+        <md-switch class="md-secondary" ng-model="sensor.enabled" ng-change="vm.toggleState($key)"></md-switch>
+      </md-list-item>
+      <md-divider></md-divider>
+    </md-list>
+  </md-content>
+</div>
+
+<div hide flex-gt-sm="50"  flex>
+  <md-toolbar layout="row" class="md-hue-3">
+    <div class="md-toolbar-tools">
+      <span>Detalhes</span>
+    </div>
+  </md-toolbar>
+
+  <md-content>
+    <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">Card with image</span>
+            <span class="md-subhead">Large</span>
+          </md-card-title-text>
+          <md-card-title-media>
+            <div class="md-media-lg card-media"></div>
+          </md-card-title-media>
+        </md-card-title>
+        <md-card-actions layout="row" layout-align="end center">
+          <md-button>Action 1</md-button>
+          <md-button>Action 2</md-button>
+        </md-card-actions>
+      </md-card>
+  </md-content>
+</div>
