@@ -11,8 +11,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prestart": "npm install",
-    "start": "nodemon --debug ./server/bin/www",
-    "debug": "node-inspector & nodemon --debug ./server/bin/www"
+    "start": "node ./server/bin/www"
   },
   "keywords": [],
   "author": "Leonardo Almeida S. Ferreira",
