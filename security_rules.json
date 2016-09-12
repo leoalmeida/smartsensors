@@ -1,0 +1,20 @@
+{
+    "rules": {
+        "alerts": {
+            ".read": true,
+            ".write": true
+        },
+        "groups": {
+            ".read": true,
+            ".write": true
+        },
+        "users": {
+            ".read": true,
+            ".write": false
+        },
+        "another_resource": {
+            ".read": "auth.uid === 'BYFzjIrm1BTaVbPtliezzU8KgHv2'",
+            ".write": "auth.uid === 'BYFzjIrm1BTaVbPtliezzU8KgHv2'"
+        }
+    }
+}
