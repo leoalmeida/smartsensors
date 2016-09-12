@@ -35,6 +35,7 @@
                 firebaseAuthObject.signInWithPopup(provider).then(function(result) {
                     this.credential = result.credential;
                     this.user = result.user;
+                    firebaseDataService.getFullArray(firebaseDataService.users).$add(this.user);
                 }).catch(function(error) {
                     let errorCode = error.code;
                     let errorMessage = error.message;
