@@ -5,8 +5,8 @@
             <span class="md-subhead">{{vm.user.email}}</span>
             <span class="md-subhead">
                 status:
-                <span ng-if="vm.user">Signed in</span>
-                <span ng-if="!vm.user">Signed out</span>
+                <span ng-if="vm.user">Online</span>
+                <span ng-if="!vm.user">Offline</span>
             </span>
         </md-card-title-text>
         <md-card-title-media layout-padding>
@@ -22,8 +22,8 @@
             <md-button ng-click="vm.changeMood()" class="md-icon-button" >
                 <md-icon md-svg-src="{{vm.selectedMood}}" class="md-secondary " aria-label="Send Msg "></md-icon>
             </md-button>
-            <md-button ng-click="vm.login()" class="md-icon-button" >
-                <md-icon md-svg-src="assets/icons/action/ic_settings_24px.svg" class="md-secondary " aria-label="Send Msg "></md-icon>
+            <md-button ng-click="vm.googlelogin()" class="md-icon-button" >
+                <md-icon md-svg-src="assets/icons/action/ic_power_settings_new_24px.svg" class="md-secondary " aria-label="Log out"></md-icon>
             </md-button>
             <md-button ng-click="vm.navigateTo('/home/profile')" class="md-primary" aria-label="Open Profile">
                 Perfil

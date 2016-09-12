@@ -14,7 +14,7 @@
         { name: "Assinantes", options: {icon: "assets/icons/action/ic_supervisor_account_24px.svg", face : "assets/icons/action/ic_supervisor_account_24px.svg", link : '/subscribers', avatarIcon: true }},
         { name: "Configurações", options: { icon: "assets/icons/action/ic_build_24px.svg", face : "assets/icons/action/ic_build_24px.svg", link : '/admin', avatarIcon: true }},
         { layout: true, separator: true },
-        { name: "LogOut", options: { icon: "assets/icons/action/ic_power_settings_new_24px.svg" }}
+        { name: "LogOut", options: { icon: "assets/icons/action/ic_power_settings_new_24px.svg" }, link : '/logout'}
     ];
 
     const PROTECTED_PATHS = ['/friends', '/home', '/alerts'];

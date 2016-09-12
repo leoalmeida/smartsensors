@@ -67,13 +67,13 @@
             });
 
 
-        vm.toggleGoogleSignIn = toggleGoogleSignIn;
+        vm.googlelogin = googlelogin;
         vm.onSignIn = onSignIn;
         vm.toggleNotifications = toggleNotifications;
         vm.changeMood = changeMood;
 
-        function toggleGoogleSignIn() {
-            authService.toggleGoogleSignIn()
+        function googlelogin() {
+            authService.googlelogin()
                 .then(function() {
                     $location.path('/friends');
                 })

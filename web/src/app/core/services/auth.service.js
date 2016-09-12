@@ -57,9 +57,6 @@
                 firebaseAuthObject.signOut();
                 // [END signout]
             }
-            // [START_EXCLUDE]
-            document.getElementById('quickstart-sign-in').disabled = true;
-            // [END_EXCLUDE]
         }
 
         function logout() {
