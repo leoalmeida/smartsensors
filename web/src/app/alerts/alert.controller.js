@@ -34,27 +34,16 @@
             var it, results = [ ];
             for (var j=0; j < tileImpl.length; j++) {
                 it = angular.extend({},tileImpl[j]);
-                // it.tile.span  = { row : randomSpan(), col : randomSpan()};
-                // it.tile.background = "{'background': " + randomColor() + " }";
 
                 it.tile.span  = { row : 1, col : 1};
                 it.tile.background = "red";
 
                 switch(j+1%11) {
-                    case 1:
-                        it.tile.background = "red";
-                        it.tile.span.row = it.tile.span.col = 2;
-                        break;
+                    case 1: it.tile.background = "red";           break;
                     case 2: it.tile.background = "green";         break;
                     case 3: it.tile.background = "darkBlue";      break;
-                    case 4:
-                        it.tile.background = "blue";
-                        it.tile.span.col = 2;
-                        break;
-                    case 5:
-                        it.tile.background = "yellow";
-                        it.tile.span.row = it.tile.span.col = 2;
-                        break;
+                    case 4: it.tile.background = "blue";          break;
+                    case 5: it.tile.background = "yellow";        break;
                     case 6: it.tile.background = "pink";          break;
                     case 7: it.tile.background = "darkBlue";      break;
                     case 8: it.tile.background = "purple";        break;

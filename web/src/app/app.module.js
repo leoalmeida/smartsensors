@@ -20,17 +20,19 @@
     angular
       .module('app', dependencyModules.concat(myAppComponents))
       .config(function($mdThemingProvider) {
-          let customTealMap = $mdThemingProvider.extendPalette('teal', {
-            'contrastDefaultColor': 'dark',
+          let customPaletteMap = $mdThemingProvider.extendPalette('blue-grey', {
+            'contrastDefaultColor': 'light',
             'contrastDarkColors': ['50'],
             '50': 'ffffff'
           });
-          $mdThemingProvider.definePalette('customTeal', customTealMap);
+          $mdThemingProvider.definePalette('customPaletteMap', customPaletteMap);
           $mdThemingProvider.theme('default')
-            .primaryPalette('customTeal', {
-              'default': '500',
-              'hue-2': '50'
-            }).accentPalette('green');
+            .primaryPalette('customPaletteMap', {
+                'default': '500',
+                'hue-2': '300',
+                'hue-3': '100'
+            })
+            .accentPalette('light-blue');
           $mdThemingProvider.theme('input', 'default')
             .primaryPalette('grey');
       });

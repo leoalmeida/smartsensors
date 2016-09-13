@@ -344,8 +344,8 @@ img[src*="gstatic.com/"], img[src*="googleapis.com/"] {
 .gridListDynamicTiles md-grid-tile md-icon {
     padding-bottom: 32px; }
 .gridListDynamicTiles md-grid-tile md-grid-tile-footer {
-    background: rgba(0, 0, 0, 0.5);
-    height: 64px; }
+    alpha: 0.5;
+    height: 56px; }
 .gridListDynamicTiles md-grid-tile-footer figcaption {
     width: 100%; }
 .gridListDynamicTiles md-grid-tile-footer figcaption h3 {

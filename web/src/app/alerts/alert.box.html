@@ -1,10 +1,9 @@
 <div id="card" (click)="onSelect(alertinfo.$key)">
     <div class="alert-selected">
         <article>
-            <div class="info">
-                <div class="alert"><span>alerta:</span> {{alertinfo.label}} ({{alertinfo.$key}}) </div>
-                <div class="alert-type">{{alertinfo.name}}</div>
-                <div class="main-info">{{alertinfo.severity.indexOf(true)}}</div>
+            <div class="info" ng-class="alertinfo.severity">
+                <div class="alert"><span>alerta:</span> {{alertinfo.configuration.label}} ({{alertinfo.$key}}) </div>
+                <div class="alert-type">{{alertinfo.configuration.name}}</div>
             </div>
 
             <div class="icon">
