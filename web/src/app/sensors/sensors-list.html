@@ -9,7 +9,7 @@
     <md-list ng-cloak data-ng-init="vm.initList()">
       <md-divider></md-divider>
       <md-subheader class="md-no-sticky">Covered Sensors</md-subheader>
-      <md-list-item ng-click="navigateTo(setting.extraScreen, $event)" ng-repeat="sensor in vm.sensors">
+      <md-list-item ng-click="vm.navigateTo(sensor.$id, $event)" ng-repeat="sensor in vm.sensors">
         <md-icon md-svg-icon="assets/icons/{{sensor.icon}}"></md-icon>
         <p> {{ sensor.name }} </p>
         <span flex></span>

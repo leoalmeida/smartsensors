@@ -6,9 +6,9 @@
       .module('app.sensors')
       .controller('SensorListController', SensorListController);
 
-  SensorListController.$inject = ['$scope', 'firebase', 'SensorsInfoService', 'SensorsSocket'];
+  SensorListController.$inject = ['$location', 'firebase', 'SensorsInfoService', 'SensorsSocket'];
 
-  function SensorListController($scope, firebase, sensorsService, sensorsSocket) {
+  function SensorListController($location, firebase, sensorsService, sensorsSocket) {
     let vm = this;
 
     vm.title = 'Lista de Sensores';
@@ -28,19 +28,23 @@
         console.log(contact);
     };
 
-    $scope.ledOn = function () {
+    vm.navigateTo = function(key, $event){
+        $location.path( "/sensors/" + key);
+    }
+
+    vm.ledOn = function () {
         sensorsSocket.emit('led:on');
         console.log('LED ON');
     };
-    $scope.ledOff = function () {
+    vm.ledOff = function () {
         sensorsSocket.emit('led:off');
         console.log('LED OFF');
     };
-    $scope.moistureOn = function () {
+    vm.moistureOn = function () {
         sensorsSocket.emit('moisture:on');
         console.log('Moisture ON');
     };
-    $scope.moistureOff = function () {
+    vm.moistureOff = function () {
         sensorsSocket.emit('moisture:off');
         console.log('Moisture OFF');
     };

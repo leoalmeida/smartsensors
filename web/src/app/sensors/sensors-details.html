@@ -1,0 +1,137 @@
+<div layout="column" ng-cloak class="md-inline-form">
+    <md-content layout-padding>
+        <div>
+            <form name="sensorForm">
+                <md-content style="height: 600px;" md-theme="altTheme">
+                    <md-subheader class="md-primary">Informações básicas: </md-subheader>
+                    <section>
+                        <div layout-gt-xs="row">
+                            <md-input-container>
+                                <md-switch ng-model="vm.sensor.alert">Alerta ativo? </md-switch>
+                            </md-input-container>
+                        </div>
+                        <div layout-gt-xs="row">
+                            <md-input-container>
+                                <label>Nome</label>
+                                <input ng-model="vm.sensor.name" >
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Label</label>
+                                <input ng-model="vm.sensor.label" >
+                            </md-input-container>
+                        </div>
+
+                        <div layout-gt-xs="row">
+                            <md-input-container>
+                                <label>Tipo</label>
+                                <md-select ng-model="vm.sensor.type" required>
+                                    <md-option ng-repeat="type in vm.types" value="{{type.abbrev}}">{{type.abbrev}}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                        <div layout-gt-xs="row">
+                            <md-input-container>
+                                <md-switch ng-model="vm.sensor.enabled"> Disponibilizar Sensor? </md-switch>
+                            </md-input-container>
+                        </div>
+
+                    </section>
+
+                    <md-subheader class="md-primary">Configurações: </md-subheader>
+                    <section>
+                        <div layout-gt-xs="row">
+                            <md-input-container class="md-block" flex-gt-xs>
+                                <label>Modelo</label>
+                                <input ng-model="vm.sensor.configurations.model" >
+                            </md-input-container>
+
+                            <md-input-container>
+                                <label>Unidade</label>
+                                <md-select ng-model="vm.sensor.configurations.unit" required>
+                                    <md-option ng-repeat="unit in vm.units" value="{{unit.abbrev}}">{{unit.abbrev}}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                        <div layout-gt-xs="row">
+                            <md-input-container class="md-block">
+                                <label>Loop</label>
+                                <input required type="number" step="any"
+                                       name="loop" ng-model="vm.sensor.configurations.loop" min="100"
+                                       max="9999" />
+                            </md-input-container>
+                            <md-input-container class="md-block">
+                                <label>Min</label>
+                                <input required type="number" step="any"
+                                       name="min" ng-model="vm.sensor.configurations.min" min="0"
+                                       max="100" />
+                            </md-input-container>
+                            <md-input-container class="md-block">
+                                <label>Max</label>
+                                <input required type="number" step="any"
+                                       name="max" ng-model="vm.sensor.configurations.max" min="0"
+                                       max="100" />
+                            </md-input-container>
+                        </div>
+                        <div layout-gt-sm="row">
+                            <div >
+                                <md-subheader class="md-primary">Entrada Digital</md-subheader>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Pin</label>
+                                    <md-select ng-model="vm.sensor.configurations.digital.pin" required>
+                                        <md-option ng-repeat="pin in vm.digitalpins" value="{{pin.abbrev}}">{{pin.abbrev}}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                            <div >
+                                <md-subheader class="md-primary">Entrada Analógica</md-subheader>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Pin</label>
+                                    <md-select ng-model="vm.sensor.configurations.analogic.pin" required>
+                                        <md-option ng-repeat="pin in vm.analogicpins" value="{{pin.abbrev}}">{{pin.abbrev}}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-input-container class="md-block">
+                                    <label>Threshold</label>
+                                    <input required type="number" step="any"
+                                           name="threshold" ng-model="vm.sensor.configurations.analogic.threshold" min="0"
+                                           max="100" />
+                                </md-input-container>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <div>
+                            <h1 class="md-title">Selecione um ícone: </h1>
+                            <div layout="row">
+                                <md-input-container>
+                                    <label>Icone</label>
+                                    <md-select ng-model="vm.sensor.icon" md-selected-text="getSelectedText()">
+                                        <md-optgroup label="items">
+                                            <md-option ng-repeat="icon in vm.icons" value="{{icon.abbrev}}">{{icon.abbrev}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <md-list layout-padding>
+                            <md-list-item class="md-3-line" ng-repeat="reading in readings">
+                                <div class="md-list-item-text">
+                                    <h3>{{reading.what}}</h3>
+                                    <h4>{{reading.who}}</h4>
+                                    <p>
+                                        {{reading.notes}}
+                                    </p>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </section>
+                </md-content>
+            </form>
+        </div>
+    </md-content>
+
+</div>

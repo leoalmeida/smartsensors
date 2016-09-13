@@ -5,85 +5,44 @@
       .module('app.sensors')
       .controller('SensorDetailsController', SensorDetailsController);
 
+  SensorDetailsController.$inject = ['$routeParams', 'firebase', 'SensorsInfoService'];
 
+  function SensorDetailsController($routeParams, firebase, sensorsInfoService) {
+      let vm = this;
+      let key = $routeParams.id;
 
-  SensorDetailsController.$inject = ['$scope', 'firebase', 'ReadingsService'];
-
-  function SensorDetailsController($scope, firebase, readingsService) {
-    let vm = this;
-    vm.messages = [];
-    let five = require("johnny-five");
-    let readingPeriod = process.argv[2] || 1000;
-    let board = new five.Board();
-
-    vm.initReadings = function() {
-        vm.title = 'Moisture';
-
-        readingsService.getAll().$loaded().then(function (snapshot) {
-            vm.messages.push.apply(vm.messages, snapshot.val());
-            $scope.$apply();
-        }, function (errorObject) {
-            console.log("The read failed: " + errorObject.code);
-        });
-    };
-
-    vm.show = function(contact) {
-        console.log(contact);
-    };
-
-    board.on("ready", function() {
-      vm.messages.push("Connected");
-
-      let sensorReader = new five.Sensor({
-        pin: "A0",
-        enabled: false
+      vm.analogicpins = ('A0 A1 A2 A3 A4').split(' ').map(function (pin) {
+          return {abbrev: pin};
       });
-      let sensorControl = new five.Pin(13);
-
-      sensorReader.on("data", function() {
-        if (sensorControl.isHigh) {
-          vm.actualReading = ((1024-this.value)*100)/1024;
-          this.storedb(vm.actualReading);
-
-          vm.messages.push("Moisture: " + vm.actualReading);
-          sensorControl.low();
-          sensorReader.disable();
-        }
+      vm.digitalpins = ('D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 D11 D12 D13').split(' ').map(function (pin) {
+          return {abbrev: pin};
       });
-
-      sensorReader.on("change", function() {
-          vm.messages.push("The reading value has changed.");
+      vm.units = ('cm m %').split(' ').map(function (unit) {
+          return {abbrev: unit};
       });
-
-      this.loop(readingPeriod, function() {
-        if (!sensorControl.isHigh) {
-          sensorControl.high();
-          sensorReader.enable();
-        }
+      vm.icons = ('motion.svg oscillator.svg').split(' ').map(function (icon) {
+          return {abbrev: icon};
       });
+      vm.types = ('moisture oscillator').split(' ').map(function (type) {
+          return {abbrev: type};
+      });
+      vm.sensors = sensorsInfoService.getOne(key);
 
-    });
-
-    let storedb = (data) => {
-      state = ((((data-vm.lastReading)*100)>1) ||
-              (((data-vm.lastReading)*100)<-1)) ;
-      if (state) {
-
-      }
-    };
-
-    let updateReading = function (id, data, refDB) {
-        let status = readingsService.update(id, data);
-        console.log("update  " + status);
-    }
-
-    let storeReading = function (data, refDB){
-      state = ((((data-vm.lastReading)*100)>1) ||
-              (((data-vm.lastReading)*100)<-1)) ;
-      if (state) {
-        return readingsService.insert(data);
-      }
-    }
-  };
+      /*vm.sensor = {
+          alert: false,
+          configurations: {
+              analogic: {pin: 'A0', threshold: 5},
+              digital: {pin: 'D13'},
+              loop: 1000, max: 85, min: 65,
+              model: 'YL-96', unit: '%'
+          },
+          enabled: true,
+          icon: 'motion.svg',
+          label: 'P0',
+          name: 'Moisture',
+          readings: {},
+          type: 'moisture'
+      };*/
+  }
 
 })(angular);

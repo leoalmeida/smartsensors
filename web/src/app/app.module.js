@@ -3,6 +3,7 @@
 
     var dependencyModules = [
         'ngMaterial',
+        'ngMessages',
         'ngRoute',
         'btford.socket-io',
         'firebase',
