@@ -29,14 +29,18 @@ module.exports = (httpServer) => {
         digital: { pin: "D13" },
         loop: 1000,
         min: 65,
-        max: 85,
+        max: 70,
         unit: "%"
       }
   };
 
   let alert = {
     isActive: true,
-    lastUpdates: [],
+    lastUpdate: {
+        loops: 0,
+        unit: "%",
+        value: 0
+    },
     localization: {
         address: "Rua Ray Wesley Herrick 1501, Casa 251",
         image: "chuvaforte.jpg",
@@ -109,21 +113,24 @@ module.exports = (httpServer) => {
           messages.push("The reading value has changed.");
           console.log("The reading value has changed.");
 
-          alert.lastUpdates.push({
+          alert.lastUpdate = {
               loops: loops,
               unit: "%",
               value: moisture.readings.value
-          });
+          };
 
           if (moisture.readings.value > moisture.configurations.max) {
             moisture.alert = true;
             alert.severity = "red";
             updateAlert(alert, key);
           }else if (moisture.readings.value < moisture.configurations.max) {
-            moisture.alert = false;
+            moisture.alert = true;
             alert.severity = "blue";
             updateAlert(alert, key);
           }else if(moisture.alert == true){
+            moisture.alert = false;
+            alert.severity = "white";
+            alert.releaseDate = "11/06/2016 15:15"
             removeAlert(key);
           }
 

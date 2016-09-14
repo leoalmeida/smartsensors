@@ -23,16 +23,14 @@
                         </md-card-avatar>
                         <md-card-header-text>
                             <span class="md-title">{{item.configurations.name}}</span>
-                            <div class="md-subhead md-primary">
-                                <span>{{item.configurations.label}}</span>
-                                <span flex></span>
-                                <span>{{item.startDate}}</span>
-                            </div>
+                                <h4>
+                                  {{item.configurations.label}} - 
+                                  <span flex-end>{{item.startDate}}</span>
+                                </h4>
                         </md-card-header-text>
                     </md-card-header>
                 </md-grid-tile-header>
                 <img ng-src="assets/images/{{item.localization.image}}" class="md-card-image" alt="Image" />
-
                 <md-grid-content ng-class="item.severity">
                     <md-card-actions layout="row" layout-align="start center" >
                         <md-card-icon-actions>
@@ -45,6 +43,7 @@
                             <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Share">
                                 <md-icon md-svg-src="assets/icons/action/ic_favorite_24px.svg"></md-icon>
                             </md-button>
+                            <h4>{{item.lastUpdate.value}}{{item.lastUpdate.unit}}</h4>
                         </md-card-icon-actions>
                         <md-button>Assinar</md-button>
                     </md-card-actions>
