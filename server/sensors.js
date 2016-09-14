@@ -12,7 +12,7 @@ module.exports = (httpServer) => {
     icon: "motion.svg",
     enabled: true,
     alert: true,
-    label: "P0",
+    label: "S0",
     name: "Moisture",
     type: "moisture",
     readings: {
@@ -24,7 +24,7 @@ module.exports = (httpServer) => {
     },
     configurations: {
         model: "YL-96",
-        analogic: { pin: "A0", threshold: 5 },
+        analogic: { pin: "A0", freq: 5000, threshold: 5 },
         digital: { pin: "D13" },
         loop: 1000,
         min: 65,
@@ -46,21 +46,21 @@ module.exports = (httpServer) => {
         teste: "teste"
     }],
     configurations: {
-        name: "Humidade elevada",
+        name: "Humidade da terra",
         pin: {
             color: "blue"
         },
         draggable: false,
         icon: "motion.svg",
-        label: "P0",
+        label: "A0",
         type: "moisture",
         col: 1,
         row: 1
     },
     releaseDate : "",
     routeLink : "/sensors/moisture",
-    sensors : [],
-    severity : "black",
+    sensors : ["S0"],
+    severity : "grey",
     startDate : "10/06/2016 10:15"
   }
 
@@ -86,7 +86,7 @@ module.exports = (httpServer) => {
           // this.storedb(actualReading);
 
           messages.push("Moisture: " + value);
-          console.log("Moisture: " + value);
+          // console.log("Moisture: " + value);
 
           sensorPower.low();
           sensor.disable();
