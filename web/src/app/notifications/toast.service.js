@@ -13,6 +13,7 @@
             data: {},
             serverError: serverError,
             showTemplate: showTemplate,
+            showMessage: showMessage,
             moodChange: moodChange
         };
 
@@ -43,8 +44,23 @@
                 position    : 'top right',
                 controller  : 'ToastController',
                 controllerAs: 'vm',
-                templateUrl : 'app/core/layouts/toast-template.layout.html'
+                templateUrl : 'app/notifications/layouts/toast-template.layout.html'
             });
+
+        }
+
+        function showMessage(message) {
+            //The toastController gets an instance of toastService, so the error message is exposed
+            //via the message property and the controller provides it to the toast.html view
+            this.message = message;
+
+            var toast = $mdToast.simple()
+                .content(message)
+                .hideDelay(3000)
+                .position('top right');
+
+
+            $mdToast.show(toast);
 
         }
 
@@ -56,9 +72,9 @@
             $mdToast.show({
                 hideDelay   : 10000,
                 position    : 'top right',
-                controller  : 'ToastController',
+                controller  : 'MoodController',
                 controllerAs: 'vmToast',
-                templateUrl : 'app/core/layouts/toast-mood.layout.html',
+                templateUrl : 'app/notifications/layouts/toast-mood.layout.html',
                 bindToController: true
             });
         }

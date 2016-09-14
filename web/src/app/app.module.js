@@ -6,6 +6,7 @@
         'ngMessages',
         'ngRoute',
         'btford.socket-io',
+        'angular-web-notification',
         'firebase',
         'uiGmapgoogle-maps'];
     const myAppComponents = [

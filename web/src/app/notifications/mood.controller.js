@@ -3,14 +3,14 @@
 
     angular
         .module('app.notifications')
-        .controller('ToastController', ToastController);
+        .controller('MoodController', MoodController);
 
-    ToastController.$inject = ['$rootScope', '$location', '$mdToast', 'CONSTANTS'];
+    MoodController.$inject = ['$rootScope', '$mdToast', 'CONSTANTS'];
 
-    function ToastController($rootScope, $location, $mdToast, CONSTANTS) {
+    function MoodController($rootScope, $mdToast, CONSTANTS) {
         let vmToast = this;
 
-        vmToast.message = $rootScope.param;
+        vmToast.values = CONSTANTS.MOODLIST;
 
         vmToast.closeToast = function() {
             if (isDlgOpen) return vm.localSelectedMood;
@@ -21,11 +21,16 @@
                 });
             return vm.localSelectedMood;
         };
-        vmToast.openMoreInfo = function(value) {
+        vmToast.openMoreInfo = function(e) {
+            if ( isDlgOpen ) return;
+            isDlgOpen = true;
+        };
+
+        vmToast.setValue = function(value) {
             $mdToast
                 .hide()
                 .then(function() {
-                    $location.path( value );
+                    $rootScope.$broadcast('moodChanged', value);
                 });
         };
     }
