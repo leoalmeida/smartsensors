@@ -16,6 +16,7 @@ module.exports = (httpServer) => {
     name: "Moisture",
     type: "moisture",
     readings: {
+          loops: 0,
           average: 0,
           date: "initial",
           quantity: 0,
@@ -71,6 +72,7 @@ module.exports = (httpServer) => {
   //Arduino board connection
   board.on("ready", () => {
       let messages = [];
+      let loops = 0;
 
       messages.push("Arduino Connected");
       console.log('Arduino connected');
@@ -83,6 +85,7 @@ module.exports = (httpServer) => {
       sensor.on("data", () => {
         if (sensorPower.isHigh) {
           let value = sensor.scaleTo(0, 100);
+          loops++;
           // this.storedb(actualReading);
 
           messages.push("Moisture: " + value);
@@ -98,19 +101,27 @@ module.exports = (httpServer) => {
           moisture.readings.value = sensor.scaleTo(0, 100);
           console.log("Average: " + moisture.readings.value);
           moisture.readings.quantity++;
+          moisture.readings.loops = loops;
           moisture.readings.average = ((moisture.readings.average * (moisture.readings.quantity - 1)) + moisture.readings.value)/ moisture.readings.quantity;
           console.log("Average: " + moisture.readings.average );
           // moisture.date =
 
           messages.push("The reading value has changed.");
           console.log("The reading value has changed.");
+
+          alert.lastUpdates.push({
+              loops: loops,
+              unit: "%",
+              value: moisture.readings.value
+          });
+
           if (moisture.readings.value > moisture.configurations.max) {
             moisture.alert = true;
             alert.severity = "red";
             updateAlert(alert, key);
           }else if (moisture.readings.value < moisture.configurations.max) {
             moisture.alert = false;
-            alert.severity = "silver";
+            alert.severity = "blue";
             updateAlert(alert, key);
           }else if(moisture.alert == true){
             removeAlert(key);
