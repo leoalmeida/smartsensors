@@ -11,7 +11,7 @@ module.exports = (httpServer) => {
   let moisture = {
     icon: "motion.svg",
     enabled: true,
-    alert: false,
+    alert: true,
     label: "P0",
     name: "Moisture",
     type: "moisture",
@@ -34,36 +34,34 @@ module.exports = (httpServer) => {
   };
 
   let alert = {
-    "draggable" : false,
-    "icon" : "motion.svg",
-    "isActive" : true,
-    "label" : "P0",
-    "lastUpdates" : [],
-    "localization" : {
-      "address" : "Av. X",
-      "image" : "chuvaforte.jpg",
-      "latitude" : -22.0161282,
-      "longitude" : -47.9137721
+    isActive: true,
+    lastUpdates: [],
+    localization: {
+        address: "Rua Ray Wesley Herrick 1501, Casa 251",
+        image: "chuvaforte.jpg",
+        latitude: -22.0161282,
+        longitude: -47.9137721
     },
-    "moreInfo" : [ {
-      "teste" : "teste"
-    } ],
-    "name" : "Humidade elevada",
-    "releaseDate" : "",
-    "routeLink" : "/humdade",
-    "sensors" : [],
-    "severity" : "black",
-    "startDate" : "10/06/2016 10:15",
-    "pin" : {
-      "color": "blue"
+    moreInfo: [{
+        teste: "teste"
+    }],
+    configurations: {
+        name: "Humidade elevada",
+        pin: {
+            color: "blue"
+        },
+        draggable: false,
+        icon: "motion.svg",
+        label: "P0",
+        type: "moisture",
+        col: 1,
+        row: 1
     },
-    "tile" : {
-      "span" : {
-        "col" : 1,
-        "row" : 1
-      }
-    },
-    "type" : "Humidade"
+    releaseDate : "",
+    routeLink : "/sensors/moisture",
+    sensors : [],
+    severity : "black",
+    startDate : "10/06/2016 10:15"
   }
 
   const io = require('socket.io')(httpServer);

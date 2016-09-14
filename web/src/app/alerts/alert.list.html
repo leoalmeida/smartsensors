@@ -10,8 +10,8 @@
             md-gutter-gt-sm="4px"
             data-ng-init="vm.initList()" >
         <md-grid-tile ng-repeat="item in vm.alertItems track by $index"
-                      md-rowspan="{{item.configuration.row}}"
-                      md-colspan="{{item.configuration.col}}"
+                      md-rowspan="{{item.configurations.row}}"
+                      md-colspan="{{item.configurations.col}}"
                       md-colspan-sm="1"
                       md-colspan-xs="1"
                       class="card">
@@ -19,12 +19,12 @@
                 <md-grid-tile-header layout-padding class="darkAlphaBackground" >
                     <md-card-header>
                         <md-card-avatar>
-                            <img class="md-user-avatar" ng-src="assets/icons/{{item.configuration.icon}}"/>
+                            <img class="md-user-avatar" ng-src="assets/icons/{{item.configurations.icon}}"/>
                         </md-card-avatar>
                         <md-card-header-text>
-                            <span class="md-title">{{item.configuration.name}}</span>
+                            <span class="md-title">{{item.configurations.name}}</span>
                             <div class="md-subhead md-primary">
-                                <span>{{item.configuration.label}}</span>
+                                <span>{{item.configurations.label}}</span>
                                 <span flex></span>
                                 <span>{{item.startDate}}</span>
                             </div>
@@ -56,10 +56,10 @@
                 <div class="alert-selected" >
                     <div flex layout-xs="column" layout="row" class="alert-content">
                         <div layout="row" flex-gt-sm="40" >
-                            <img ng-src="assets/images/{{item.configuration.icon}}" class="card-image" alt="Washed Out">
+                            <img ng-src="assets/images/{{item.configurations.icon}}" class="card-image" alt="Washed Out">
                         </div>
                         <div layout="column" flex-gt-sm="60" >
-                            <div layout-align="center center">alerta: {{item.configuration.label}} ({{item.$key}})</div>
+                            <div layout-align="center center">alerta: {{item.configurations.label}} ({{item.$key}})</div>
                             <div layout-align="space-around center">
                                 <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Favorite">
                                     <md-icon md-svg-src="assets/icons/action/ic_account_circle_24px.svg"></md-icon>
@@ -74,7 +74,7 @@
                         </div>
                     </div>
                 </div>-->
-                <md-grid-tile-footer ng-class="item.configuration.background">
+                <md-grid-tile-footer ng-class="item.configurations.background">
                     <h3>{{item.localization.address}}</h3>
                 </md-grid-tile-footer>
             </md-card>
@@ -104,17 +104,17 @@
             <md-card md-theme="{{ showDarkTheme ? 'dark-blue' : 'default' }}" md-theme-watch ng-click="navigateTo(item.routeLink)">
                 <md-card-header>
                     <md-card-avatar>
-                        <img ng-src="assets/images/{{item.configuration.icon}}"/>
+                        <img ng-src="assets/images/{{item.configurations.icon}}"/>
                     </md-card-avatar>
                     <md-card-header-text>
-                        <span class="md-title">{{item.configuration.name}}</span>
-                        <span class="md-subhead">{{item.configuration.type}}</span>
+                        <span class="md-title">{{item.configurations.name}}</span>
+                        <span class="md-subhead">{{item.configurations.type}}</span>
                     </md-card-header-text>
                 </md-card-header>
                 <img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out">
                 <md-card-title>
                     <md-card-title-text>
-                        <span class="md-headline">{{item.configuration.label}}</span>
+                        <span class="md-headline">{{item.configurations.label}}</span>
                         <span class="md-subhead">{{item.moreInfo}}</span>
                     </md-card-title-text>
                     <md-card-title-media>
