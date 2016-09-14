@@ -30,8 +30,8 @@
 
         function login() {
 
-            let user = authService.isLoggedIn();
-            let name, email, photoUrl, uid;
+            var user = authService.isLoggedIn();
+            var name, email, photoUrl, uid;
 
             if (user != null) {
                 name = user.displayName;

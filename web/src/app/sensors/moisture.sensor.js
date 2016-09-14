@@ -1,8 +1,8 @@
 (function(angular) {
   'use strict';
 
-  let five = require("johnny-five");
-  let readingPeriod = process.argv[2] || 1000;
+  var five = require("johnny-five");
+  var readingPeriod = process.argv[2] || 1000;
 
 
   angular
@@ -14,9 +14,9 @@
   MoistureController.$inject = ['$scope', 'firebase', 'ReadingsService', 'SensorsSocket'];
 
   function MoistureController($scope, firebase, readingsService, 'sensorsSocket') {
-    let vm = this;
+    var vm = this;
     vm.messages = [];
-    let board = new five.Board();
+    var board = new five.Board();
 
     vm.initReadings = function() {
         vm.title = 'Moisture';
@@ -44,11 +44,11 @@
     board.on("ready", function() {
       vm.messages.push("Connected");
 
-      let sensorReader = new five.Sensor({
+      var sensorReader = new five.Sensor({
         pin: "A0",
         enabled: false
       });
-      let sensorControl = new five.Pin(13);
+      var sensorControl = new five.Pin(13);
 
       sensorReader.on("data", function() {
         if (sensorControl.isHigh) {
@@ -74,7 +74,7 @@
 
     });
 
-    let storedb = (data) => {
+    var storedb = (data) => {
       state = ((((data-vm.lastReading)*100)>1) ||
               (((data-vm.lastReading)*100)<-1)) ;
       if (state) {
@@ -82,12 +82,12 @@
       }
     };
 
-    let updateReading = function (id, data, refDB) {
-        let status = readingsService.update(id, data);
+    var updateReading = function (id, data, refDB) {
+        var status = readingsService.update(id, data);
         console.log("update  " + status);
     }
 
-    let storeReading = function (data, refDB){
+    var storeReading = function (data, refDB){
       state = ((((data-vm.lastReading)*100)>1) ||
               (((data-vm.lastReading)*100)<-1)) ;
       if (state) {

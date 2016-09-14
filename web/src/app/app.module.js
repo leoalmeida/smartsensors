@@ -9,7 +9,7 @@
         'angular-web-notification',
         'firebase',
         'uiGmapgoogle-maps'];
-    const myAppComponents = [
+    var myAppComponents = [
         'app.core',
         'app.auth',
         'app.home',
@@ -22,7 +22,7 @@
     angular
       .module('app', dependencyModules.concat(myAppComponents))
       .config(function($mdThemingProvider) {
-          let customPaletteMap = $mdThemingProvider.extendPalette('blue-grey', {
+          var customPaletteMap = $mdThemingProvider.extendPalette('blue-grey', {
             'contrastDefaultColor': 'light',
             'contrastDarkColors': ['50'],
             '50': 'ffffff'

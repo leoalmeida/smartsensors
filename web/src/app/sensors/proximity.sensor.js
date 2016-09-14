@@ -1,8 +1,8 @@
 (function(angular) {
   'use strict';
 
-  let five = require("johnny-five");
-  let readingPeriod = process.argv[2] || 1000;
+  var five = require("johnny-five");
+  var readingPeriod = process.argv[2] || 1000;
 
 
   angular
@@ -12,9 +12,9 @@
     ProximityController.$inject = ['$scope', 'firebase', 'ReadingsService'];
 
     function ProximityController($scope, firebase, readingsService) {
-      let vm = this;
+      var vm = this;
       vm.messages = [];
-      let board = new five.Board();
+      var board = new five.Board();
 
       board.on("ready", function() {
         var proximity = new five.Proximity({

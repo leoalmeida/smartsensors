@@ -11,7 +11,7 @@
     MainController.$inject = [];
 
     function MainController() {
-        let vm = this;
+        var vm = this;
 
         vm.people = [];
         vm.person = {};
@@ -24,7 +24,7 @@
     IndexController.$inject = [];
 
     function IndexController() {
-        let vm = this;
+        var vm = this;
 
         vm.people = [];
         vm.person = {};

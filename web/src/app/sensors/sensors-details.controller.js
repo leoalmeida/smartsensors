@@ -8,8 +8,8 @@
   SensorDetailsController.$inject = ['$routeParams', 'firebase', 'SensorsInfoService'];
 
   function SensorDetailsController($routeParams, firebase, sensorsInfoService) {
-      let vm = this;
-      let key = $routeParams.id;
+      var vm = this;
+      var key = $routeParams.id;
 
       vm.analogicpins = ('A0 A1 A2 A3 A4').split(' ').map(function (pin) {
           return {abbrev: pin};

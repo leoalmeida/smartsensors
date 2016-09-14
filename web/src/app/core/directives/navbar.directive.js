@@ -20,7 +20,7 @@
     NavbarController.$inject = ['$scope', 'CONSTANTS', 'AuthService', '$location', '$timeout', '$mdSidenav', '$log', 'ToastService', '$mdDialog'];
 
     function NavbarController($scope, CONSTANTS, authService, $location, $timeout, $mdSidenav, $log, toastService, $mdDialog) {
-        let vm = this;
+        var vm = this;
 
         vm.menuItems = CONSTANTS.MENU;
         vm.status = false;

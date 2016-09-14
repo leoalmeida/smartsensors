@@ -8,7 +8,7 @@
     AuthService.$inject = ['firebase', 'firebaseDataService'];
 
     function AuthService(firebase, firebaseDataService) {
-        let firebaseAuthObject = firebase.auth();
+        var firebaseAuthObject = firebase.auth();
         this.user = firebaseAuthObject.currentUser;
         this.credential = null;
 
@@ -29,7 +29,7 @@
         function toggleGoogleSignIn() {
 
             if (!firebaseAuthObject.currentUser) {
-                let provider = new firebase.auth.GoogleAuthProvider();
+                var provider = new firebase.auth.GoogleAuthProvider();
                 provider.addScope('https://www.googleapis.com/auth/plus.login');
 
                 firebaseAuthObject.signInWithPopup(provider).then(function(result) {
@@ -37,12 +37,12 @@
                     this.user = result.user;
                     firebaseDataService.getFullArray(firebaseDataService.users).$add(this.user);
                 }).catch(function(error) {
-                    let errorCode = error.code;
-                    let errorMessage = error.message;
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
                     // The email of the user's account used.
-                    let email = error.email;
+                    var email = error.email;
                     // The firebase.auth.AuthCredential type that was used.
-                    let credential = error.credential;
+                    var credential = error.credential;
                     // [START_EXCLUDE]
                     if (errorCode === 'auth/account-exists-with-different-credential') {
                         alert('You have already signed up with a different auth provider for that email.');

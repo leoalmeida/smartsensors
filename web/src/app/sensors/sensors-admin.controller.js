@@ -8,7 +8,7 @@
   SensorAdminController.$inject = ['$scope', 'firebase', 'ReadingsService'];
 
   function SensorAdminController($scope, firebase, readingsService) {
-    let vm = this;
+    var vm = this;
     vm.messages = [];
   };
 

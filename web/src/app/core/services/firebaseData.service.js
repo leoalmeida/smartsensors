@@ -8,15 +8,15 @@
     firebaseDataService.$inject = ['firebase', '$firebaseObject', '$firebaseArray'];
 
     function firebaseDataService(firebase, $firebaseObject, $firebaseArray) {
-        let root = new firebase.database().ref();
-        let firebaseObject = (database, key) => {
+        var root = new firebase.database().ref();
+        var firebaseObject = function (database, key){
           return $firebaseObject(root.child(database));
         };
-        let filteredFirebaseArray = (database, key) => {
-          let query = root.child(database).child(key);
+        var filteredFirebaseArray = function (database, key) {
+          var query = root.child(database).child(key);
           return $firebaseArray(query);
         };
-        let fullFirebaseArray = (database) => {return $firebaseArray(root.child(database))}
+        var fullFirebaseArray = function (database) {return $firebaseArray(root.child(database))}
 
         var service = {
             getFirebaseObject: firebaseObject,

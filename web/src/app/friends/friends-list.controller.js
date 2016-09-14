@@ -9,7 +9,7 @@
     FriendsListController.$inject = ['$scope', '$mdBottomSheet', '$mdDialog', 'FriendsService', '$routeParams', '$location'];
 
     function FriendsListController($scope, $mdBottomSheet, $mdDialog, friendsService, $routeParams, $location) {
-        let vm = this;
+        var vm = this;
 
         vm.friends = friendsService.getFiltered(0);
         vm.alert = '';

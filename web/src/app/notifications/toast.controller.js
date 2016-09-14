@@ -8,7 +8,7 @@
     ToastController.$inject = ['$rootScope', '$location', '$mdToast', 'CONSTANTS'];
 
     function ToastController($rootScope, $location, $mdToast, CONSTANTS) {
-        let vmToast = this;
+        var vmToast = this;
 
         vmToast.message = $rootScope.param;
 

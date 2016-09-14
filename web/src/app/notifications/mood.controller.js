@@ -8,7 +8,7 @@
     MoodController.$inject = ['$rootScope', '$mdToast', 'CONSTANTS'];
 
     function MoodController($rootScope, $mdToast, CONSTANTS) {
-        let vmToast = this;
+        var vmToast = this;
 
         vmToast.values = CONSTANTS.MOODLIST;
 

@@ -3999,7 +3999,7 @@ WS.prototype.supportsBinary = true;
 
 WS.prototype.doOpen = function(){
   if (!this.check()) {
-    // let probe timeout
+    // var probe timeout
     return;
   }
 

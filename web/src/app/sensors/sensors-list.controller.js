@@ -9,7 +9,7 @@
   SensorListController.$inject = ['$location', 'firebase', 'SensorsInfoService', 'SensorsSocket'];
 
   function SensorListController($location, firebase, sensorsService, sensorsSocket) {
-    let vm = this;
+    var vm = this;
 
     vm.title = 'Lista de Sensores';
     vm.sensors = sensorsService.getAll();
@@ -49,7 +49,7 @@
         console.log('Moisture OFF');
     };
 
-    let storedb = (data) => {
+    var storedb = function(data){
       state = ((((data-vm.lastReading)*100)>1) ||
               (((data-vm.lastReading)*100)<-1)) ;
       if (state) {
@@ -57,12 +57,12 @@
       }
     };
 
-    let updateReading = function (id, data, refDB) {
-        let status = sensorsService.update(id, data);
+    var updateReading = function (id, data, refDB) {
+        var status = sensorsService.update(id, data);
         console.log("update  " + status);
     }
 
-    let storeReading = function (data, refDB){
+    var storeReading = function (data, refDB){
       state = ((((data-vm.lastReading)*100)>1) ||
               (((data-vm.lastReading)*100)<-1)) ;
       if (state) {

@@ -1,7 +1,7 @@
 (function(angular) {
     'use strict';
 
-    const MENU = [
+    var MENU = [
         { layout: true, separator: true },
         { name: "Home", options: { icon: "assets/icons/action/ic_dashboard_24px.svg", face : "assets/icons/action/ic_dashboard_24px.svg",  link : '/',  avatarIcon: true }},
         { name: "Mapa", options: { icon: "assets/icons/maps/ic_map_24px.svg", face : "assets/icons/maps/ic_map_24px.svg",  link : '/map',  avatarIcon: true }},
@@ -17,9 +17,9 @@
         { name: "LogOut", options: { icon: "assets/icons/action/ic_power_settings_new_24px.svg" }, link : '/logout'}
     ];
 
-    const PROTECTED_PATHS = ['/friends', '/home', '/alerts'];
+    var PROTECTED_PATHS = ['/friends', '/home', '/alerts'];
 
-    const MOODLIST = [
+    var MOODLIST = [
         {name: 'verysatisfied', link: "assets/icons/social/ic_sentiment_very_satisfied_24px.svg"},
         {name: 'satisfied', link: "assets/icons/social/ic_mood_24px.svg"},
         {name: 'neutral', link: "assets/icons/social/ic_sentiment_neutral_24px.svg"},
