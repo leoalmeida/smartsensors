@@ -9,7 +9,7 @@
 
     function configFunction($routeProvider) {
         $routeProvider
-            .when('/home', {
+            .when('/', {
                 templateUrl: 'app/home/home.html',
                 controller: 'HomeController',
                 controllerAs: 'vm'

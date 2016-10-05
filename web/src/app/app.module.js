@@ -3,18 +3,20 @@
 
     var dependencyModules = [
         'ngMaterial',
+        'ngAnimate',
         'ngMessages',
         'ngRoute',
         'btford.socket-io',
         'angular-web-notification',
         'firebase',
-        'uiGmapgoogle-maps'];
+        'ngMap'];
     var myAppComponents = [
         'app.core',
         'app.auth',
         'app.home',
         'app.notifications',
         'app.friends',
+        'app.groups',
         'app.alerts',
         'app.sensors'
     ];

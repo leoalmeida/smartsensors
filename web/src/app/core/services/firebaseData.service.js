@@ -9,33 +9,31 @@
 
     function firebaseDataService(firebase, $firebaseObject, $firebaseArray) {
         var root = new firebase.database().ref();
-        var firebaseObject = function (database, key){
-          return $firebaseObject(root.child(database));
-        };
-        var filteredFirebaseArray = function (database, key) {
-          var query = root.child(database).child(key);
-          return $firebaseArray(query);
-        };
-        var fullFirebaseArray = function (database) {return $firebaseArray(root.child(database))}
 
         var service = {
-            getFirebaseObject: firebaseObject,
-            getFilteredArray: filteredFirebaseArray,
-            getFullArray: fullFirebaseArray,
-            readings: 'readings',
-            friends: 'friends',
-            alerts: 'alerts',
-            configurations: 'configurations',
-            emails: 'emails',
-            textMessages: 'textMessages',
-            groups: 'groups',
-            mapinfo: 'map-info',
-            sensors: 'sensors',
-            subscribers: 'subscribers',
-            users: 'users'
+            getFirebaseObject:  firebaseObject,
+            getFirebaseArray: firebaseArray,
+            readings: firebaseObject('readings'),
+            friends: firebaseObject('friends'),
+            alerts: firebaseObject('alerts'),
+            configurations: firebaseObject('configurations'),
+            emails: firebaseObject('emails'),
+            textMessages: firebaseObject('textMessages'),
+            groups: firebaseObject('groups'),
+            mapinfo: firebaseObject('map-info'),
+            sensors: firebaseObject('sensors'),
+            subscribers: firebaseObject('subscribers'),
+            users: firebaseObject('users')
         };
 
         return service;
+
+        function firebaseObject(database){
+            return $firebaseObject(root.child(database));
+        };
+        function firebaseArray(database) {
+            return $firebaseArray(root.child(database));
+        };
     }
 
 })(angular);

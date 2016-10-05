@@ -3,43 +3,30 @@
 
     angular
         .module('app.alerts')
-        .controller('MapController', MapController)
-        .config(function(uiGmapGoogleMapApiProvider) {
-            uiGmapGoogleMapApiProvider.configure({
-                key: 'AIzaSyCCO7zMiZZTav3eDQlD6JnVoEcEVXkodns',
-                v: '3.26.1', //defaults to latest 3.X anyhow
-                libraries: 'weather,geometry,visualization'
-            });
-        });
+        .controller('MapController', MapController);
 
-    MapController.$inject = ['AlertService', 'uiGmapLogger', 'uiGmapObjectIterators'];
+    MapController.$inject = ['AlertService', 'NgMap'];
 
-    function MapController(alertService, logger, uiGmapObjectIterators) {
+    function MapController(alertService, NgMap) {
         var vm = this;
 
-        logger.doLog = true;
-        logger.currentLevel = logger.LEVELS.debug;
         var lastId = 1;
         var clusterThresh = 6;
 
-        vm.alertItems = [];
+        vm.alertItems = alertService.getAll();
 
-
-
-        vm.initList = function() {
-            vm.syncObject = alertService.getAll();
-
-
-            vm.syncObject.$loaded().then(function(snapshot) {
-                    vm.alertItems.push.apply(vm.alertItems, snapshot);
-                    return vm.addMarkers(snapshot);
-                }, function (errorObject) {
-                    console.log("The read failed: " + errorObject.code);
-                    return errorObject;
+        vm.alertItems.$loaded().then(function(snapshot) {
+                NgMap.getMap().then(function(map) {
+                    vm.map = map;
+                    console.log(map.getCenter());
+                    console.log('markers', map.markers);
+                    console.log('shapes', map.shapes);
                 });
-        };
-
-
+                return vm.alertItems.push.apply(vm.alertItems, snapshot);
+        }, function (errorObject) {
+            console.log("The read failed: " + errorObject.code);
+            return errorObject;
+            });
 
 
         vm.map = {
@@ -75,6 +62,8 @@
             },
             clusterOptions: {}
         };
+
+
 
         vm.searchResults = {
             results: {

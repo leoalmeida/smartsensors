@@ -1,0 +1,227 @@
+<md-content layout="column" ng-cloak class="md-inline-form" xmlns="http://www.w3.org/1999/html">
+    <div class="page-container">
+        <md-toolbar class="md-menu-toolbar">
+            <div layout="row">
+                <md-toolbar-filler layout layout-align="center center">
+                    <md-icon md-svg-src="assets/icons/action/ic_account_box_24px.svg" aria-label="Clientes Logo"></md-icon>
+                </md-toolbar-filler>
+                <div>
+                    <h2 class="md-toolbar-tools">{{vm.activity}}</h2>
+                    <md-nav-bar md-selected-nav-item="vm.currentNavItem" nav-bar-aria-label="navigation links">
+                        <md-nav-item md-nav-sref="localization" name="localization">Localização</md-nav-item>
+                        <md-nav-item md-nav-sref="main" name="main">Básico</md-nav-item>
+                        <md-nav-item md-nav-sref="tec" name="tec">Técnicas</md-nav-item>
+                        <md-nav-item md-nav-sref="readings" name="readings">Leituras</md-nav-item>
+                    </md-nav-bar>
+                </div>
+            </div>
+        </md-toolbar>
+
+        <div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>
+        <div class="container" ng-show="vm.progress">
+                <md-progress-linear md-mode="query" ng-disabled="!vm.progress"></md-progress-linear>
+                <div class="bottom-block">
+                    <span>Enviando ...</span>
+                </div>
+            </div>
+        <div layout-padding>
+            <form name="vm.sensorForm" ng-submit="vm.submit()">
+                <section layout="column" layout-gt-md="row" >
+                    <md-card ng-show="vm.currentNavItem == 'localization'">
+                        <md-card-header>
+                            <md-card-avatar>
+                                <md-icon md-svg-icon="assets/icons/maps/ic_person_pin_24px.svg"></md-icon>
+                            </md-card-avatar>
+                            <md-card-header-text>
+                                <span class="md-title">Localização</span>
+                                <span class="md-subhead">{{vm.sensor.name}}</span>
+                            </md-card-header-text>
+                        </md-card-header>
+                        <md-card-content>
+                            <md-content layout-padding flex>
+                                <div layout="row" layout-fill >
+                                    <md-input-container  md-no-float flex>
+                                        <label>Localização</label>
+                                        <input type="text"
+                                               required
+                                               places-auto-complete
+                                               md-maxlength=80
+                                               aria-label="Endereço"
+                                               ng-model="vm.address"
+                                               component-restrictions="{country:'br'}"
+                                               on-place-changed="vm.placeChanged(place)" />
+                                    </md-input-container>
+                                    <md-button class="md-fab md-mini md-primary" ng-click="vm.findMe()" >
+                                        <md-icon md-svg-icon="assets/icons/maps/ic_my_location_24px.svg"></md-icon>
+                                    </md-button>
+                                </div>
+                                <ng-map center="{{vm.mapCenter}}"
+                                        zoom="16">
+                                    <marker animation="DROP"
+                                            draggable="false"
+                                            position="{{vm.position.pos}}"
+                                            title="pos: {{vm.position.pos}}"></marker>
+
+                                </ng-map>
+                            </md-content>
+                        </md-card-content>
+                    </md-card>
+                </section>
+                <section layout="column" layout-gt-md="row" ng-show="vm.currentNavItem == 'main'" flex>
+                    <md-card>
+                            <md-card-header>
+                                <md-card-avatar>
+                                    <md-icon class="md-avatar-icon" md-svg-icon="assets/icons/action/ic_info_outline_24px.svg"></md-icon>
+                                </md-card-avatar>
+                                <md-card-header-text>
+                                    <span class="md-title">Informações Básicas</span>
+                                    <span class="md-subhead">{{vm.sensor.name}}</span>
+                                </md-card-header-text>
+                            </md-card-header>
+                            <md-card-content>
+                                <md-content layout-gt-md="row" layout-padding>
+                                    <md-input-container class="md-block">
+                                        <label>Icone</label>
+                                        <md-select ng-model="vm.sensor.icon" >
+                                            <md-optgroup label="items">
+                                                <md-option ng-repeat="icon in vm.icons" ng-value="icon">{{icon}}</md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                    </md-input-container>
+                                </md-content>
+                                <md-content layout-gt-md="row" layout-padding>
+                                    <md-input-container flex-gt-md>
+                                        <md-switch ng-model="vm.sensor.alert" disabled>Alertas ativos? </md-switch>
+                                    </md-input-container>
+                                    <md-input-container flex-gt-md>
+                                        <md-switch ng-model="vm.sensor.enabled"> Disponibilizar Sensor? </md-switch>
+                                    </md-input-container>
+                                </md-content>
+                                <md-content layout-gt-xs="row" layout-padding>
+                                    <md-input-container class="md-block" flex-gt-md>
+                                        <label>Nome</label>
+                                        <input ng-model="vm.sensor.name">
+                                    </md-input-container>
+                                    <md-input-container class="md-block" flex-gt-md>
+                                        <label>Label</label>
+                                        <input ng-model="vm.sensor.label">
+                                    </md-input-container>
+                                    <md-input-container class="md-block" flex-gt-md>
+                                        <label>Tipo</label>
+                                        <md-select ng-model="vm.sensor.type" required>
+                                            <md-option ng-repeat="tp in vm.types track by $index" value="{{tp}}">{{tp}}</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </md-content>
+                            </md-card-content>
+                        </md-card>
+                </section>
+                <section layout="column" layout-gt-md="row" ng-show="vm.currentNavItem == 'tec'" flex>
+                    <md-card>
+                        <md-card-header>
+                            <md-card-avatar>
+                                <md-icon class="md-avatar-icon" md-svg-icon="assets/icons/action/ic_info_outline_24px.svg"></md-icon>
+                            </md-card-avatar>
+                            <md-card-header-text>
+                                <span class="md-title">Configurações</span>
+                                <span class="md-subhead">{{vm.sensor.name}}</span>
+                            </md-card-header-text>
+                        </md-card-header>
+                        <md-card-content>
+                            <md-content layout-gt-xs="row" layout-padding>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Modelo</label>
+                                    <input ng-model="vm.sensor.configurations.model" >
+                                </md-input-container>
+                            </md-content>
+                            <md-content layout-gt-xs="row" layout-padding>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Loop</label>
+                                    <input required type="number" step="any"
+                                           name="loop" ng-model="vm.sensor.configurations.loop" min="100"
+                                           max="9999" />
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Min</label>
+                                    <input required type="number" step="any"
+                                           name="min" ng-model="vm.sensor.configurations.min" min="0"
+                                           max="100" />
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Max</label>
+                                    <input required type="number" step="any"
+                                           name="max" ng-model="vm.sensor.configurations.max" min="0"
+                                           max="100" />
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Unidade</label>
+                                    <md-select ng-model="vm.sensor.configurations.unit" required>
+                                        <md-option ng-repeat="unit in vm.units" value="{{unit}}">{{unit}}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </md-content>
+                            <md-content layout-gt-xs="row" layout-padding>
+                                <div class="md-block" flex-gt-xs>
+                                    <md-subheader class="md-primary">Entrada Digital</md-subheader>
+                                    <md-input-container class="md-block">
+                                        <label>Pin</label>
+                                        <md-select ng-model="vm.sensor.configurations.digital.pin" required>
+                                            <md-option ng-repeat="pin in vm.digitalpins" value="{{pin}}">{{pin}}</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                                <div class="md-block" flex-gt-xs>
+                                    <md-subheader class="md-primary">Entrada Analógica</md-subheader>
+                                    <md-input-container class="md-block">
+                                        <label>Pin</label>
+                                        <md-select ng-model="vm.sensor.configurations.analogic.pin" required>
+                                            <md-option ng-repeat="pin in vm.analogicpins" value="{{pin}}">{{pin}}</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <md-input-container class="md-block">
+                                        <label>Threshold</label>
+                                        <input required type="number" step="any"
+                                               name="threshold" ng-model="vm.sensor.configurations.analogic.threshold" min="0"
+                                               max="100" />
+                                    </md-input-container>
+                                </div>
+                            </md-content>
+                        </md-card-content>
+                    </md-card>
+                </section>
+                <section layout="column" layout-gt-md="row" ng-if="vm.currentNavItem == 'readings'">
+                    <md-card>
+                        <md-card-header>
+                            <md-card-avatar>
+                                <md-icon class="md-avatar-icon" md-svg-icon="assets/icons/action/ic_info_outline_24px.svg"></md-icon>
+                            </md-card-avatar>
+                            <md-card-header-text>
+                                <span class="md-title">Histórico de Leituras</span>
+                                <span class="md-subhead">{{vm.sensor.name}}</span>
+                            </md-card-header-text>
+                        </md-card-header>
+                        <md-card-content>
+                            <div class="md-list-item-text">
+                                <h3>{{vm.sensor.readings.value}}{{vm.sensor.readings.unit}}</h3>
+                                <h4>média: {{vm.sensor.readings.average}}</h4>
+                                <p>letituras: {{vm.sensor.readings.quantity}}</p>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </section>
+                <div layout-gt-xs="row" flex>
+                    <md-button flex class="md-primary" type="submit" >
+                        <md-icon class="md-secondary"  aria-label="Submeter Cliente" md-svg-icon="assets/icons/editor/ic_publish_24px.svg"></md-icon>
+                        Finalizar
+                    </md-button>
+                    <md-button flex class="md-warn" ng-click="vm.cancel()" >
+                        <md-icon class="md-secondary" aria-label="Submeter Cliente" md-svg-icon="assets/icons/content/ic_delete_sweep_24px.svg"></md-icon>
+                        Cancelar
+                    </md-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</md-content>
+
+

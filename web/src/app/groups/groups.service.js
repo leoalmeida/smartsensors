@@ -2,16 +2,16 @@
     'use strict';
 
     angular
-        .module('app.alerts')
-        .factory('AlertService', AlertService);
+        .module('app.groups')
+        .factory('GroupsService', GroupsService);
 
-    AlertService.$inject = ['firebaseDataService'];
+    GroupsService.$inject = ['firebaseDataService'];
 
-    function AlertService(firebaseDataService) {
+    function GroupsService(firebaseDataService) {
 
-        var alertsRef = firebaseDataService.alerts;
-        var database = alertsRef.$id;
-        var alertsList = firebaseDataService.getFirebaseArray(alertsRef.$id);
+        var groupsRef = firebaseDataService.groups;
+        var database = groupsRef.$id;
+        var groupsList = firebaseDataService.getFirebaseArray(groupsRef.$id);
         var configRef = firebaseDataService.configurations;
 
 
@@ -27,7 +27,7 @@
         ////////////
 
         function getAll() {
-            return alertsList;
+            return groupsList;
         }
 
         function getOne(key) {

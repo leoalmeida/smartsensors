@@ -3,8 +3,8 @@
 
     angular
       .module('app.sensors')
-      .factory('SensorsInfoService', SensorsInfoService)
-      .factory('SensorsSocket', SensorsSocket);
+      .factory('SensorsInfoService', SensorsInfoService);
+      // .factory('SensorsSocket', SensorsSocket);
 
 
     SensorsSocket.$inject = ['socketFactory'];
@@ -17,40 +17,40 @@
     SensorsInfoService.$inject = ['firebaseDataService'];
 
     function SensorsInfoService(firebaseDataService) {
+
+        var sensorsRef = firebaseDataService.sensors;
+        var database = sensorsRef.$id;
+        var sensorsList = firebaseDataService.getFirebaseArray(sensorsRef.$id);
+        var configRef = firebaseDataService.configurations;
+
         var service = {
             getAll: getAll,
             getOne: getOne,
             addOne: addOne,
-            updateOne: updateOne,
-            removeOne: removeOne
+            removeOne: removeOne,
+            getAllConfigurations: getAllConfigurations
         };
 
         return service;
 
         function getAll() {
-            return firebaseDataService.getFullArray(firebaseDataService.sensors);
+            return sensorsList;
         }
 
         function getOne(key) {
-          return firebaseDataService.getFilteredArray(firebaseDataService.sensors, key);
+            return firebaseDataService.getFirebaseObject(database + '/' + key);
         }
 
         function addOne(newObject) {
-            firebaseDataService.sensors.push({
-                reading: newObject
-            });
-        }
-
-        function updateOne(newObject) {
-            return firebaseDataService.sensors.update({
-                readings: newObject
-            });
+            return firebaseDataService.getFirebaseObject(database).$add(newObject);
         }
 
         function removeOne(key) {
-            firebaseDataService.sensors.remove({
-                _id: key
-            });
+            return firebaseDataService.getFirebaseObject(database).remove(key);
+        }
+
+        function getAllConfigurations() {
+            return configRef;
         }
 
         /* service.save = function(contact) {

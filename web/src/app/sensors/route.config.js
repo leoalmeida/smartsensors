@@ -3,7 +3,7 @@
 
     angular
       .module('app.sensors')
-      .config(config);
+        .config(config);
 
     config.$inject = ['$routeProvider'];
 
@@ -14,8 +14,13 @@
                 controller: 'SensorListController',
                 controllerAs: 'vm'
             })
-            .when('/sensors/:id', {
-                templateUrl: 'app/sensors/sensors-details.html',
+            .when('/sensors/:type', {
+                templateUrl: 'app/sensors/sensors-detail.html',
+                controller: 'SensorDetailsController',
+                controllerAs: 'vm'
+            })
+            .when('/sensors/:type/:id', {
+                templateUrl: 'app/sensors/sensors-detail.html',
                 controller: 'SensorDetailsController',
                 controllerAs: 'vm'
             })

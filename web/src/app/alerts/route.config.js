@@ -9,13 +9,18 @@
 
   function config($routeProvider) {
         $routeProvider
-            .when('/', {
-                templateUrl: 'app/alerts/alert.list.html',
+            .when('/alerts', {
+                templateUrl: 'app/alerts/alert-list.html',
                 controller: 'AlertController',
                 controllerAs: 'vm'
             })
+            .when('/alerts/creator', {
+                templateUrl: 'app/alerts/alert-editor.html',
+                controller: 'AlertCreatorController',
+                controllerAs: 'vm'
+            })
             .when('/map', {
-                templateUrl: 'app/alerts/map.details.html',
+                templateUrl: 'app/alerts/map-details.html',
                 controller: 'MapController',
                 controllerAs: 'vm'
             });

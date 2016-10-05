@@ -8,6 +8,9 @@
     AuthService.$inject = ['firebase', 'firebaseDataService'];
 
     function AuthService(firebase, firebaseDataService) {
+
+        var usersRef = firebaseDataService.users;
+
         var firebaseAuthObject = firebase.auth();
         this.user = firebaseAuthObject.currentUser;
         this.credential = null;
@@ -15,7 +18,6 @@
         var service = {
             firebaseAuthObject: firebaseAuthObject,
             googlelogin: toggleGoogleSignIn,
-            logout: logout,
             isLoggedIn: isLoggedIn,
             sendWelcomeEmail: sendWelcomeEmail
         };
@@ -26,16 +28,27 @@
             return firebaseAuthObject.$createUserWithEmailAndPassword(user.email, user.password);
         }*/
 
+        function addUser(newObject) {
+            return firebaseDataService.getFirebaseArray(usersRef).$add(newObject);
+        }
+
         function toggleGoogleSignIn() {
 
             if (!firebaseAuthObject.currentUser) {
                 var provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+                provider.addScope('https://www.googleapis.com/auth/plus.me');
                 provider.addScope('https://www.googleapis.com/auth/plus.login');
+                provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+                provider.addScope('profile');
+                provider.addScope('email');
 
                 firebaseAuthObject.signInWithPopup(provider).then(function(result) {
                     this.credential = result.credential;
                     this.user = result.user;
-                    firebaseDataService.getFullArray(firebaseDataService.users).$add(this.user);
+
+                    addUser( this.user );
+
                 }).catch(function(error) {
                     var errorCode = error.code;
                     var errorMessage = error.message;
@@ -53,9 +66,7 @@
                     }
                 });
             } else {
-                // [START signout]
-                firebaseAuthObject.signOut();
-                // [END signout]
+                logout();
             }
         }
 

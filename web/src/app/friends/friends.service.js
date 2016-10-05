@@ -10,42 +10,37 @@
     FriendsService.$inject = ['firebaseDataService'];
 
     function FriendsService(firebaseDataService) {
+
+        var friendsRef = firebaseDataService.friends;
+        var database = friendsRef.$id;
+        var friendsList = firebaseDataService.getFirebaseArray(friendsRef.$id + '/0');
+        var configRef = firebaseDataService.configurations;
+
         var service = {
             getAll: getAll,
-            getFiltered: getFiltered,
+            getOne: getOne,
             addOne: addOne,
-            updateOne: updateOne,
             removeOne: removeOne
         };
 
         return service;
 
-
         function getAll() {
-            return firebaseDataService.getFullArray(firebaseDataService.friends);
+            return friendsList;
         }
 
-        function getFiltered(key) {
-            return firebaseDataService.getFilteredArray(firebaseDataService.friends, key);
+        function getOne(key) {
+            return firebaseDataService.getFirebaseObject(database + '/' + key);
         }
 
         function addOne(newObject) {
-            firebaseDataService.data(firebaseDataService.friends).push({
-                alert: newObject
-            });
-        }
-
-        function updateOne(newObject) {
-            return firebaseDataService.data(firebaseDataService.friends).update({
-                friends: newObject
-            });
+            return firebaseDataService.getFirebaseObject(database).$add(newObject);
         }
 
         function removeOne(key) {
-            firebaseDataService.data(firebaseDataService.friends).remove({
-                _id: key
-            });
+            return firebaseDataService.getFirebaseObject(database).remove(key);
         }
+
 
         /* service.save = function(friend) {
             if (friend._id){

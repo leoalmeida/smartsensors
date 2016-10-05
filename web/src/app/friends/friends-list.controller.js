@@ -11,7 +11,7 @@
     function FriendsListController($scope, $mdBottomSheet, $mdDialog, friendsService, $routeParams, $location) {
         var vm = this;
 
-        vm.friends = friendsService.getFiltered(0);
+        vm.friends = friendsService.getOne(0);
         vm.alert = '';
 
 
@@ -31,8 +31,8 @@
             console.log(friend);
         };
 
-        vm.edit = function(friend) {
-            $location.path('/friends/' + friend._id + '/edit');
+        vm.navigateTo = function(key, $event){
+            $location.path( "/friends/edit/" + key);
         };
 
         vm.newFriend = function() {
