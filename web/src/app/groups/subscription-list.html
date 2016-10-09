@@ -12,37 +12,53 @@
         </div>
     </md-toolbar>
     <md-content>
-        <md-list ng-animate="'animate'" class="md-dense" >
+        <md-list ng-animate="'animate'" class="md-dense">
             <md-divider></md-divider>
-            <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFS.LIST.CONNECTED.TITLE}}</md-subheader>
-            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems  | filter:{ enabled: true }">
-                <img alt="{{ item.configurations.name }}" ng-src="assets/images/{{item.configurations.localization.image}}" class="md-avatar" />
+            <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFS.LIST.SUBSCRIBED.TITLE}}</md-subheader>
+            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.subscribed">
+                <img alt="{{ item.name }}" ng-src="assets/images/{{item.avatar}}" class="md-avatar" />
                 <div class="md-list-item-text" >
-                    <h3>{{ item.configurations.name }}</h3>
-                    <h4>{{ item.configurations.type }}</h4>
-                    <p ng-if="item.active">{{vm.SCREENCONFS.LIST.ACTIVE.TITLE}}</p>
-                    <p ng-if="!item.active">{{vm.SCREENCONFS.LIST.NOTACTIVE.TITLE}}</p>
+                    <h3>{{ item.name }}</h3>
+                    <h4>{{ item.description }}</h4>
                 </div>
                 <span flex></span>
-                <h4> {{ vm.subscribersQty(item.subscribers) }} </h4>
+                <h4> {{ item.members.length }} </h4>
                 <md-icon md-svg-icon="assets/icons/{{vm.SCREENCONFS.LIST.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
                 <span flex></span>
-                <md-switch class="md-secondary" ng-model="item.enabled" ng-change="vm.toggleState(item)"></md-switch>
+                <md-switch class="md-secondary" ng-model="item.status" ng-change="vm.toggleState(item)"></md-switch>
             </md-list-item>
             <md-divider></md-divider>
         </md-list>
         <md-divider ></md-divider>
-        <md-list ng-animate="'animate'" class="md-dense" data-ng-init="vm.initList()">
+        <md-list ng-if="filteredAlerts.length>0" ng-animate="'animate'" class="md-dense">
             <md-divider></md-divider>
-            <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFS.LIST.DISCONNECTED.TITLE}}</md-subheader>
-            <md-list-item class="md-2-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems | filter:{ enabled: false }">
-                <img alt="{{ item.configurations.name }}" ng-src="assets/images/{{item.localization.image}}" class="md-avatar" />
+            <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFS.LIST.ALERTS.TITLE}}</md-subheader>
+            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.alerts | SubscriptionFilter:{values: vm.listItems.subscribed, type:'alert', reversal: true} as filteredAlerts" >
+                <img alt="{{ item.configurations.name }}" ng-src="assets/images/{{item.configurations.localization.image}}" class="md-avatar" />
                 <div class="md-list-item-text" >
                     <h3>{{ item.configurations.name }}</h3>
                     <h4>{{ item.configurations.type }}</h4>
                 </div>
                 <span flex></span>
-                <md-switch class="md-secondary" ng-model="item.enabled" ng-change="vm.toggleState(item)"></md-switch>
+                <h4> {{ item.subscribers.length }} </h4>
+                <md-icon md-svg-icon="assets/icons/{{vm.SCREENCONFS.LIST.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
+                <span flex></span>
+                <md-switch class="md-secondary" ng-model="item.subscribed" ng-change="vm.subscribeToAlert(item)"></md-switch>
+            </md-list-item>
+            <md-divider></md-divider>
+        </md-list>
+        <md-divider ></md-divider>
+        <md-list ng-if="filteredGroups.length>0" ng-animate="'animate'" class="md-dense">
+            <md-divider></md-divider>
+            <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFS.LIST.GROUPS.TITLE}}</md-subheader>
+            <md-list-item class="md-2-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.groups  | SubscriptionFilter:{values: vm.listItems.subscribed, type:'messenger', reversal: true} as filteredGroups" >
+                <img alt="{{ item.name }}" ng-src="assets/images/{{item.avatar}}" class="md-avatar" />
+                <div class="md-list-item-text" >
+                    <h3>{{ item.name }}</h3>
+                    <h4>{{ item.description }}</h4>
+                </div>
+                <span flex></span>
+                <md-switch class="md-secondary" ng-model="item.subscribed" ng-change="vm.subscribeToGroup(item)"></md-switch>
             </md-list-item>
             <md-divider></md-divider>
         </md-list>

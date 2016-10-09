@@ -19,6 +19,7 @@
         var service = {
             getAll: getAll,
             getOne: getOne,
+            getOwn: getOwn,
             addOne: addOne,
             removeOne: removeOne
         };
@@ -27,6 +28,10 @@
 
         function getAll() {
             return friendsList;
+        }
+
+        function getOwn(currentUser) {
+            return firebaseDataService.getFirebaseArray(database + '/public/' + currentUser.uid);
         }
 
         function getOne(key) {

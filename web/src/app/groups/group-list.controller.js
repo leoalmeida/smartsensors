@@ -5,12 +5,12 @@
 
     angular
         .module('app.groups')
-        .controller('GroupsController', GroupsController);
+        .controller('SubscriptionsController', SubscriptionsController);
 
 
-    GroupsController.$inject = ['$scope', 'CONSTANTS','AlertService', 'FriendsService', 'GroupsService', '$mdDialog', 'ToastService', 'NotifyService'];
+    SubscriptionsController.$inject = ['currentUser', 'CONSTANTS','AlertService', 'GroupsService', 'SubscriptionsService', '$mdDialog', 'ToastService', 'NotifyService'];
 
-    function GroupsController($scope, CONSTANTS, alertService, friendsService, groupsService, $mdDialog, toastService, notifyService) {
+    function SubscriptionsController(currentUser, CONSTANTS, alertService, groupsService, subscriptionsService, $mdDialog, toastService, notifyService) {
 
         var vm = this;
 
@@ -18,9 +18,9 @@
 
         vm.listItems = {};
 
-        vm.listItems.subscribed = groupsService.getAll();
-        vm.listItems.alerts = alertService.getAll();
-        vm.listItems.groups = friendsService.getAll();
+        vm.listItems.subscribed = subscriptionsService.getOwn(currentUser);
+        vm.listItems.alerts = alertService.getPublic();
+        vm.listItems.groups = groupsService.getPublic();
 
         vm.subscribe = function (item){
             var ret = vm.listItems.subscribed.$save(vm.listItems.subscribed.$indexFor(item.$id));

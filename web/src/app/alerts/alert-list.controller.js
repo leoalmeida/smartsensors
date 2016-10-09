@@ -8,30 +8,23 @@
         .controller('AlertController', AlertController);
 
 
-    AlertController.$inject = ['$scope', 'CONSTANTS','AlertService', '$mdDialog', 'ToastService', 'NotifyService'];
+    AlertController.$inject = ['$scope', 'currentUser', 'CONSTANTS','AlertService', '$mdDialog', 'ToastService', 'NotifyService'];
 
-    function AlertController($scope, CONSTANTS, alertService, $mdDialog, toastService, notifyService) {
+    function AlertController($scope, currentUser, CONSTANTS, alertService, $mdDialog, toastService, notifyService) {
 
         var vm = this;
 
         vm.SCREENCONFS = CONSTANTS.SCREENCONFIG.ALERTS;
 
-        vm.listItems = alertService.getAll();
-
-        vm.save = function(alert) {
-            alertService.save(alert)
-                .then(function(resp) {
-                    console.log(resp);
-                })
-                .catch(function(err) {
-                    console.log(err);
-                });
-        };
+        vm.listItems = alertService.getOwn(currentUser);
 
         vm.toggleState = function (item){
             var ret = vm.listItems.$save(vm.listItems.$indexFor(item.$id));
         };
 
+        vm.subscribersQty = function (item){
+            return Object.keys(item).length;
+        }
 
         vm.newItem = function(){
             $location.path( "/alerts/new");

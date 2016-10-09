@@ -3,7 +3,7 @@
 
     angular
       .module('app.sensors')
-      .factory('SensorsInfoService', SensorsInfoService);
+      .factory('SensorsService', SensorsService);
       // .factory('SensorsSocket', SensorsSocket);
 
 
@@ -14,9 +14,9 @@
 
     // UserService.$inject = ['$http', 'API'];
     // function UserService($http, API) {
-    SensorsInfoService.$inject = ['firebaseDataService'];
+    SensorsService.$inject = ['firebaseDataService'];
 
-    function SensorsInfoService(firebaseDataService) {
+    function SensorsService(firebaseDataService) {
 
         var sensorsRef = firebaseDataService.sensors;
         var database = sensorsRef.$id;
@@ -25,6 +25,8 @@
 
         var service = {
             getAll: getAll,
+            getPublic: getPublic,
+            getOwn: getOwn,
             getOne: getOne,
             addOne: addOne,
             removeOne: removeOne,
@@ -37,16 +39,24 @@
             return sensorsList;
         }
 
-        function getOne(key) {
-            return firebaseDataService.getFirebaseObject(database + '/' + key);
+        function getPublic() {
+            return firebaseDataService.getFirebaseArray(database + '/public' );
         }
 
-        function addOne(newObject) {
-            return firebaseDataService.getFirebaseObject(database).$add(newObject);
+        function getOwn(currentUser) {
+            return firebaseDataService.getFirebaseArray(database + '/public/' + currentUser.uid);
         }
 
-        function removeOne(key) {
-            return firebaseDataService.getFirebaseObject(database).remove(key);
+        function getOne(type, key) {
+            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + key);
+        }
+
+        function addOne(type, newObject) {
+            return firebaseDataService.getFirebaseObject(database + '/' + type).$add(newObject);
+        }
+
+        function removeOne(type, key) {
+            return firebaseDataService.getFirebaseObject(database + '/' + type).remove(key);
         }
 
         function getAllConfigurations() {

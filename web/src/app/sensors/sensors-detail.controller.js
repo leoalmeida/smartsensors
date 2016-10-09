@@ -6,7 +6,7 @@
       .controller('SensorDetailsController', SensorDetailsController);
 
 
-    SensorDetailsController.$inject = ['$location', 'CONSTANTS', '$routeParams', 'SensorsInfoService', 'NgMap', 'NotifyService'];
+    SensorDetailsController.$inject = ['$location', 'CONSTANTS', '$routeParams', 'SensorsService', 'NgMap', 'NotifyService'];
 
 
   function SensorDetailsController($location, CONSTANTS,  $routeParams, sensorsService, NgMap, notifyService) {

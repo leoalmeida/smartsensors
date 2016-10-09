@@ -6,7 +6,7 @@
         .controller('AlertCreatorController', AlertCreatorController);
 
 
-    AlertCreatorController.$inject = ['$routeParams', 'SensorsInfoService', 'AlertService'];
+    AlertCreatorController.$inject = ['$routeParams', 'SensorsService', 'AlertService'];
 
 
     function AlertCreatorController($routeParams, sensorsService, alertService) {

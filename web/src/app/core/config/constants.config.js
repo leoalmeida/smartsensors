@@ -17,7 +17,7 @@
         { name: "LogOut", options: { icon: "assets/icons/action/ic_power_settings_new_24px.svg" }, link : '/logout'}
     ];
 
-    var PROTECTED_PATHS = ['/friends', '/home', '/alerts'];
+    var PROTECTED_PATHS = ['/friends', '/home', '/alerts', '/groups'];
 
     var MOODLIST = [
         {name: 'verysatisfied', link: "assets/icons/social/ic_sentiment_very_satisfied_24px.svg"},
@@ -78,7 +78,7 @@
                     TITLE: "Alertas Não Assinados"
                 },
                 GROUPS: {
-                    TITLE: "Grupos Não Assinados"
+                    TITLE: "Grupos de Menssagens Não Assinados"
                 }
             }
         }

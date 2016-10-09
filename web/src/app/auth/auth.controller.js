@@ -15,6 +15,12 @@
         vm.register = register;
         vm.login = login;
 
+
+        (function initController() {
+            // reset login status
+            authService.clearCredentials();
+        })();
+
         function register(user) {
             return authService.register(user)
                 .then(function() {
@@ -30,18 +36,10 @@
 
         function login() {
 
-            var user = authService.isLoggedIn();
-            var name, email, photoUrl, uid;
+            vm.dataLoading = true;
 
-            if (user != null) {
-                name = user.displayName;
-                email = user.email;
-                photoUrl = user.photoURL;
-                uid = user.uid;  // The user's ID, unique to the Firebase project. Do NOT use
-                                 // this value to authenticate with your backend server, if
-                                 // you have one. Use User.getToken() instead.
-            }else{
-                authService.login(user)
+            if (authService.isLoggedIn() == null) {
+                authService.googlelogin(user)
                     .then(function() {
                         $location.path('/home');
                     })

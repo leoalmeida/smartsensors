@@ -3,14 +3,14 @@
 
     angular
       .module('app.home')
-      .factory('UserService', UserService);
+      .factory('UsersService', UsersService);
 
     // UserService.$inject = ['$http', 'API'];
     // function UserService($http, API) {
 
-    UserService.$inject = ['firebaseDataService'];
+    UsersService.$inject = ['firebaseDataService'];
 
-    function UserService(firebaseDataService) {
+    function UsersService(firebaseDataService) {
 
         var service = {
             getAll: getAll,

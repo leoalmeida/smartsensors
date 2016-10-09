@@ -42,9 +42,9 @@
         };
     }
 
-    AuthCardsController.$inject = ['$scope', '$location', 'AuthService', 'ToastService', 'CONSTANTS'];
+    AuthCardsController.$inject = ['$rootScope', '$location', 'AuthService', 'ToastService', 'CONSTANTS'];
 
-    function AuthCardsController($scope, $location, authService, toastService, CONSTANTS) {
+    function AuthCardsController($rootScope, $location, authService, toastService, CONSTANTS) {
         var vm = this;
 
         // vm.user = authService.credentials.user;
@@ -54,15 +54,14 @@
         vm.selectedMood = CONSTANTS.MOODLIST[0].link;
 
         authService.firebaseAuthObject
-            .onAuthStateChanged(function(user) {
+            .$onAuthStateChanged(function(user) {
                 if (user) {
-                    // User is signed in.
                     vm.user = user;
                     vm.status = true;
 
-                } else {
-                    vm.user = null;
-                    vm.status = false;
+                    authService.updateUser(user);
+
+                    // addUser( user );
                 }
             });
 
@@ -71,14 +70,12 @@
         vm.onSignIn = onSignIn;
         vm.toggleNotifications = toggleNotifications;
         vm.changeMood = changeMood;
+        vm.logout = logout;
 
         function googlelogin() {
             authService.googlelogin()
-                .then(function() {
-                    $location.path('/friends');
-                })
-                .catch(function(error) {
-                    vm.error = error;
+                .finally(function() {
+                    $location.path('/home');
                 });
         }
 
@@ -98,8 +95,11 @@
             toastService.moodChange();
         };
 
+        function logout() {
+            authService.firebaseAuthObject.$signOut();
+        }
 
-        $scope.$on('moodChanged', function(event, data) {
+        $rootScope.$on('moodChanged', function(event, data) {
             vm.selectedMood = CONSTANTS.MOODLIST[data].link;
         })
 

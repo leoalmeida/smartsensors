@@ -17,9 +17,9 @@
         };
     }
 
-    NavbarController.$inject = ['$scope', 'CONSTANTS', 'AuthService', '$location', '$timeout', '$mdSidenav', '$log', 'ToastService', '$mdDialog'];
+    NavbarController.$inject = ['$rootScope', 'CONSTANTS', 'AuthService', '$location', '$timeout', '$mdSidenav', '$log', 'ToastService', '$mdDialog'];
 
-    function NavbarController($scope, CONSTANTS, authService, $location, $timeout, $mdSidenav, $log, toastService, $mdDialog) {
+    function NavbarController($rootScope, CONSTANTS, authService, $location, $timeout, $mdSidenav, $log, toastService, $mdDialog) {
         var vm = this;
 
         vm.menuItems = CONSTANTS.MENU;
@@ -28,7 +28,6 @@
         vm.close = close;
         vm.logout = logout;
         vm.login = login;
-        vm.initApp = initApp;
         vm.goToUserProfile = goToUserProfile;
         vm.openModal = openModal;
         vm.navigateTo = navigateTo;
@@ -54,21 +53,13 @@
             toastService.showTemplate();
         };
 
-        function initApp() {
-            // Listening for auth state changes.
-            authService.firebaseAuthObject
-                .onAuthStateChanged(function(user) {
-                if (user) {
-                    // User is signed in.
-                    vm.user = user;
-                    vm.status = true;
-
-                } else {
-                    vm.user = null;
-                    vm.status = false;
-                }
-            });
-        };
+        authService.firebaseAuthObject
+            .$onAuthStateChanged(function(user) {
+            if (user) {
+                vm.user = user;
+                vm.status = true;
+            }
+        });
 
         /**
          * Supplies a function that will continue to operate until the

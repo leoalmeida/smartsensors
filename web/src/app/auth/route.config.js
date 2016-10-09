@@ -20,7 +20,7 @@
 
     function runFunction($location, authService, CONSTANTS) {
 
-        authService.firebaseAuthObject.onAuthStateChanged(function(authData) {
+        authService.firebaseAuthObject.$onAuthStateChanged(function(authData) {
             if (!authData && pathIsProtected($location.path())) {
                 authService.logout();
                 $location.path('/login');

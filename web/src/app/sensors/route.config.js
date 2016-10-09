@@ -12,22 +12,42 @@
             .when('/sensors', {
                 templateUrl: 'app/sensors/sensors-list.html',
                 controller: 'SensorListController',
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                resolve: {
+                    "currentUser": ["AuthService", function(authService) {
+                        return authService.firebaseAuthObject.$requireSignIn();
+                    }]
+                }
             })
             .when('/sensors/:type', {
                 templateUrl: 'app/sensors/sensors-detail.html',
                 controller: 'SensorDetailsController',
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                resolve: {
+                    "currentUser": ["AuthService", function(authService) {
+                        return authService.firebaseAuthObject.$requireSignIn();
+                    }]
+                }
             })
             .when('/sensors/:type/:id', {
                 templateUrl: 'app/sensors/sensors-detail.html',
                 controller: 'SensorDetailsController',
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                resolve: {
+                    "currentUser": ["AuthService", function(authService) {
+                        return authService.firebaseAuthObject.$requireSignIn();
+                    }]
+                }
             })
             .when('/sensors/admin', {
                 templateUrl: 'app/sensors/sensors-admin.html',
                 controller: 'SensorAdminController',
-                controllerAs: 'vm'
+                controllerAs: 'vm',
+                resolve: {
+                    "currentUser": ["AuthService", function(authService) {
+                        return authService.firebaseAuthObject.$requireSignIn();
+                    }]
+                }
             });
     };
 

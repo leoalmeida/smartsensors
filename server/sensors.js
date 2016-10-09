@@ -1,4 +1,4 @@
-let firebase = require("firebase");
+var firebase = require("firebase");
 firebase.initializeApp({
     apiKey: 'AIzaSyCCO7zMiZZTav3eDQlD6JnVoEcEVXkodns',
     authDomain: 'guifragmentos.firebaseapp.com',
@@ -6,144 +6,111 @@ firebase.initializeApp({
     storageBucket: 'guifragmentos.appspot.com',
 });
 
-module.exports = (httpServer) => {
-  let sensor, sensorPower;
-  let moisture = {
-    icon: "motion.svg",
-    enabled: true,
-    alert: true,
-    label: "S0",
-    name: "Moisture",
-    type: "moisture",
-    readings: {
-          loops: 0,
-          average: 0,
-          date: "initial",
-          quantity: 0,
-          unit: "%",
-          value: 0
-    },
-    configurations: {
-        model: "YL-96",
-        analogic: { pin: "A0", freq: 5000, threshold: 5 },
-        digital: { pin: "D13" },
-        loop: 1000,
-        min: 65,
-        max: 70,
-        unit: "%"
-      }
-  };
+let locationID = "JwyqVEHujYe3RtBCN50gbjXK1EB3";
+let db = firebase.database();
 
-  let alert = {
-    isActive: true,
-    lastUpdate: {
-        loops: 0,
-        unit: "%",
-        value: 0
-    },
-    localization: {
-        address: "Rua Ray Wesley Herrick 1501, Casa 251",
-        image: "chuvaforte.jpg",
-        latitude: -22.0161282,
-        longitude: -47.9137721
-    },
-    moreInfo: [{
-        teste: "teste"
-    }],
-    configurations: {
-        name: "Humidade da terra",
-        pin: {
-            color: "blue"
-        },
-        draggable: false,
-        icon: "motion.svg",
-        label: "A0",
-        type: "moisture",
-        col: 1,
-        row: 1
-    },
-    releaseDate : "",
-    routeLink : "/sensors/moisture",
-    sensors : ["S0"],
-    severity : "grey",
-    startDate : "10/06/2016 10:15"
-  }
+module.exports = (httpServer) =>
+{
 
-  const io = require('socket.io')(httpServer);
-  const five = require("johnny-five");
-  const board = new five.Board();
+    let sensors, alerts, sensor, sensorPower;
 
-  //Arduino board connection
-  board.on("ready", () => {
-      let messages = [];
-      let loops = 0;
-
-      messages.push("Arduino Connected");
-      console.log('Arduino connected');
-
-      sensor = new five.Sensor(moisture.configurations.analogic);
-      sensorPower = new five.Pin(moisture.configurations.digital);
-
-      let key = includeSensor(moisture);
-
-      sensor.on("data", () => {
-        if (sensorPower.isHigh) {
-          let value = sensor.scaleTo(0, 100);
-          loops++;
-          // this.storedb(actualReading);
-
-          messages.push("Moisture: " + value);
-          // console.log("Moisture: " + value);
-
-          sensorPower.low();
-          sensor.disable();
+    let refSensors = db.ref('sensors/public/' + locationID);
+    refSensors.once("value", function (snapshot) {
+        console.log(snapshot.val());
+        sensors = snapshot.val();
+        for (var i=0; i < sensors.length; i++) {
+            console.log(sensors[i].$key);
         }
-      });
+    });
 
-      sensor.on("change", () => {
-          let actualReading;
-          moisture.readings.value = sensor.scaleTo(0, 100);
-          console.log("Average: " + moisture.readings.value);
-          moisture.readings.quantity++;
-          moisture.readings.loops = loops;
-          moisture.readings.average = ((moisture.readings.average * (moisture.readings.quantity - 1)) + moisture.readings.value)/ moisture.readings.quantity;
-          console.log("Average: " + moisture.readings.average );
-          // moisture.date =
-
-          messages.push("The reading value has changed.");
-          console.log("The reading value has changed.");
-
-          alert.lastUpdate = {
-              loops: loops,
-              unit: "%",
-              value: moisture.readings.value
-          };
-
-          if (moisture.readings.value > moisture.configurations.max) {
-            moisture.alert = true;
-            alert.severity = "red";
-            updateAlert(alert, key);
-          }else if (moisture.readings.value < moisture.configurations.max) {
-            moisture.alert = true;
-            alert.severity = "blue";
-            updateAlert(alert, key);
-          }else if(moisture.alert == true){
-            moisture.alert = false;
-            alert.severity = "white";
-            alert.releaseDate = "11/06/2016 15:15"
-            removeAlert(key);
-          }
-
-          updateReadings(moisture.readings, key);
-      });
-
-      board.loop(moisture.configurations.loop, function(){
-        if (!sensorPower.isHigh) {
-          sensorPower.high();
-          sensor.enable();
+    let refAlerts = db.ref('sensors/public/' + locationID);
+    refAlerts.once("value", function (snapshot) {
+        console.log(snapshot.val());
+        alerts = snapshot.val();
+        for (var i=0; i < alerts.length; i++) {
+            console.log(alerts[i].$key);
         }
-      });
+    });
 
+    const io = require('socket.io')(httpServer);
+
+    const five = require("johnny-five");
+    const board = new five.Board();
+
+    //Arduino board connection
+    board.on("ready", () => {
+        let messages = [];
+        let loops = 0;
+
+        messages.push("Arduino Connected");
+        console.log('Arduino connected');
+
+        for (var i=0; i < sensors.length; i++){
+
+            if (!sensors[i].enabled) continue;
+
+            sensor = new five.Sensor(sensors[i].configurations.analogic);
+            sensorPower = new five.Pin(sensors[i].configurations.digital);
+
+            sensor.on("data", () => {
+                if (sensorPower.isHigh) {
+                  let value = sensor.scaleTo(0, 100);
+                  loops++;
+                  // this.storedb(actualReading);
+
+                  messages.push("Moisture: " + value);
+                  // console.log("Moisture: " + value);
+
+                  sensorPower.low();
+                  sensor.disable();
+                }
+            });
+
+            sensor.on("change", () => {
+                let actualReading, changedReading;
+                changedReading.value = sensor.scaleTo(0, 100);
+                console.log("Average: " + changedReading.value);
+                changedReading.quantity++;
+                changedReading.loops = loops;
+                changedReading.average = ((changedReading.average * (changedReading.quantity - 1)) + changedReading.value)/ changedReading.quantity;
+                console.log("Average: " + changedReading.average );
+                // moisture.date =
+
+                messages.push("The reading value has changed.");
+                console.log("The reading value has changed.");
+
+                alerts[sensors[i].$key].lastUpdate = {
+                  loops: loops,
+                  unit: "%",
+                  value: changedReading.value
+                };
+
+                if (changedReading.value > moisture.configurations.max) {
+                moisture.alert = true;
+                alert.severity = "red";
+                updateAlert(alert, key);
+                }else if (changedReading.value < moisture.configurations.max) {
+                moisture.alert = true;
+                alert.severity = "blue";
+                updateAlert(alert, key);
+                }else if(moisture.alert == true){
+                moisture.alert = false;
+                alert.severity = "white";
+                alert.releaseDate = "11/06/2016 15:15"
+                removeAlert(key);
+                }
+
+                updateReadings(changedReading, key);
+            });
+
+
+            board.loop(moisture.configurations.loop, function(){
+                if (!sensorPower.isHigh) {
+                  sensorPower.high();
+                  sensor.enable();
+                }
+            });
+        }
   });
 
   //Socket connection handler
@@ -172,16 +139,73 @@ let removeAlert = function (key) {
     console.log("inserted  " + key);
 };
 
-let includeSensor = function (sensor) {
-    let newKey = firebase.database().ref().child('sensors').push().key;
-    firebase.database().ref('sensors/' + newKey).set(sensor)
-    console.log("inserted  " + newKey);
-    return newKey;
-};
 
 let updateReadings = function (reading, key) {
     console.log("updating  " + key);
-    let sessionsRef = firebase.database().ref('sensors/'+ key).child('readings');
+    let sessionsRef = firebase.database().ref('readings/'+ key);
     sessionsRef.update(reading);
     console.log("updated  " + key);
 };
+
+
+
+/*let moisture = {
+ icon: "motion.svg",
+ enabled: true,
+ alert: true,
+ label: "S0",
+ name: "Moisture",
+ type: "moisture",
+ readings: {
+ loops: 0,
+ average: 0,
+ date: "initial",
+ quantity: 0,
+ unit: "%",
+ value: 0
+ },
+ configurations: {
+ model: "YL-96",
+ analogic: { pin: "A0", freq: 5000, threshold: 5 },
+ digital: { pin: "D13" },
+ loop: 1000,
+ min: 65,
+ max: 70,
+ unit: "%"
+ }
+ };
+
+ let alert = {
+ isActive: true,
+ lastUpdate: {
+ loops: 0,
+ unit: "%",
+ value: 0
+ },
+ localization: {
+ address: "Rua Ray Wesley Herrick 1501, Casa 251",
+ image: "chuvaforte.jpg",
+ latitude: -22.0161282,
+ longitude: -47.9137721
+ },
+ moreInfo: [{
+ teste: "teste"
+ }],
+ configurations: {
+ name: "Humidade da terra",
+ pin: {
+ color: "blue"
+ },
+ draggable: false,
+ icon: "motion.svg",
+ label: "A0",
+ type: "moisture",
+ col: 1,
+ row: 1
+ },
+ releaseDate : "",
+ routeLink : "/sensors/moisture",
+ sensors : ["S0"],
+ severity : "grey",
+ startDate : "10/06/2016 10:15"
+ }*/

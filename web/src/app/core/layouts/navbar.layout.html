@@ -27,7 +27,7 @@
                         <img ng-if="!vm.user" class="avatarImage imageZoom" ng-src="assets/icons/action/ic_lock_24px.svg" alt="Profile" />
                         <img ng-if="vm.user" class="avatarImage imageZoom" ng-src="{{vm.user.photoURL}}" alt="{{vm.user.name}}" />
                     </div>
-                    <md-menu-content width="5" class="lightAlphaBackground" ng-init="vm.initApp()">
+                    <md-menu-content width="5" class="lightAlphaBackground" >
                         <as-login-card ng-hide="vm.status" ></as-login-card>
                         <as-profile-card ng-show="vm.status" ></as-profile-card>
                     </md-menu-content>

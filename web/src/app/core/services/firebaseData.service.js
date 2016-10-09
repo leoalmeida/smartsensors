@@ -13,17 +13,15 @@
         var service = {
             getFirebaseObject:  firebaseObject,
             getFirebaseArray: firebaseArray,
-            readings: firebaseObject('readings'),
-            friends: firebaseObject('friends'),
-            alerts: firebaseObject('alerts'),
-            configurations: firebaseObject('configurations'),
-            emails: firebaseObject('emails'),
-            textMessages: firebaseObject('textMessages'),
+            users: firebaseObject('users'),
+            subscriptions: firebaseObject('subscriptions'),
             groups: firebaseObject('groups'),
-            mapinfo: firebaseObject('map-info'),
+            alerts: firebaseObject('alerts'),
             sensors: firebaseObject('sensors'),
-            subscribers: firebaseObject('subscribers'),
-            users: firebaseObject('users')
+            readings: firebaseObject('readings'),
+            configurations: firebaseObject('configurations'),
+            mapinfo: firebaseObject('map-info'),
+            textMessages: firebaseObject('textMessages')
         };
 
         return service;
