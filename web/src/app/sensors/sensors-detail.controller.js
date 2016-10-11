@@ -136,7 +136,7 @@
               notifyService.notify('Sensor atualizado', message);
           } else{
               vm.accessType = vm.publicAccess ? "private": "public";
-              item = sensorsService.addOne(currentUser, accessType , vm.serverID, vm.sensor);
+              item = sensorsService.addOne(currentUser, vm.accessType , vm.serverID, vm.sensor);
               var message =  'Sensor ' + vm.sensor.name + ' ('+ vm.sensor.type +') encontrado.';
               notifyService.notify('Novo sensor encontrado', message);
           }

@@ -56,6 +56,30 @@ module.exports = (httpServer) =>
             console.log(sensors[i]);
 
             if (sensors[i].type == led) {
+              var motion = new five.Motion(sensors[i].configurations.digital.pin);
+
+              // "calibrated" occurs once, at the beginning of a session,
+              motion.on("calibrated", function() {
+                console.log("calibrated", Date.now());
+              });
+
+              // "motionstart" events are fired when the "calibrated"
+              // proximal area is disrupted, generally by some form of movement
+              motion.on("motionstart", function() {
+                console.log("motionstart", Date.now());
+              });
+
+              // "motionend" events are fired following a "motionstart" event
+              // when no movement has occurred in X ms
+              motion.on("motionend", function() {
+                console.log("motionend", Date.now());
+              });
+
+              motion.on("data", function(data) {
+                 console.log(data);
+              });
+
+            }else if (sensors[i].type == led) {
                 var led = new five.Led(sensors[i].configurations.digital.pin);
 
                 if (sensors[i].style == 0)
