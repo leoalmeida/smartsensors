@@ -8,7 +8,7 @@
     firebaseDataService.$inject = ['firebase', '$firebaseObject', '$firebaseArray'];
 
     function firebaseDataService(firebase, $firebaseObject, $firebaseArray) {
-        var root = new firebase.database().ref();
+        var root = new firebase.database();
 
         var service = {
             getFirebaseObject:  firebaseObject,
@@ -27,10 +27,11 @@
         return service;
 
         function firebaseObject(database){
-            return $firebaseObject(root.child(database));
+            return $firebaseObject(root.ref().child(database));
         };
-        function firebaseArray(database) {
-            return $firebaseArray(root.child(database));
+        function firebaseArray(database, child) {
+            if (child == null) return $firebaseArray(root.ref(database));
+            return $firebaseArray(root.ref(database).child(child));
         };
     }
 

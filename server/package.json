@@ -1,26 +1,20 @@
 {
-  "name": "modulo-importacao",
-  "version": "1.0.0",
+  "name": "smartsensor-server",
+  "version": "0.0.1",
   "description": "Importacao de dados de planilha",
-  "main": "app.js",
+  "main": "./bin/www.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prestart": "npm install",
     "start": "node ./bin/www"
   },
   "keywords": [
-    "xlsx",
-    "Data",
-    "Import",
+    "express",
+    "johnny-five",
     "nodejs"
   ],
   "author": "Leonardo Almeida S. Ferreira",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.15.2",
-    "cors": "^2.8.0",
-    "express": "^4.14.0",
-    "mongoose": "^4.5.8",
-    "node-xlsx": "^0.7.1"
   }
 }

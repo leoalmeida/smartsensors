@@ -30,7 +30,8 @@
             getOne: getOne,
             addOne: addOne,
             removeOne: removeOne,
-            getAllConfigurations: getAllConfigurations
+            getAllConfigurations: getAllConfigurations,
+            getOwnServers: getOwnServers
         };
 
         return service;
@@ -44,15 +45,16 @@
         }
 
         function getOwn(currentUser) {
-            return firebaseDataService.getFirebaseArray(database + '/public/' + currentUser.uid);
+            return firebaseDataService.getFirebaseArray(database + '/public/', currentUser.uid);
         }
 
-        function getOne(type, key) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + key);
+        function getOne(type, currentUser, location, key) {
+            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/' + key);
         }
 
-        function addOne(type, newObject) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type).$add(newObject);
+        function addOne(currentUser, type, location, newObject) {
+            firebaseDataService.getFirebaseArray('servers/' + currentUser.uid + '/' + location).$save();
+            return firebaseDataService.getFirebaseArray(database + '/' + type + '/' + currentUser.uid + '/' + location).$add(newObject);
         }
 
         function removeOne(type, key) {
@@ -61,6 +63,10 @@
 
         function getAllConfigurations() {
             return configRef;
+        }
+
+        function getOwnServers(currentUser) {
+            return firebaseDataService.getFirebaseArray('servers/', currentUser.uid);
         }
 
         /* service.save = function(contact) {

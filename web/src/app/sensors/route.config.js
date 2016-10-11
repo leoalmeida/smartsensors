@@ -19,7 +19,7 @@
                     }]
                 }
             })
-            .when('/sensors/:type', {
+            .when('/sensors/:accessType/:location/:type', {
                 templateUrl: 'app/sensors/sensors-detail.html',
                 controller: 'SensorDetailsController',
                 controllerAs: 'vm',
@@ -29,7 +29,7 @@
                     }]
                 }
             })
-            .when('/sensors/:type/:id', {
+            .when('/sensors/:accessType/:location/:type/:id', {
                 templateUrl: 'app/sensors/sensors-detail.html',
                 controller: 'SensorDetailsController',
                 controllerAs: 'vm',
