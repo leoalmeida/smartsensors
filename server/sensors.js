@@ -6,30 +6,34 @@ firebase.initializeApp({
     storageBucket: 'guifragmentos.appspot.com',
 });
 
-let locationID = "JwyqVEHujYe3RtBCN50gbjXK1EB3";
+let userKey = "JwyqVEHujYe3RtBCN50gbjXK1EB3";
+let locationID = "Casa"
 let db = firebase.database();
 
 module.exports = (httpServer) =>
 {
 
-    let sensors, alerts, sensor, sensorPower;
+    let sensors = [], alerts, sensor, sensorPower;
 
-    let refSensors = db.ref('sensors/public/' + locationID);
-    refSensors.once("value", function (snapshot) {
-        console.log(snapshot.val());
-        sensors = snapshot.val();
-        for (var i=0; i < sensors.length; i++) {
-            console.log(sensors[i].$key);
+    let refSensors = db.ref('sensors/public/' + userKey + "/" + locationID);
+    refSensors.on("child_added", function (snapshot) {
+        var item = snapshot.val();
+        console.log(item.enabled);
+        if (item.enabled) {
+            sensors.push(item);
         }
+        console.log(sensors.length);
+        /*
+        for (var i=0; i < snapshot.val().length; i++) {
+            console.log("fired");
+            sensors.push(snapshot.val()[i]);
+        }
+        */
     });
 
-    let refAlerts = db.ref('sensors/public/' + locationID);
+    let refAlerts = db.ref('alerts/public/' + userKey);
     refAlerts.once("value", function (snapshot) {
-        console.log(snapshot.val());
         alerts = snapshot.val();
-        for (var i=0; i < alerts.length; i++) {
-            console.log(alerts[i].$key);
-        }
     });
 
     const io = require('socket.io')(httpServer);
@@ -49,8 +53,57 @@ module.exports = (httpServer) =>
 
             if (!sensors[i].enabled) continue;
 
-            sensor = new five.Sensor(sensors[i].configurations.analogic);
-            sensorPower = new five.Pin(sensors[i].configurations.digital);
+            console.log(sensors[i]);
+
+            if (sensors[i].type == led) {
+                var led = new five.Led(sensors[i].configurations.digital.pin);
+
+                if (sensors[i].style == 0)
+                    led.blink(sensors[i].configurations.loop);
+                else if (sensors[i].style == 1) {
+                    led.pulse({
+                        easing: "linear",
+                        duration: sensors[i].configurations.duration,
+                        cuePoints: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                        keyFrames: [0, 10, 0, 50, 0, 255],
+                        onstop: function() {
+                            console.log("Animation stopped");
+                        }
+                    });
+                    this.wait(sensors[i].configurations.loop, function() {
+
+                        // stop() terminates the interval
+                        // off() shuts the led off
+                        led.stop().off();
+                    });
+                }
+                else if (sensors[i].syle == 2) {
+                    led.fadeIn();
+
+                    // Toggle the led after 5 seconds (shown in ms)
+                    this.wait(sensors[i].configurations.loop, function() {
+                        led.fadeOut();
+                    });
+                }
+
+                this.repl.inject({
+                    // Allow limited on/off control access to the
+                    // Led instance from the REPL.
+                    on: function() {
+                        led.on();
+                    },
+                    off: function() {
+                        led.off();
+                    }
+                });
+                continue;
+            }
+
+            if (sensors[i].configurations.analogic)
+                analogicSensor = new five.Sensor(sensors[i].configurations.analogic);
+
+            if (sensors[i].configurations.digital)
+                digitalSensor = new five.Pin(sensors[i].configurations.digital);
 
             sensor.on("data", () => {
                 if (sensorPower.isHigh) {
