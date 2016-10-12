@@ -113,9 +113,9 @@ let startMotion = function (sensor) {
     motion.active = true;
     motion.key = sensor.key;
 
-    for each (event in sensor.configurations.events){
-        motion.on(event, function () {
-            console.log(event, Date.now());
+    for (var i=0; i< sensor.configurations.events.length; i++){
+        motion.on(sensor.configurations.events[i], function () {
+            console.log(sensor.configurations.events[i], Date.now());
         });
     }
 /*
