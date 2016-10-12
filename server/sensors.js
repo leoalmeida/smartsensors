@@ -36,7 +36,6 @@ module.exports = (httpServer) => {
 
     refSensors.on("child_added", function (snapshot) {
         var item = snapshot.val();
-        console.log(item.enabled);
         if (item.enabled) {
             sensors.push(item);
 
@@ -98,7 +97,8 @@ module.exports = (httpServer) => {
         for (var i=0; i< sensor.configurations.events.length; i++){
             console.log("Size: " + sensor.configurations.events[i]);
             motion.on(sensor.configurations.events[i], function (data) {
-                console.log(sensor.configurations.events[i], Date.now());
+                console.log("This:"+this, Date.now());
+                console.log("Data:"+data, Date.now());
             });
         }
         /*
