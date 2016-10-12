@@ -11,7 +11,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prestart": "npm install",
-    "start": "node ./server/bin/www"
+    "start": "node ./server/bin/heroku"
   },
   "keywords": [],
   "author": "Leonardo Almeida S. Ferreira",
