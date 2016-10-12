@@ -88,6 +88,171 @@ module.exports = (httpServer) => {
       });
     });
     console.log('Waiting for connection');
+
+    let startMotion = function (sensor) {
+        var motion = new five.Motion(sensor.configurations.digital.pin);
+        motion.active = true;
+        motion.key = sensor.key;
+
+        for (var i=0; i< sensor.configurations.events.length; i++){
+            motion.on(sensor.configurations.events[i], function () {
+                console.log(sensor.configurations.events[i], Date.now());
+            });
+        }
+        /*
+         // "calibrated" occurs once, at the beginning of a session,
+         motion.on("calibrated", function () {
+         console.log("calibrated", Date.now());
+         });
+
+         // "motionstart" events are fired when the "calibrated"
+         // proximal area is disrupted, generally by some form of movement
+         motion.on("motionstart", function () {
+         console.log("motionstart", Date.now());
+         });
+
+         // "motionend" events are fired following a "motionstart" event
+         // when no movement has occurred in X ms
+         motion.on("motionend", function () {
+         console.log("motionend", Date.now());
+         });
+
+         motion.on("data", function (data) {
+
+         if (data.detectedMotion == motion.lastReading) return;
+
+         motion.lastReading = data.detectedMotion;
+         console.log("leitura:" + data);
+
+         alerts[motion.key].lastUpdate.data = data;
+
+         messages.push("The reading value has changed.");
+         console.log("The reading value has changed.");
+
+         if (data.detectedMotion) {
+         motion.alert = true;
+         alerts[motion.key].severity = "red";
+         updateAlert("public", motion.key, alerts[motion.key]);
+         } else {
+         motion.alert = false;
+         alerts[motion.key].severity = "white";
+         alerts[motion.key].releaseDate = Date.now();
+         removeAlert("public", userKey, motion.key);
+         }
+         updateReadings(alerts[motion.key].lastUpdate, motion.key);
+         });*/
+        return motion;
+    };
+    let startLed = function (sensor) {
+        var led = new five.Led(sensor.configurations.digital.pin);
+
+        if (sensor.style == 0)
+            led.blink(sensor.configurations.loop);
+        else if (sensor.style == 1) {
+            led.pulse({
+                easing: "linear",
+                duration: sensor.configurations.duration,
+                cuePoints: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                keyFrames: [0, 10, 0, 50, 0, 255],
+                onstop: function () {
+                    console.log("Animation stopped");
+                }
+            });
+            this.wait(sensor.configurations.loop, function () {
+
+                // stop() terminates the interval
+                // off() shuts the led off
+                led.stop().off();
+            });
+        }
+        else if (sensor.style == 2) {
+            led.fadeIn();
+
+            // Toggle the led after 5 seconds (shown in ms)
+            this.wait(sensor.configurations.loop, function () {
+                led.fadeOut();
+            });
+        }
+
+        this.repl.inject({
+            // Allow limited on/off control access to the
+            // Led instance from the REPL.
+            on: function () {
+                led.on();
+            },
+            off: function () {
+                led.off();
+            }
+        });
+        return led;
+    };
+    let startMoisture = function (sensor) {
+        if (sensor.configurations.analogic)
+            analogicSensor = new five.Sensor(sensor.configurations.analogic);
+
+        if (sensor.configurations.digital)
+            digitalSensor = new five.Pin(sensor.configurations.digital);
+
+        sensor.on("data", () => {
+            if (sensorPower.isHigh){
+                let value = sensor.scaleTo(0, 100);
+                loops++;
+                // this.storedb(actualReading);
+
+                messages.push("Moisture: " + value);
+                // console.log("Moisture: " + value);
+
+                sensorPower.low();
+                sensor.disable();
+            }
+        });
+        sensor.on("change", () => {
+            let actualReading, changedReading;
+            changedReading.value = sensor.scaleTo(0, 100);
+            console.log("Average: " + changedReading.value);
+            changedReading.quantity++;
+            changedReading.loops = loops;
+            changedReading.average = ((changedReading.average * (changedReading.quantity - 1)) + changedReading.value) / changedReading.quantity;
+            console.log("Average: " + changedReading.average);
+            // moisture.date =
+
+            messages.push("The reading value has changed.");
+            console.log("The reading value has changed.");
+
+            alerts[sensor.$key].lastUpdate = {
+                loops: loops,
+                unit: "%",
+                value: changedReading.value
+            };
+
+            if (changedReading.value > moisture.configurations.max) {
+                moisture.alert = true;
+                alert.severity = "red";
+                updateAlert("public", moisture.key, alerts[moisture.key]);
+            } else if (changedReading.value < moisture.configurations.max) {
+                moisture.alert = true;
+                alert.severity = "blue";
+                updateAlert("public", moisture.key, alerts[moisture.key]);
+            } else if (moisture.alert == true) {
+                moisture.alert = false;
+                alert.severity = "white";
+                alert.releaseDate = "11/06/2016 15:15"
+                removeAlert("public", moisture.key);
+            }
+
+            updateReadings(changedReading, key);
+        });
+
+
+        board.loop(moisture.configurations.loop, function () {
+            if (!sensorPower.isHigh) {
+                sensorPower.high();
+                sensor.enable();
+            }
+        });
+        return value;
+    };
+
 };
 
 let updateAlert = function (accessType, key ,alert) {
@@ -107,171 +272,6 @@ let updateReadings = function (reading, key) {
     sessionsRef.update(reading);
     console.log("updated  " + key);
 };
-
-let startMotion = function (sensor) {
-    var motion = new five.Motion(sensor.configurations.digital.pin);
-    motion.active = true;
-    motion.key = sensor.key;
-
-    for (var i=0; i< sensor.configurations.events.length; i++){
-        motion.on(sensor.configurations.events[i], function () {
-            console.log(sensor.configurations.events[i], Date.now());
-        });
-    }
-/*
-    // "calibrated" occurs once, at the beginning of a session,
-    motion.on("calibrated", function () {
-        console.log("calibrated", Date.now());
-    });
-
-    // "motionstart" events are fired when the "calibrated"
-    // proximal area is disrupted, generally by some form of movement
-    motion.on("motionstart", function () {
-        console.log("motionstart", Date.now());
-    });
-
-    // "motionend" events are fired following a "motionstart" event
-    // when no movement has occurred in X ms
-    motion.on("motionend", function () {
-        console.log("motionend", Date.now());
-    });
-
-    motion.on("data", function (data) {
-
-        if (data.detectedMotion == motion.lastReading) return;
-
-        motion.lastReading = data.detectedMotion;
-        console.log("leitura:" + data);
-
-        alerts[motion.key].lastUpdate.data = data;
-
-        messages.push("The reading value has changed.");
-        console.log("The reading value has changed.");
-
-        if (data.detectedMotion) {
-            motion.alert = true;
-            alerts[motion.key].severity = "red";
-            updateAlert("public", motion.key, alerts[motion.key]);
-        } else {
-            motion.alert = false;
-            alerts[motion.key].severity = "white";
-            alerts[motion.key].releaseDate = Date.now();
-            removeAlert("public", userKey, motion.key);
-        }
-        updateReadings(alerts[motion.key].lastUpdate, motion.key);
-    });*/
-    return motion;
-};
-let startLed = function (sensor) {
-    var led = new five.Led(sensor.configurations.digital.pin);
-
-    if (sensor.style == 0)
-        led.blink(sensor.configurations.loop);
-    else if (sensor.style == 1) {
-        led.pulse({
-            easing: "linear",
-            duration: sensor.configurations.duration,
-            cuePoints: [0, 0.2, 0.4, 0.6, 0.8, 1],
-            keyFrames: [0, 10, 0, 50, 0, 255],
-            onstop: function () {
-                console.log("Animation stopped");
-            }
-        });
-        this.wait(sensor.configurations.loop, function () {
-
-            // stop() terminates the interval
-            // off() shuts the led off
-            led.stop().off();
-        });
-    }
-    else if (sensor.style == 2) {
-        led.fadeIn();
-
-        // Toggle the led after 5 seconds (shown in ms)
-        this.wait(sensor.configurations.loop, function () {
-            led.fadeOut();
-        });
-    }
-
-    this.repl.inject({
-        // Allow limited on/off control access to the
-        // Led instance from the REPL.
-        on: function () {
-            led.on();
-        },
-        off: function () {
-            led.off();
-        }
-    });
-    return led;
-};
-let startMoisture = function (sensor) {
-    if (sensor.configurations.analogic)
-        analogicSensor = new five.Sensor(sensor.configurations.analogic);
-
-    if (sensor.configurations.digital)
-        digitalSensor = new five.Pin(sensor.configurations.digital);
-
-    sensor.on("data", () = > {
-        if (sensorPower.isHigh){
-        let value = sensor.scaleTo(0, 100);
-        loops++;
-        // this.storedb(actualReading);
-
-        messages.push("Moisture: " + value);
-        // console.log("Moisture: " + value);
-
-        sensorPower.low();
-        sensor.disable();
-    }
-});
-    sensor.on("change", () = > {
-        let actualReading, changedReading;
-    changedReading.value = sensor.scaleTo(0, 100);
-    console.log("Average: " + changedReading.value);
-    changedReading.quantity++;
-    changedReading.loops = loops;
-    changedReading.average = ((changedReading.average * (changedReading.quantity - 1)) + changedReading.value) / changedReading.quantity;
-    console.log("Average: " + changedReading.average);
-    // moisture.date =
-
-    messages.push("The reading value has changed.");
-    console.log("The reading value has changed.");
-
-    alerts[sensor.$key].lastUpdate = {
-        loops: loops,
-        unit: "%",
-        value: changedReading.value
-    };
-
-    if (changedReading.value > moisture.configurations.max) {
-        moisture.alert = true;
-        alert.severity = "red";
-        updateAlert("public", moisture.key, alerts[moisture.key]);
-    } else if (changedReading.value < moisture.configurations.max) {
-        moisture.alert = true;
-        alert.severity = "blue";
-        updateAlert("public", moisture.key, alerts[moisture.key]);
-    } else if (moisture.alert == true) {
-        moisture.alert = false;
-        alert.severity = "white";
-        alert.releaseDate = "11/06/2016 15:15"
-        removeAlert("public", moisture.key);
-    }
-
-    updateReadings(changedReading, key);
-});
-
-
-    board.loop(moisture.configurations.loop, function () {
-        if (!sensorPower.isHigh) {
-            sensorPower.high();
-            sensor.enable();
-        }
-    });
-    return value;
-};
-
 
 /*let moisture = {
  icon: "motion.svg",
