@@ -90,12 +90,13 @@ module.exports = (httpServer) => {
     console.log('Waiting for connection');
 
     let startMotion = function (sensor) {
-        var motion = new five.Motion(sensor.configurations.digital.pin);
+        var motion = new five.Motion(sensor.properties.digital.pin);
         motion.active = true;
         motion.key = sensor.key;
+        console.log(sensor);
 
         for (var i=0; i< sensor.configurations.events.length; i++){
-            motion.on(sensor.configurations.events[i], function () {
+            motion.on(sensor.configurations.events[i], function (data) {
                 console.log(sensor.configurations.events[i], Date.now());
             });
         }
