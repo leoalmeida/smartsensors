@@ -90,7 +90,7 @@ module.exports = (httpServer) => {
     console.log('Waiting for connection');
 
     let startMotion = function (sensor) {
-        var motion = new five.Motion(sensor.properties.digital.pin);
+        var motion = new five.Motion(sensor.configurations.digital.pin);
         motion.active = true;
         motion.key = sensor.key;
         console.log(sensor);
