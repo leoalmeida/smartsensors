@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prestart": "npm install",
-    "start": "node ./bin/www"
+    "start": "node ./bin/heroku"
   },
   "keywords": [
     "express",
