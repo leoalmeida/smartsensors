@@ -93,9 +93,10 @@ module.exports = (httpServer) => {
         var motion = new five.Motion(sensor.configurations.digital.pin);
         motion.active = true;
         motion.key = sensor.key;
-        console.log(sensor);
+        console.log("Size: " + sensor.configurations.events.length);
 
         for (var i=0; i< sensor.configurations.events.length; i++){
+            console.log("Size: " + sensor.configurations.events[i]);
             motion.on(sensor.configurations.events[i], function (data) {
                 console.log(sensor.configurations.events[i], Date.now());
             });
