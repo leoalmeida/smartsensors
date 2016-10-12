@@ -60,14 +60,14 @@ module.exports = (httpServer) => {
 
                     console.log("Conectando sensor [" + sensors[i].type + "]");
 
-                    if (sensors[i].type == "motion")
-                        let motion = startMotion(sensors[i]);
+                    if (sensors[i].type == "motion"){
+                        var motion = startMotion(sensors[i]);
                     }
                     else if (sensors[i].type == "led") {
-                        let led = startLed(sensors[i]);
+                        var led = startLed(sensors[i]);
                     }
                     else{
-                        let moisture = startMoisture(sensors[i]);
+                        var moisture = startMoisture(sensors[i]);
                     }
                 };
             }
