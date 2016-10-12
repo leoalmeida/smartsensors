@@ -26,6 +26,43 @@
             </div>
         <div layout-padding>
             <form name="vm.sensorForm" ng-submit="vm.submit()">
+                <section layout="column" layout-gt-xs="row"  layout-align="center center">
+                    <span flex  layout-margin>
+                    <!--<md-autocomplete
+                            md-selected-item="vm.serverID"
+                            md-search-text-change="vm.searchTextChange(vm.searchText)"
+                            md-search-text="vm.searchText"
+                            md-selected-item-change="vm.selectedItemChange(item)"
+                            md-items="item in vm.querySearch(vm.searchText)"
+                            md-item-text="item.$value"
+                            md-min-length="0"
+                            placeholder="Selecione um servidor"
+                            md-menu-class="autocomplete-custom-template">
+                        <md-item-template>
+                                                    <span class="item-title">
+                                                        <md-icon md-svg-icon="assets/icons/device/ic_usb_24px.svg"></md-icon>
+                                                        <span> Servidor: </span>
+                                                    </span>
+                            <span class="item-metadata">
+                                                        <span class="item-metastat">
+                                                          <strong>{{item.$value}} </strong>
+                                                        </span>
+                                                    </span>
+                        </md-item-template>
+                    </md-autocomplete>-->
+                        <span class="item-title">
+                            <md-icon md-svg-icon="assets/icons/device/ic_usb_24px.svg"></md-icon>
+                            <span> Servidor: </span>
+                            <strong>{{vm.serverID}}</strong>
+                        </span>
+
+                    </span>
+                    <span flex>
+                        <md-input-container layout-margin>
+                            <md-switch ng-model="vm.isPrivateAccess">Sensor privado?</md-switch>
+                        </md-input-container>
+                    </span>
+                </section>
                 <section layout="column" layout-gt-md="row" >
                     <md-card ng-show="vm.currentNavItem == 'localization'">
                         <md-card-header>
@@ -39,40 +76,13 @@
                         </md-card-header>
                         <md-card-content>
                             <md-content layout-padding flex>
-                                <div layout="row" layout-fill >
-                                    <md-content layout-padding layout="column">
-                                        <md-autocomplete
-                                                md-selected-item="vm.serverID"
-                                                md-search-text-change="vm.searchTextChange(vm.searchText)"
-                                                md-search-text="vm.searchText"
-                                                md-selected-item-change="vm.selectedItemChange(item)"
-                                                md-items="item in vm.querySearch(vm.searchText)"
-                                                md-item-text="item.$value"
-                                                md-min-length="0"
-                                                placeholder="Selecione um servidor"
-                                                md-menu-class="autocomplete-custom-template">
-                                            <md-item-template>
-                                                <span class="item-title">
-                                                    <md-icon md-svg-icon="assets/icons/device/ic_usb_24px.svg"></md-icon>
-                                                    <span> Servidor: </span>
-                                                </span>
-                                                <span class="item-metadata">
-                                                    <span class="item-metastat">
-                                                      <strong>{{item.$value}} </strong>
-                                                    </span>
-                                                </span>
-                                            </md-item-template>
-                                        </md-autocomplete>
-                                    </md-content>
-                                    <md-input-container flex-gt-md>
-                                        <md-switch ng-model="vm.publicAccess">Sensor privado?</md-switch>
-                                    </md-input-container>
+                                <div layout="row" layout-fill ng-if="vm.activityType=='new'">
+
                                 </div>
                                 <div layout="row" layout-fill >
                                     <md-input-container  md-no-float flex>
                                         <label>Localização</label>
                                         <input type="text"
-                                               
                                                places-auto-complete
                                                md-maxlength=80
                                                aria-label="Endereço"
@@ -84,14 +94,14 @@
                                         <md-icon md-svg-icon="assets/icons/maps/ic_my_location_24px.svg"></md-icon>
                                     </md-button>
                                 </div>
-                                <ng-map center="{{vm.mapCenter}}"
+                                <!--<ng-map center="{{vm.mapCenter}}"
                                         zoom="16">
                                     <marker animation="DROP"
                                             draggable="false"
                                             position="{{vm.position.pos}}"
                                             title="pos: {{vm.position.pos}}"></marker>
 
-                                </ng-map>
+                                </ng-map>-->
                             </md-content>
                         </md-card-content>
                     </md-card>
@@ -104,18 +114,17 @@
                                 </md-card-avatar>
                                 <md-card-header-text>
                                     <span class="md-title">Informações Básicas</span>
-                                    <span class="md-subhead">{{vm.sensor.name}}</span>
+                                    <span class="md-subhead">{{vm.sensor.name}} ({{vm.selectedSensorConfig.name}})</span>
                                 </md-card-header-text>
                             </md-card-header>
                             <md-card-content>
                                 <md-content layout-gt-md="row" layout-padding>
-                                    <md-input-container class="md-block">
-                                        <label>Icone</label>
-                                        <md-select ng-model="vm.sensor.icon" >
-                                            <md-optgroup label="items">
-                                                <md-option ng-repeat="icon in vm.icons" ng-value="icon">{{icon}}</md-option>
-                                            </md-optgroup>
+                                    <md-input-container class="md-block" flex-gt-md>
+                                        <label>Tipo</label>
+                                        <md-select required ng-model="vm.selectedSensorConfig" ng-change="vm.selectSensorType()">
+                                            <md-option ng-repeat="tp in vm.sensorTypes | filter: {available: true} as availableSensors"  ng-value="{{tp}}">{{tp.name}}</md-option>
                                         </md-select>
+                                        <span>{{vm.startSensorConfig(vm.availableSensors)}}</span>
                                     </md-input-container>
                                 </md-content>
                                 <md-content layout-gt-md="row" layout-padding>
@@ -135,12 +144,6 @@
                                         <label>Label</label>
                                         <input ng-model="vm.sensor.label">
                                     </md-input-container>
-                                    <md-input-container class="md-block" flex-gt-md>
-                                        <label>Tipo</label>
-                                        <md-select ng-model="vm.sensor.type" >
-                                            <md-option ng-repeat="tp in vm.types track by $index" value="{{tp}}">{{tp}}</md-option>
-                                        </md-select>
-                                    </md-input-container>
                                 </md-content>
                             </md-card-content>
                         </md-card>
@@ -157,52 +160,54 @@
                             </md-card-header-text>
                         </md-card-header>
                         <md-card-content>
-                            <md-content layout-gt-xs="row" layout-padding ng-if="vm.sensor.type!='led'">
-                                <md-input-container class="md-block" flex-gt-sm>
+                            <md-content layout-gt-xs="row" layout-padding>
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.controller">
                                     <label>Modelo</label>
-                                    <input ng-model="vm.sensor.configurations.model" >
+                                    <md-select ng-model="vm.sensor.configurations.controller">
+                                        <md-option ng-repeat="controller in vm.selectedSensorConfig.properties.input.controller" value="{{controller}}">{{controller}}</md-option>
+                                    </md-select>
                                 </md-input-container>
-                            </md-content>
-                            <md-content layout-gt-xs="row" layout-padding ng-if="vm.sensor.type=='led'">
-                                <md-input-container class="md-block" flex-gt-sm>
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.events">
+                                    <label>Eventos</label>
+                                    <md-select ng-model="vm.sensor.configurations.events" multiple>
+                                        <md-optgroup label="Eventos">
+                                            <md-option ng-repeat="event in vm.selectedSensorConfig.properties.events" value="{{event}}">{{event}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.duration">
                                     <label>Duração</label>
                                     <input  type="number" step="any"
                                             name="duration" ng-model="vm.sensor.configurations.duration" min="1000"
                                             max="99999" />
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm>
-                                    <label>Loop</label>
-                                    <input  type="number" step="any"
-                                            name="loop" ng-model="vm.sensor.configurations.loop" min="100"
-                                            max="9999" />
-                                </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm>
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.ledStyle">
                                     <label>Estilo de Led</label>
                                     <md-select ng-model="vm.sensor.configurations.ledStyle">
                                         <md-option ng-repeat="style in vm.ledStyles" value="{{style.val}}">{{style.name}}</md-option>
                                     </md-select>
                                 </md-input-container>
                             </md-content>
-                            <md-content layout-gt-xs="row" layout-padding ng-if="vm.sensor.type!='led'">
-                                <md-input-container class="md-block" flex-gt-sm>
+                            <md-content layout-gt-xs="row" layout-padding>
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.loop">
                                     <label>Loop</label>
                                     <input  type="number" step="any"
                                            name="loop" ng-model="vm.sensor.configurations.loop" min="100"
                                            max="9999" />
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm>
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.min">
                                     <label>Min</label>
                                     <input  type="number" step="any"
                                            name="min" ng-model="vm.sensor.configurations.min" min="0"
                                            max="100" />
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm>
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.max">
                                     <label>Max</label>
                                     <input  type="number" step="any"
                                            name="max" ng-model="vm.sensor.configurations.max" min="0"
                                            max="100" />
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm>
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.unit">
                                     <label>Unidade</label>
                                     <md-select ng-model="vm.sensor.configurations.unit" >
                                         <md-option ng-repeat="unit in vm.units" value="{{unit}}">{{unit}}</md-option>
@@ -210,24 +215,24 @@
                                 </md-input-container>
                             </md-content>
                             <md-content layout-gt-xs="row" layout-padding>
-                                <div class="md-block" flex-gt-xs>
+                                <div class="md-block" flex-gt-xs layout-padding ng-if="vm.selectedSensorConfig.properties.input.digital">
                                     <md-subheader class="md-primary">Entrada Digital</md-subheader>
-                                    <md-input-container class="md-block">
+                                    <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.digital.pin">
                                         <label>Pin</label>
                                         <md-select ng-model="vm.sensor.configurations.digital.pin">
                                             <md-option ng-repeat="pin in vm.digitalpins" value="{{pin}}">{{pin}}</md-option>
                                         </md-select>
                                     </md-input-container>
                                 </div>
-                                <div class="md-block" flex-gt-xs layout-padding ng-if="vm.sensor.type!='led'">
+                                <div class="md-block" flex-gt-xs layout-padding ng-if="vm.selectedSensorConfig.properties.input.analogic">
                                     <md-subheader class="md-primary">Entrada Analógica</md-subheader>
-                                    <md-input-container class="md-block">
+                                    <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.analogic.pin">
                                         <label>Pin</label>
                                         <md-select ng-model="vm.sensor.configurations.analogic.pin" >
                                             <md-option ng-repeat="pin in vm.analogicpins" value="{{pin}}">{{pin}}</md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <md-input-container class="md-block">
+                                    <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.analogic.threshold">
                                         <label>Threshold</label>
                                         <input type="number" step="any"
                                                name="threshold" ng-model="vm.sensor.configurations.analogic.threshold" min="0"

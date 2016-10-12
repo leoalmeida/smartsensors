@@ -6,32 +6,21 @@
       .controller('SensorDetailsController', SensorDetailsController);
 
 
-    SensorDetailsController.$inject = ['$log', '$location', 'currentUser', 'CONSTANTS', '$routeParams', 'SensorsService', 'NgMap', 'NotifyService'];
+    SensorDetailsController.$inject = ['$log', '$q', '$location', 'currentUser', 'CONSTANTS', '$routeParams', 'SensorsService', 'NgMap', 'NotifyService'];
 
 
-  function SensorDetailsController($log, $location, currentUser, CONSTANTS,  $routeParams, sensorsService, NgMap, notifyService) {
+  function SensorDetailsController($log, $q, $location, currentUser, CONSTANTS,  $routeParams, sensorsService, NgMap, notifyService) {
       var vm = this;
       var key = $routeParams.id;
 
       vm.currentNavItem = 'localization';
       vm.serverID =  $routeParams.location;
       vm.accessType =  $routeParams.accessType;
-      vm.publicAccess = ($routeParams.accessType !== "public");
+      vm.activityType = $routeParams.type;
+
+      vm.isPrivateAccess = (vm.accessType !== "public");
+      vm.mapCenter = "current-location";
       // vm.location.sensor = new SensorModel();
-
-      vm.serverList = sensorsService.getOwnServers(currentUser);
-
-      vm.querySearch   = function (query) {
-          return query ? vm.serverList.filter( createFilterFor(query) ) : vm.serverList;
-      }
-
-      vm.searchTextChange   = function (text) {
-          $log.info('Text changed to ' + text);
-      };
-
-      vm.selectedItemChange = function (item) {
-          $log.info('Item changed to ' + item.$value);
-      };
 
       var addressComponentForm = {
           street_number: 'short_name',
@@ -43,11 +32,40 @@
       };
       var item = 0;
 
-      vm.mapCenter = "current-location";
+      vm.configurations = sensorsService.getAllConfigurations();
 
-      NgMap.getMap().then(function(map) {
-          vm.map = map;
+      vm.configurations.$loaded().then(function(snapshot) {
+          vm.analogicpins = snapshot.analogicpins;
+          vm.digitalpins = snapshot.digitalpins;
+          vm.units = snapshot.units;
+          vm.icons = snapshot.icons;
+          vm.types = snapshot.types;
+          vm.states = snapshot.states;
+          vm.countries = snapshot.country;
+          vm.addressTypes = snapshot.addressTypes;
+          vm.localTypes = snapshot.localTypes;
+          vm.ledStyles = snapshot.ledStyles;
+          vm.sensorTypes = snapshot.sensorTypes;
       });
+
+
+
+      vm.asyncSelectSensorType = function(type) {
+          var deferred = $q.defer();
+
+          setTimeout(function() {
+              deferred.notify('About to greet ' + vm.sensorTypes + '.');
+
+              if (vm.sensorTypes) {
+                  deferred.resolve(vm.sensorTypes.find(item => item.type == vm.sensor.type));
+              } else {
+                  deferred.reject();
+              }
+
+          }, 1000);
+
+          return deferred.promise;
+      }
 
       if ($routeParams.type === "edit") {
           vm.activity = "Alterar Sensor";
@@ -60,6 +78,18 @@
                   vm.mapCenter = {lat: vm.sensor.localization.latitude, lng: vm.sensor.localization.longitude};
                   vm.address = vm.sensor.localization.address;
               }
+              // vm.selectedSensorConfig = vm.sensor.;
+
+              vm.asyncSelectSensorType(vm.sensorTypes)
+                  .then(function(sensorConfig) {
+                  vm.selectedSensorConfig = sensorConfig;
+                      vm.sensorConfig = sensorConfig;
+                      vm.selectSensorType();
+                  }, function() {
+                  vm.selectedSensorConfig = undefined;
+                      vm.sensorConfig = undefined;
+              });
+
           }, function (errorObject) {
               console.log("The read failed: " + errorObject.code);
               return errorObject;
@@ -79,8 +109,12 @@
               value: 0
           };
           vm.sensor.enabled = false;
-          vm.publicAccess = false;
+          vm.isPrivateAccess = false;
       }
+
+      NgMap.getMap().then(function(map) {
+          vm.map = map;
+      });
 
       vm.placeChanged = function() {
           vm.place = this.getPlace();
@@ -94,6 +128,12 @@
       vm.findMe = function() {
           vm.center = "current-location"
       };
+
+      vm.selectSensorType = function () {
+          vm.sensor.type = vm.selectedSensorConfig.type;
+          vm.sensorConfig = vm.selectedSensorConfig;
+          vm.sensor.icon = vm.selectedSensorConfig.type + ".svg";
+      }
 
       function fillInAddress(place) {
           // Get each component of the address from the place details
@@ -114,28 +154,13 @@
           vm.sensor.localization.longitude = ll.lng();
       };
 
-      vm.configurations = sensorsService.getAllConfigurations();
-
-      vm.configurations.$loaded().then(function(snapshot) {
-          vm.analogicpins = snapshot.analogicpins;
-          vm.digitalpins = snapshot.digitalpins;
-          vm.units = snapshot.units;
-          vm.icons = snapshot.icons;
-          vm.types = snapshot.types;
-          vm.states = snapshot.states;
-          vm.countries = snapshot.country;
-          vm.addressTypes = snapshot.addressTypes;
-          vm.localTypes = snapshot.localTypes;
-          vm.ledStyles = snapshot.ledStyles;
-      });
-
       vm.submit = function () {
           if ($routeParams.type === "edit") {
               vm.sensor.$save();
               var message =  'Sensor ' + vm.sensor.name + ' ('+ vm.sensor.type +') foi atualizado.';
               notifyService.notify('Sensor atualizado', message);
           } else{
-              vm.accessType = vm.publicAccess ? "private": "public";
+              vm.accessType = vm.isPrivateAccess ? "private": "public";
               item = sensorsService.addOne(currentUser, vm.accessType , vm.serverID, vm.sensor);
               var message =  'Sensor ' + vm.sensor.name + ' ('+ vm.sensor.type +') encontrado.';
               notifyService.notify('Novo sensor encontrado', message);
