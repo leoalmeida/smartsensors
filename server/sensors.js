@@ -45,16 +45,28 @@ module.exports = (httpServer) => {
 
                 if (!sensors[i].enabled) continue;
 
-                alerts[sensors[i].key] = {
-                      active: true,
-                      enabled: true,
-                      severity: "white",
-                      startDate: Date.now(),
-                      lastUpdate: {
-                        loops: loops,
-                        unit: "%",
-                        value: ""
-                      }
+                    alerts[sensors[i].key] = {
+                        active: true,
+                        enabled: true,
+                        severity: "white",
+                        lastUpdate: {
+                            data,
+                            value: sensors[i].label
+                        },
+                        configurations: {
+                            col: 1,
+                            row: 1,
+                            draggable: false,
+                            icon: sensors[i].icon,
+                            label: sensors[i].label,
+                            localization: {image: "chuvaforte.jpg"},
+                            pin: {color: "blue"},
+                            sensors: [sensors[i].label],
+                            type: sensors[i].type,
+                            name: sensors[i].name,
+                            owner: userKey,
+
+                        }
                     };
 
                     console.log("Conectando sensor [" + sensors[i].type + "]");
@@ -123,27 +135,7 @@ module.exports = (httpServer) => {
              motion.lastReading = data.detectedMotion;
              console.log("leitura:" + data);
 
-             alerts[motion.key] = {
-                 enabled: true,
-                 lastUpdate: {
-                     data,
-                     value: sensor.label
-                 },
-                 configurations: {
-                     col: 1,
-                     row: 1,
-                     draggable: false,
-                     icon: sensor.icon,
-                     label: sensor.label,
-                     localization: {image: "chuvaforte.jpg"},
-                     pin: {color: "blue"},
-                     sensors: [sensor.label],
-                     type: sensor.type,
-                     name: sensor.name,
-                     owner: userKey,
-
-                 }
-             };
+             alerts[motion.key].lastUpdate.data = data;
 
              messages.push("The reading value has changed.");
              console.log("The reading value has changed.");
