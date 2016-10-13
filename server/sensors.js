@@ -302,7 +302,6 @@ module.exports = (httpServer) => {
             console.log("kelvin: %d", this.K);
 
             alerts[temperature.key].lastUpdate.data = {
-                transformedCelsius: this.toCelsius(),
                 celsius: this.C,
                 fahrenheit: this.F,
                 kelvin: this.K
