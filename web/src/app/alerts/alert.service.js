@@ -5,9 +5,9 @@
         .module('app.alerts')
         .factory('AlertService', AlertService);
 
-    AlertService.$inject = ['firebaseDataService'];
+    AlertService.$inject = ['firebaseDataService', '$firebaseArray'];
 
-    function AlertService(firebaseDataService) {
+    function AlertService(firebaseDataService, $firebaseArray) {
 
         var alertsRef = firebaseDataService.alerts;
         var database = alertsRef.$id;

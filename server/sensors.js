@@ -137,7 +137,7 @@ module.exports = (httpServer) => {
                      sensors: [sensor.label],
                      type: sensor.type,
                      name: sensor.name,
-                     owner: "",
+                     owner: userKey,
 
                  }
              };
@@ -275,13 +275,13 @@ module.exports = (httpServer) => {
 };
 
 let updateAlert = function (accessType, key ,alert) {
-    firebase.database().ref('alerts/' + accessType + '/' + userKey + '/' + key).set(alert)
-    console.log("updated  " + 'alerts/' + accessType + '/' + userKey + '/'+ key);
+    firebase.database().ref('alerts/' + accessType + '/' + key).set(alert)
+    console.log("updated  " + 'alerts/' + accessType + '/'+ key);
 };
 
 let removeAlert = function (accessType, key) {
-    firebase.database().ref('alerts/' + accessType + '/' + userKey + '/'+ key).remove();
-    console.log("removed  " + 'alerts/' + accessType + '/' + userKey + '/'+ key);
+    firebase.database().ref('alerts/' + accessType + '/'+ key).remove();
+    console.log("removed  " + 'alerts/' + accessType + '/'+ key);
 };
 
 
