@@ -50,7 +50,6 @@ module.exports = (httpServer) => {
                         enabled: true,
                         severity: "white",
                         lastUpdate: {
-                            data,
                             value: sensors[i].label
                         },
                         configurations: {
