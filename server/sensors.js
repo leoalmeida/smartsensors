@@ -25,18 +25,18 @@ module.exports = (httpServer) => {
 
     const five = require("johnny-five");
     const board = new five.Board();
+    let messages = [];
 
     //Arduino board connection
     board.on("ready", () => {
-        let messages = [];
-    let loops = 0;
+        let loops = 0;
 
-    messages.push("Arduino Connected");
-    console.log('Arduino connected');
+        messages.push("Arduino Connected");
+        console.log('Arduino connected');
 
-    refSensors.on("child_added", function (snapshot) {
-        var item = snapshot.val();
-        if (item.enabled) {
+        refSensors.on("child_added", function (snapshot) {
+            var item = snapshot.val();
+            if (item.enabled) {
             sensors.push(item);
 
             console.log('Encontrei o sensor [' + item.name + '] conectado!!');
@@ -70,7 +70,7 @@ module.exports = (httpServer) => {
                     }
                 };
             }
-          });
+        });
     });
 
     //Socket connection handler

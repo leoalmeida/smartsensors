@@ -164,7 +164,7 @@
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.controller">
                                     <label>Modelo</label>
                                     <md-select ng-model="vm.sensor.configurations.controller">
-                                        <md-option ng-repeat="controller in vm.selectedSensorConfig.properties.input.controller" value="{{controller}}">{{controller}}</md-option>
+                                        <md-option ng-repeat="controller in vm.selectedSensorConfig.properties.input.controller" value="{{controller.id}}">{{controller.id}}</md-option>
                                     </md-select>
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.events">
