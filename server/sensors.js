@@ -98,7 +98,9 @@ module.exports = (httpServer) => {
             console.log("Size: " + sensor.configurations.events[i]);
             motion.on(sensor.configurations.events[i], function (data) {
                 console.log("This:"+this, Date.now());
-                console.log("Data:"+data, Date.now());
+                console.log("Value:"+data.value, Date.now());
+                console.log("DetectedMotion:"+data.detectedMotion, Date.now());
+                console.log("iIsCalibrated:"+data.isCalibrated, Date.now());
             });
         }
         /*
