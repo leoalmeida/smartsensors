@@ -18,7 +18,9 @@ module.exports = (httpServer) => {
 
     let refAlerts = db.ref('alerts/public/');
     refAlerts.once("value", function (snapshot) {
-        alerts = snapshot.val();
+        if (snapshot){
+            alerts = snapshot.val() ;
+        }
     });
 
     const io = require('socket.io')(httpServer);
@@ -44,6 +46,8 @@ module.exports = (httpServer) => {
             for (var i=0; i < sensors.length; i++){
 
                 if (!sensors[i].enabled) continue;
+
+                    if (alerts) alerts = [];
 
                     alerts[sensors[i].key] = {
                         active: true,
@@ -83,7 +87,7 @@ module.exports = (httpServer) => {
                         var sensor = startSensor(sensors[i]);
                     }
                     else if (sensors[i].type == "thermometer") {
-                        var sensor = startThermometer(sensors[i]);
+                        var temperature = startThermometer(sensors[i]);
                     }
                 };
             }
@@ -288,18 +292,19 @@ module.exports = (httpServer) => {
 
 
         temperature.on("data", function() {
-            if (this.C == temperature.lastReading.C) return;
+            if (this.C == temperature.lastReading) return;
 
-            temperature.lastReading.C = this.C;
-            temperature.lastReading.F = this.F;
-            temperature.lastReading.K = this.K;
+            temperature.lastReading = this.C;
 
             console.log("celsius: %d", this.C);
             console.log("fahrenheit: %d", this.F);
             console.log("kelvin: %d", this.K);
 
-
-            alerts[temperature.key].lastUpdate.data = this;
+            alerts[temperature.key].lastUpdate.data = {
+                celsius: this.C,
+                fahrenheit: this.F,
+                kelvin: this.K,
+            };
 
             messages.push("The reading value has changed.");
             console.log("The reading value has changed.");
