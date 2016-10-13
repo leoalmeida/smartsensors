@@ -124,6 +124,7 @@ module.exports = (httpServer) => {
              console.log("leitura:" + data);
 
              alerts[motion.key] = {
+                 enabled: true,
                  lastUpdate: data,
                  configurations: {
                      col: 1,
@@ -131,12 +132,13 @@ module.exports = (httpServer) => {
                      draggable: false,
                      icon: sensor.icon,
                      label: motion.key,
-                     localization: "",
-                     pin: {
-                         color: "blue"
-                     },
+                     localization: {image: "chuvaforte.jpg"},
+                     pin: {color: "blue"},
                      sensors: [sensor.label],
-                     type: sensor.type
+                     type: sensor.type,
+                     name: sensor.name,
+                     owner: sensor.owner,
+
                  }
              };
 
@@ -145,10 +147,13 @@ module.exports = (httpServer) => {
 
              if (data.detectedMotion) {
                  motion.alert = true;
+                 alerts[motion.key].active = true;
                  alerts[motion.key].severity = "red";
+                 alerts[motion.key].startDate = Date.now();
                  updateAlert("public", motion.key, alerts[motion.key]);
              } else {
                  motion.alert = false;
+                 alerts[motion.key].active = false;
                  alerts[motion.key].severity = "white";
                  alerts[motion.key].releaseDate = Date.now();
                  removeAlert("public", userKey, motion.key);
