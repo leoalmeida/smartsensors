@@ -45,7 +45,7 @@ module.exports = (httpServer) => {
 
                 if (!sensors[i].enabled) continue;
 
-                    if (alerts) alerts = [];
+                    if (!alerts) alerts = [];
 
                     alerts[sensors[i].key] = {
                         active: true,
