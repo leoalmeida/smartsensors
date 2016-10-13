@@ -94,7 +94,7 @@ module.exports = (httpServer) => {
         motion.key = sensor.key;
         console.log("Size: " + sensor.configurations.events.length);
 
-        for (var i=0; i< sensor.configurations.events.length; i++){
+        /*for (var i=0; i< sensor.configurations.events.length; i++){
             console.log("Size: " + sensor.configurations.events[i]);
             motion.on(sensor.configurations.events[i], function (data) {
                 console.log("This:"+this, Date.now());
@@ -102,49 +102,44 @@ module.exports = (httpServer) => {
                 console.log("DetectedMotion:"+data.detectedMotion, Date.now());
                 console.log("iIsCalibrated:"+data.isCalibrated, Date.now());
             });
-        }
-        /*
-         // "calibrated" occurs once, at the beginning of a session,
+        }*/
+
          motion.on("calibrated", function () {
-         console.log("calibrated", Date.now());
+            console.log("Sensor Calibrated", Date.now());
          });
 
-         // "motionstart" events are fired when the "calibrated"
-         // proximal area is disrupted, generally by some form of movement
          motion.on("motionstart", function () {
-         console.log("motionstart", Date.now());
+            console.log("motion started", Date.now());
          });
 
-         // "motionend" events are fired following a "motionstart" event
-         // when no movement has occurred in X ms
          motion.on("motionend", function () {
-         console.log("motionend", Date.now());
+            console.log("motion ended", Date.now());
          });
 
          motion.on("data", function (data) {
 
-         if (data.detectedMotion == motion.lastReading) return;
+             if (data.detectedMotion == motion.lastReading) return;
 
-         motion.lastReading = data.detectedMotion;
-         console.log("leitura:" + data);
+             motion.lastReading = data.detectedMotion;
+             console.log("leitura:" + data);
 
-         alerts[motion.key].lastUpdate.data = data;
+             alerts[motion.key].lastUpdate.data = data;
 
-         messages.push("The reading value has changed.");
-         console.log("The reading value has changed.");
+             messages.push("The reading value has changed.");
+             console.log("The reading value has changed.");
 
-         if (data.detectedMotion) {
-         motion.alert = true;
-         alerts[motion.key].severity = "red";
-         updateAlert("public", motion.key, alerts[motion.key]);
-         } else {
-         motion.alert = false;
-         alerts[motion.key].severity = "white";
-         alerts[motion.key].releaseDate = Date.now();
-         removeAlert("public", userKey, motion.key);
-         }
-         updateReadings(alerts[motion.key].lastUpdate, motion.key);
-         });*/
+             if (data.detectedMotion) {
+                 motion.alert = true;
+                 alerts[motion.key].severity = "red";
+                 updateAlert("public", motion.key, alerts[motion.key]);
+             } else {
+                 motion.alert = false;
+                 alerts[motion.key].severity = "white";
+                 alerts[motion.key].releaseDate = Date.now();
+                 removeAlert("public", userKey, motion.key);
+             }
+             updateReadings(alerts[motion.key].lastUpdate, motion.key);
+         });
         return motion;
     };
     let startLed = function (sensor) {
