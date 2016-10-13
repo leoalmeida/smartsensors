@@ -76,8 +76,14 @@ module.exports = (httpServer) => {
                     else if (sensors[i].type == "led") {
                         var led = startLed(sensors[i]);
                     }
-                    else{
+                    else if (sensors[i].type == "moisture") {
                         var moisture = startMoisture(sensors[i]);
+                    }
+                    else if (sensors[i].type == "sensor") {
+                        var sensor = startSensor(sensors[i]);
+                    }
+                    else if (sensors[i].type == "thermometer") {
+                        var sensor = startThermometer(sensors[i]);
                     }
                 };
             }
@@ -103,7 +109,7 @@ module.exports = (httpServer) => {
         var motion = new five.Motion(sensor.configurations.digital.pin);
         motion.active = true;
         motion.key = sensor.key;
-        console.log("Size: " + sensor.configurations.events.length);
+        // console.log("Size: " + sensor.configurations.events.length);
 
         /*for (var i=0; i< sensor.configurations.events.length; i++){
             console.log("Size: " + sensor.configurations.events[i]);
@@ -150,7 +156,7 @@ module.exports = (httpServer) => {
                  alerts[motion.key].active = false;
                  alerts[motion.key].severity = "white";
                  alerts[motion.key].releaseDate = Date.now();
-                 removeAlert("public", userKey, motion.key);
+                 removeAlert("public", motion.key);
              }
              updateReadings(alerts[motion.key].lastUpdate, motion.key);
          });
@@ -264,6 +270,119 @@ module.exports = (httpServer) => {
             }
         });
         return value;
+    };
+    let startThermometer = function (sensor) {
+        var pin = "A0";
+        if (sensor.configurations.analogic){
+            pin = sensor.configurations.analogic.pin;
+        }else{
+            pin = sensor.configurations.digital.pin;
+        }
+        var temperature = new five.Thermometer({
+            controller: sensor.configurations.controller,
+            pin: pin
+        });
+        temperature.active = true;
+        temperature.key = sensor.key;
+        // console.log("Size: " + sensor.configurations.events.length);
+
+
+        temperature.on("data", function() {
+            if (this.C == temperature.lastReading.C) return;
+
+            temperature.lastReading.C = this.C;
+            temperature.lastReading.F = this.F;
+            temperature.lastReading.K = this.K;
+
+            console.log("celsius: %d", this.C);
+            console.log("fahrenheit: %d", this.F);
+            console.log("kelvin: %d", this.K);
+
+
+            alerts[temperature.key].lastUpdate.data = this;
+
+            messages.push("The reading value has changed.");
+            console.log("The reading value has changed.");
+
+            if (this.C > 35) {
+                temperature.alert = true;
+                alerts[temperature.key].active = true;
+                alerts[temperature.key].severity = "red";
+                alerts[temperature.key].startDate = Date.now();
+                updateAlert("public", temperature.key, alerts[temperature.key]);
+            } else if (this.C < 10) {
+                temperature.alert = true;
+                alerts[temperature.key].active = true;
+                alerts[temperature.key].severity = "yellow";
+                alerts[temperature.key].startDate = Date.now();
+                updateAlert("public", temperature.key, alerts[temperature.key]);
+            } else {
+                temperature.alert = false;
+                alerts[temperature.key].active = false;
+                alerts[temperature.key].severity = "green";
+                alerts[temperature.key].releaseDate = Date.now();
+                removeAlert("public", temperature.key);
+            }
+            updateReadings(alerts[temperature.key].lastUpdate, temperature.key);
+
+        });
+
+        return temperature;
+    };
+    let startSensor = function (sensor) {
+        var pin = "A0";
+        if (sensor.configurations.analogic){
+            pin = sensor.configurations.analogic.pin;
+        }else{
+            pin = sensor.configurations.digital.pin;
+        }
+        var anySensor = new five.Sensor({
+            pin: pin,
+            freq: sensor.configurations.loop,
+            threshold: sensor.configurations.threshold
+        });
+        anySensor.active = true;
+        anySensor.key = sensor.key;
+        // console.log("Size: " + sensor.configurations.events.length);
+
+        // Scale the sensor's data from 0-1023 to 0-10 and log changes
+        anySensor.on("change", function() {
+            this.scaledReadingValue = this.scaleTo(0, 100);
+
+            if (this.scaledReadingValue == anySensor.lastReading) return;
+
+            alerts[anySensor.key].lastUpdate.data = this;
+            alerts[anySensor.key].lastReading = this.scaledReadingValue;
+
+            messages.push("The reading value has changed.");
+            console.log("The reading value has changed.");
+
+            console.log("New reading: " + this.scaledReadingValue );
+
+            if (this.scaledReadingValue > 70) {
+                anySensor.alert = true;
+                alerts[anySensor.key].active = true;
+                alerts[anySensor.key].severity = "red";
+                alerts[anySensor.key].startDate = Date.now();
+                updateAlert("public", anySensor.key, alerts[anySensor.key]);
+            } else if (this.scaledReadingValue < 30) {
+                anySensor.alert = true;
+                alerts[anySensor.key].active = true;
+                alerts[anySensor.key].severity = "yellow";
+                alerts[anySensor.key].startDate = Date.now();
+                updateAlert("public", anySensor.key, alerts[anySensor.key]);
+            } else {
+                anySensor.alert = false;
+                alerts[anySensor.key].active = false;
+                alerts[anySensor.key].severity = "green";
+                alerts[anySensor.key].releaseDate = Date.now();
+                removeAlert("public", anySensor.key);
+            }
+            updateReadings(alerts[anySensor.key].lastUpdate, anySensor.key);
+
+        });
+
+        return temperature;
     };
 
 };

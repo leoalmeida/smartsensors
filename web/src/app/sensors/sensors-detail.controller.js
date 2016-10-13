@@ -132,7 +132,7 @@
       vm.selectSensorType = function () {
           vm.sensor.type = vm.selectedSensorConfig.type;
           vm.sensorConfig = vm.selectedSensorConfig;
-          vm.sensor.icon = vm.selectedSensorConfig.type + ".svg";
+          vm.sensor.icon = "assets/icons/" + vm.selectedSensorConfig.type + ".svg";
       }
 
       function fillInAddress(place) {
