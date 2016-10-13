@@ -123,8 +123,6 @@ module.exports = (httpServer) => {
              motion.lastReading = data.detectedMotion;
              console.log("leitura:" + data);
 
-             data.
-
              alerts[motion.key] = {
                  enabled: true,
                  lastUpdate: {
