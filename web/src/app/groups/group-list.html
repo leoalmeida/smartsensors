@@ -12,7 +12,7 @@
         </div>
     </md-toolbar>
     <md-content>
-        <md-list ng-animate="'animate'" class="md-dense" data-ng-init="vm.initList()">
+        <md-list ng-animate="'animate'" class="md-dense" >
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFS.LIST.SUBSCRIBED.TITLE}}</md-subheader>
             <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.subscribed">
@@ -30,10 +30,10 @@
             <md-divider></md-divider>
         </md-list>
         <md-divider ></md-divider>
-        <md-list ng-animate="'animate'" class="md-dense" data-ng-init="vm.initList()">
+        <md-list ng-animate="'animate'" class="md-dense">
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFS.LIST.ALERTS.TITLE}}</md-subheader>
-            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.alerts">
+            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.alerts | AlertsFilter:{type:'alert', all: true} ">
                 <img alt="{{ item.configurations.name }}" ng-src="assets/images/{{item.localization.image}}" class="md-avatar" />
                 <div class="md-list-item-text" >
                     <h3>{{ item.configurations.name }}</h3>
@@ -48,7 +48,7 @@
             <md-divider></md-divider>
         </md-list>
         <md-divider ></md-divider>
-        <md-list ng-animate="'animate'" class="md-dense" data-ng-init="vm.initList()">
+        <!--<md-list ng-animate="'animate'" class="md-dense">
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFS.LIST.GROUPS.TITLE}}</md-subheader>
             <md-list-item class="md-2-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.groups">
@@ -61,7 +61,7 @@
                 <md-switch class="md-secondary" ng-model="item.subscribed" ng-change="vm.toggleState(item)"></md-switch>
             </md-list-item>
             <md-divider></md-divider>
-        </md-list>
+        </md-list>-->
     </md-content>
 </div>
 

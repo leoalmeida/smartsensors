@@ -19,10 +19,25 @@
         vm.SCREENCONFS = CONSTANTS.SCREENCONFIG.GROUPS;
 
         vm.listItems = {};
-
         vm.listItems.subscribed = subscriptionsService.getOwn(currentUser);
-        vm.listItems.alerts = alertService.getPublic();
-        vm.listItems.groups = groupsService.getPublic();
+        vm.listItems.alerts = [];
+
+        var alerts = alertService.getPublic();
+        alerts.$loaded(function (snapshot) {
+            var i, j, l = snapshot.length;
+            for (i = 0; i < l; i += 1) {
+                angular.forEach(snapshot[i], function(value, key) {
+                    if (angular.isObject(value)){
+                        value.$id = key;
+                        vm.listItems.alerts.push(value);
+                    }
+                });
+            }
+        })
+
+
+
+        //vm.listItems.groups = groupsService.getPublic();
 
 
         vm.toggleState = function (item){
@@ -31,7 +46,7 @@
 
         vm.subscribeToAlert = function (item){
             var newItem = {
-                avatar: item.configurations.localization.image,
+                avatar: item.configurations.localization.image | "",
                 description: item.configurations.type,
                 id: item.$id,
                 name: item.configurations.name,

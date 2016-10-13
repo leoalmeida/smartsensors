@@ -30,7 +30,7 @@
             <md-divider></md-divider>
         </md-list>
         <md-divider ></md-divider>
-        <md-list ng-if="filteredAlerts.length>0" ng-animate="'animate'" class="md-dense">
+        <md-list ng-animate="'animate'" class="md-dense">
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFS.LIST.ALERTS.TITLE}}</md-subheader>
             <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.alerts | SubscriptionFilter:{values: vm.listItems.subscribed, type:'alert', reversal: true} as filteredAlerts" >
@@ -48,7 +48,7 @@
             <md-divider></md-divider>
         </md-list>
         <md-divider ></md-divider>
-        <md-list ng-if="filteredGroups.length>0" ng-animate="'animate'" class="md-dense">
+        <!--<md-list ng-if="filteredGroups.length>0" ng-animate="'animate'" class="md-dense">
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFS.LIST.GROUPS.TITLE}}</md-subheader>
             <md-list-item class="md-2-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.groups  | SubscriptionFilter:{values: vm.listItems.subscribed, type:'messenger', reversal: true} as filteredGroups" >
@@ -61,7 +61,7 @@
                 <md-switch class="md-secondary" ng-model="item.subscribed" ng-change="vm.subscribeToGroup(item)"></md-switch>
             </md-list-item>
             <md-divider></md-divider>
-        </md-list>
+        </md-list>-->
     </md-content>
 </div>
 

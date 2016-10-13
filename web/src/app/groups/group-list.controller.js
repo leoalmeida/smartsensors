@@ -20,7 +20,7 @@
 
         vm.listItems.subscribed = subscriptionsService.getOwn(currentUser);
         vm.listItems.alerts = alertService.getPublic();
-        vm.listItems.groups = groupsService.getPublic();
+        // vm.listItems.groups = groupsService.getPublic();
 
         vm.subscribe = function (item){
             var ret = vm.listItems.subscribed.$save(vm.listItems.subscribed.$indexFor(item.$id));

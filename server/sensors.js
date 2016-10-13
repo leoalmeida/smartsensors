@@ -123,7 +123,21 @@ module.exports = (httpServer) => {
              motion.lastReading = data.detectedMotion;
              console.log("leitura:" + data);
 
-             alerts[motion.key].lastUpdate.data = data;
+             alerts[motion.key] = {
+                 lastUpdate: data,
+                 configurations : {
+                     col : 1,
+                     row : 1,
+                     draggable : false,
+                     icon : sensor.icon,
+                     label : motion.key,
+                     localization : sensor.localization,
+                     pin: {
+                         color : "blue"
+                     },
+                     sensors : [ sensor.label ],
+                     type: sensor.type
+             };
 
              messages.push("The reading value has changed.");
              console.log("The reading value has changed.");
