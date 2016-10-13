@@ -108,7 +108,7 @@ module.exports = (httpServer) => {
     console.log('Waiting for connection');
 
     let startMotion = function (sensor) {
-        var motion = new five.Motion(sensor.configurations.digital.pin);
+        var motion = new five.Motion(sensor.configurations.pin);
         motion.active = true;
         motion.key = sensor.key;
         // console.log("Size: " + sensor.configurations.events.length);
@@ -165,7 +165,7 @@ module.exports = (httpServer) => {
         return motion;
     };
     let startLed = function (sensor) {
-        var led = new five.Led(sensor.configurations.digital.pin);
+        var led = new five.Led(sensor.configurations.pin);
 
         if (sensor.style == 0)
             led.blink(sensor.configurations.loop);
@@ -209,10 +209,13 @@ module.exports = (httpServer) => {
     };
     let startMoisture = function (sensor) {
         if (sensor.configurations.analogic)
-            analogicSensor = new five.Sensor(sensor.configurations.analogic);
+            analogicSensor = new five.Sensor(
+                sensor.configurations.pin,
+                sensor.configurations.threshold
+            );
 
         if (sensor.configurations.digital)
-            digitalSensor = new five.Pin(sensor.configurations.digital);
+            digitalSensor = new five.Pin(sensor.configurations.pin);
 
         sensor.on("data", () => {
             if (sensorPower.isHigh){
@@ -274,17 +277,12 @@ module.exports = (httpServer) => {
         return value;
     };
     let startThermometer = function (sensor) {
-        var pin = "A0";
-        if (sensor.configurations.analogic){
-            pin = sensor.configurations.analogic.pin;
-        }else{
-            pin = sensor.configurations.digital.pin;
-        }
+
         var temperature = new five.Thermometer({
             controller: sensor.configurations.controller,
             freq : sensor.configurations.loop,
             threshold : sensor.configurations.threshold,
-            pin: pin,
+            pin: sensor.configurations.pin,
             toCelsius: function(raw) { // optional
                 return (raw * 0.00132 - 0.4) / 0.01953;
             }
@@ -340,13 +338,9 @@ module.exports = (httpServer) => {
     };
     let startSensor = function (sensor) {
         var pin = "A0";
-        if (sensor.configurations.analogic){
-            pin = sensor.configurations.analogic.pin;
-        }else{
-            pin = sensor.configurations.digital.pin;
-        }
+
         var anySensor = new five.Sensor({
-            pin: pin,
+            pin: sensor.configurations.pin,
             freq: sensor.configurations.loop,
             threshold: sensor.configurations.threshold
         });

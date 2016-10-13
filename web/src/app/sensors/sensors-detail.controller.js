@@ -35,8 +35,7 @@
       vm.configurations = sensorsService.getAllConfigurations();
 
       vm.configurations.$loaded().then(function(snapshot) {
-          vm.analogicpins = snapshot.analogicpins;
-          vm.digitalpins = snapshot.digitalpins;
+          vm.pins = snapshot.pins;
           vm.units = snapshot.units;
           vm.icons = snapshot.icons;
           vm.types = snapshot.types;

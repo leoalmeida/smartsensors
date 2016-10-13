@@ -140,9 +140,9 @@
                                         <label>Nome</label>
                                         <input required ng-model="vm.sensor.name">
                                     </md-input-container>
-                                    <md-input-container class="md-block" flex-gt-md>
+                                    <md-input-container required class="md-block" flex-gt-md>
                                         <label>Label</label>
-                                        <input ng-model="vm.sensor.label">
+                                        <input required ng-model="vm.sensor.label">
                                     </md-input-container>
                                 </md-content>
                             </md-card-content>
@@ -175,6 +175,8 @@
                                         </md-optgroup>
                                     </md-select>
                                 </md-input-container>
+                            </md-content>
+                            <md-content layout-gt-xs="row" layout-padding>
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.duration">
                                     <label>Duração</label>
                                     <input  type="number" step="any"
@@ -187,13 +189,29 @@
                                         <md-option ng-repeat="style in vm.ledStyles" value="{{style.val}}">{{style.name}}</md-option>
                                     </md-select>
                                 </md-input-container>
-                            </md-content>
-                            <md-content layout-gt-xs="row" layout-padding>
+                                <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.offset">
+                                    <label>Threshold</label>
+                                    <input type="number" step="any"
+                                           name="offset" ng-model="vm.sensor.configurations.offset" min="0"
+                                           max="100" />
+                                </md-input-container>
+                                <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.sensitivity">
+                                    <label>Threshold</label>
+                                    <input type="number" step="any"
+                                           name="offset" ng-model="vm.sensor.configurations.sensitivity" min="0"
+                                           max="100" />
+                                </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.loop">
                                     <label>Loop</label>
                                     <input  type="number" step="any"
                                            name="loop" ng-model="vm.sensor.configurations.loop" min="100"
                                            max="9999" />
+                                </md-input-container>
+                                <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.threshold">
+                                    <label>Threshold</label>
+                                    <input type="number" step="any"
+                                           name="threshold" ng-model="vm.sensor.configurations.threshold" min="0"
+                                           max="100" />
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.min">
                                     <label>Min</label>
@@ -215,28 +233,13 @@
                                 </md-input-container>
                             </md-content>
                             <md-content layout-gt-xs="row" layout-padding>
-                                <div class="md-block" flex-gt-xs layout-padding ng-if="vm.selectedSensorConfig.properties.input.digital">
-                                    <md-subheader class="md-primary">Entrada Digital</md-subheader>
-                                    <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.digital.pin">
+                                <div class="md-block" flex-gt-xs layout-padding >
+                                    <md-subheader class="md-primary">Entrada</md-subheader>
+                                    <md-input-container class="md-block" >
                                         <label>Pin</label>
-                                        <md-select ng-model="vm.sensor.configurations.digital.pin">
-                                            <md-option ng-repeat="pin in vm.digitalpins" value="{{pin}}">{{pin}}</md-option>
+                                        <md-select required ng-model="vm.sensor.configurations.pin">
+                                            <md-option ng-repeat="pin in vm.pins" value="{{pin}}">{{pin}}</md-option>
                                         </md-select>
-                                    </md-input-container>
-                                </div>
-                                <div class="md-block" flex-gt-xs layout-padding ng-if="vm.selectedSensorConfig.properties.input.analogic">
-                                    <md-subheader class="md-primary">Entrada Analógica</md-subheader>
-                                    <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.analogic.pin">
-                                        <label>Pin</label>
-                                        <md-select ng-model="vm.sensor.configurations.analogic.pin" >
-                                            <md-option ng-repeat="pin in vm.analogicpins" value="{{pin}}">{{pin}}</md-option>
-                                        </md-select>
-                                    </md-input-container>
-                                    <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.analogic.threshold">
-                                        <label>Threshold</label>
-                                        <input type="number" step="any"
-                                               name="threshold" ng-model="vm.sensor.configurations.analogic.threshold" min="0"
-                                               max="100" />
                                     </md-input-container>
                                 </div>
                             </md-content>
