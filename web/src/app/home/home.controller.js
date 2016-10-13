@@ -16,35 +16,17 @@
 
         vm.subscribedItems = subscriptionsService.getOwn(currentUser);
 
-        vm.alertItems = [];
+        vm.alertItems = alertService.getPublic();
 
-        vm.alertList = alertService.getPublic();
-        vm.alertList.$loaded(function (snapshot) {
-            var i, j, l = snapshot.length;
-            for (i = 0; i < l; i += 1) {
-                angular.forEach(snapshot[i], function(value, key) {
-                    if (angular.isObject(value)){
-                        vm.alertItems.push(vm.alertList.ref().child(key));
-                    }
-                });
-            }
-        });
-
-        alerts.$watch(function (event) {
+        vm.alertItems.$watch(function (event) {
             if (event.event === 'child_changed'){
-                // changeItems(event);
-                var message = "";
-                //var message = vm.alertItems[event.key].configurations.name + " atualizada para " + vm.alertItems[event.key].lastUpdate.value + vm.alertItems[event.key].lastUpdate.unit;
+                var message = vm.alertItems[event.key].configurations.name + " atualizada para " + vm.alertItems[event.key].lastUpdate.value + vm.alertItems[event.key].lastUpdate.unit;
                 toastService.showMessage(message);
                 notifyService.notify(message);
                 console.log(event);
                 console.log(message);
             }
         });
-
-        function changeItems(event){
-
-        }
 
     }
 
