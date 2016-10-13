@@ -125,18 +125,19 @@ module.exports = (httpServer) => {
 
              alerts[motion.key] = {
                  lastUpdate: data,
-                 configurations : {
-                     col : 1,
-                     row : 1,
-                     draggable : false,
-                     icon : sensor.icon,
-                     label : motion.key,
-                     localization : sensor.localization,
+                 configurations: {
+                     col: 1,
+                     row: 1,
+                     draggable: false,
+                     icon: sensor.icon,
+                     label: motion.key,
+                     localization: sensor.localization,
                      pin: {
-                         color : "blue"
+                         color: "blue"
                      },
-                     sensors : [ sensor.label ],
+                     sensors: [sensor.label],
                      type: sensor.type
+                 }
              };
 
              messages.push("The reading value has changed.");
