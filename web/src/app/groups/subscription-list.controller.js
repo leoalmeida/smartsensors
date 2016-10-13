@@ -22,23 +22,9 @@
         vm.listItems.subscribed = subscriptionsService.getOwn(currentUser);
         vm.listItems.alerts = [];
 
-        var alerts = alertService.getPublic();
-        alerts.$loaded(function (snapshot) {
-            var i, j, l = snapshot.length;
-            for (i = 0; i < l; i += 1) {
-                angular.forEach(snapshot[i], function(value, key) {
-                    if (angular.isObject(value)){
-                        value.$id = key;
-                        vm.listItems.alerts.push(value);
-                    }
-                });
-            }
-        })
-
-
+        vm.listItems.alerts = alertService.getPublic();
 
         //vm.listItems.groups = groupsService.getPublic();
-
 
         vm.toggleState = function (item){
             var ret = vm.listItems.subscribed.$save(vm.listItems.subscribed.$indexFor(item.$id));

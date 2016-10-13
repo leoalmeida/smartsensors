@@ -282,7 +282,12 @@ module.exports = (httpServer) => {
         }
         var temperature = new five.Thermometer({
             controller: sensor.configurations.controller,
-            pin: pin
+            freq : sensor.configurations.loop,
+            threshold : sensor.configurations.threshold,
+            pin: pin,
+            toCelsius: function(raw) { // optional
+                return (raw * 0.00132 - 0.4) / 0.01953;
+            }
         });
         temperature.active = true;
         temperature.key = sensor.key;
@@ -299,6 +304,7 @@ module.exports = (httpServer) => {
             console.log("kelvin: %d", this.K);
 
             alerts[temperature.key].lastUpdate.data = {
+                transformedCelsius: this.toCelsius(),
                 celsius: this.C,
                 fahrenheit: this.F,
                 kelvin: this.K
