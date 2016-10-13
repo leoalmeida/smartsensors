@@ -20,9 +20,10 @@
 
         vm.alertItems.$watch(function (event) {
             if (event.event === 'child_changed'){
-                var message = vm.alertItems[event.key].configurations.name + " atualizada para " + vm.alertItems[event.key].lastUpdate.value + vm.alertItems[event.key].lastUpdate.unit;
+                var alert = vm.alertItems.$getRecord(event.key);
+                var message = alert.configurations.name + " atualizada para " + alert.lastUpdate.value + (alert.lastUpdate.unit || "");
                 toastService.showMessage(message);
-                notifyService.notify(message);
+                notifyService.notify(message, "");
                 console.log(event);
                 console.log(message);
             }
