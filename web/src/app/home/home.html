@@ -8,8 +8,8 @@
             md-row-height="4:3"
             md-gutter="8px"
             md-gutter-gt-sm="4px" >
-        <!--<md-grid-tile ng-repeat="item in vm.alertItems | SubscriptionFilter:{values: vm.subscribedItems, type:'alert', reversal: false} track by $index"-->
-        <md-grid-tile ng-repeat="item in vm.alertItems | SubscribedAlertsFilter:{values: vm.subscribedItems, type:'alert', reversal: false} track by $index"
+            <!--<md-grid-tile ng-repeat="item in vm.alertItems | SubscribedAlertsFilter:{values: vm.subscribedItems, type:'alert', reversal: false} track by $index"-->
+            <md-grid-tile ng-repeat="item in vm.alertItems | SubscriptionFilter:{values: vm.subscribedItems, type:'alert', reversal: false} track by $index"
                       md-rowspan="{{item.configurations.row}}"
                       md-colspan="{{item.configurations.col}}"
                       md-colspan-sm="1"
@@ -22,10 +22,9 @@
                             <img class="md-user-avatar" ng-src="assets/icons/{{item.configurations.icon}}"/>
                         </md-card-avatar>
                         <md-card-header-text>
-                            <span class="md-title">{{item.configurations.name}}</span>
+                            <span class="md-title"><strong>{{item.configurations.name}}</strong> ({{item.configurations.label}})</span>
                             <h4>
-                                {{item.configurations.label}} -
-                                <span flex-end>{{item.startDate}}</span>
+                                <span flex-end>{{item.startDate | date:'dd/MM/yyyy @ h:mma'}}</span>
                             </h4>
                         </md-card-header-text>
                     </md-card-header>

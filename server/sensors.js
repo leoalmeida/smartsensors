@@ -131,7 +131,7 @@ module.exports = (httpServer) => {
                      row: 1,
                      draggable: false,
                      icon: sensor.icon,
-                     label: motion.key,
+                     label: sensor.label,
                      localization: {image: "chuvaforte.jpg"},
                      pin: {color: "blue"},
                      sensors: [sensor.label],

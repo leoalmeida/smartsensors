@@ -46,7 +46,7 @@
 
         vm.subscribeToAlert = function (item){
             var newItem = {
-                avatar: item.configurations.localization.image | "",
+                avatar: item.configurations.localization.image,
                 description: item.configurations.type,
                 id: item.$id,
                 name: item.configurations.name,
