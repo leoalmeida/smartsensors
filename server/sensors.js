@@ -137,7 +137,7 @@ module.exports = (httpServer) => {
                      sensors: [sensor.label],
                      type: sensor.type,
                      name: sensor.name,
-                     owner: sensor.owner,
+                     owner: "",
 
                  }
              };
