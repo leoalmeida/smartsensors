@@ -18,9 +18,7 @@ module.exports = (httpServer) => {
 
     let refAlerts = db.ref('alerts/public/');
     refAlerts.once("value", function (snapshot) {
-        if (snapshot){
-            alerts = snapshot.val() ;
-        }
+        alerts = snapshot.val() ;
     });
 
     const io = require('socket.io')(httpServer);
@@ -303,7 +301,7 @@ module.exports = (httpServer) => {
             alerts[temperature.key].lastUpdate.data = {
                 celsius: this.C,
                 fahrenheit: this.F,
-                kelvin: this.K,
+                kelvin: this.K
             };
 
             messages.push("The reading value has changed.");
