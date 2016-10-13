@@ -16,7 +16,7 @@ module.exports = (httpServer) => {
 
     let refSensors = db.ref('sensors/public/' + userKey + "/" + locationID);
 
-    let refAlerts = db.ref('alerts/public/' + userKey);
+    let refAlerts = db.ref('alerts/public/');
     refAlerts.once("value", function (snapshot) {
         alerts = snapshot.val();
     });
