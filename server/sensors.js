@@ -284,7 +284,7 @@ module.exports = (httpServer) => {
             threshold : sensor.configurations.threshold,
             pin: sensor.configurations.pin,
             toCelsius: function(raw) { // optional
-                return (raw * 0.00132 - 0.4) / 0.01953;
+                return (raw * sensor.configurations.sensivity) + sensor.configurations.offset;
             }
         });
         temperature.active = true;
@@ -398,7 +398,6 @@ let removeAlert = function (accessType, key) {
     firebase.database().ref('alerts/' + accessType + '/'+ key).remove();
     console.log("removed  " + 'alerts/' + accessType + '/'+ key);
 };
-
 
 let updateReadings = function (reading, key) {
     console.log("updating  " + key);
