@@ -3,7 +3,7 @@
         <div class="md-toolbar-tools">
             <span>{{vm.SCREENCONFS.LIST.TITLE}}</span>
             <span flex></span>
-            <md-button class="md-raised" aria-label="Learn More">
+            <md-button class="md-primary md-raised edgePadding" aria-label="Novo Servidor" ng-click="vm.newServer($even)">
                 Novo Servidor
             </md-button>
         </div>
@@ -11,7 +11,7 @@
     <md-content>
         <md-list ng-animate="'animate'" class="md-dense" ng-repeat="item in vm.listItems">
             <md-subheader class="md-no-sticky md-accent">
-                <md-button class="md-fab md-mini" aria-label="Favorite" ng-click="vm.newSensor(item.$id)">
+                <md-button class="md-fab md-mini" aria-label="Novo Sensor" ng-click="vm.newSensor(item.$id)">
                     <md-icon md-svg-icon="assets/icons/{{vm.SCREENCONFS.LIST.ICONNEW}}"></md-icon>
                 </md-button>
                 <span>{{item.$id}}</span>

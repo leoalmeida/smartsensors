@@ -16,10 +16,6 @@
 
     vm.readingPeriod = 1000;
 
-    vm.testfilter = function (item){
-      vm.teste = "teste"
-    }
-
     vm.toggleState = function (item){
         // if (vm.sensors[$key]) sensorsSocket.emit('moisture:on');
         // else sensorsSocket.emit('moisture:off');
@@ -35,6 +31,30 @@
         $location.path( "/sensors/public/" + serverID + "/edit/" + key);
     };
 
+    vm.newServer = function(ev) {
+
+        var confirm = $mdDialog.prompt()
+            .clickOutsideToClose(true)
+            .title('Novo Servidor')
+            .textContent('Digite o nome do novo servidor.')
+            .placeholder('Nome do servidor...')
+            .targetEvent(ev)
+            .ariaLabel('Nome do servidor')
+            .ok('Criar Sensor')
+            .cancel('Voltar')
+            .openFrom({
+                top: -50,
+                width: 30,
+                height: 80
+            })
+            .closeTo({
+                left: 1500
+            });
+
+        $mdDialog.show(confirm).then(function(result) {
+            vm.newSensor(result);
+        });
+    };
   };
 
 })(angular);

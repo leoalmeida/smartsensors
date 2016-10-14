@@ -88,15 +88,30 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                        <input class="mdl-textfield__input" type="text" id="serverID">
-                                        <label class="mdl-textfield__label" for="locationID">Server ID</label>
+                                    <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                        <input class="mdl-textfield__input" type="text" id="serverID" disabled>
+                                        <label class="mdl-textfield__label" for="serverID">Server ID</label>
+                                    </div>-->
+                                    <div class="mdl-select mdl-js-select mdl-select--floating-label">
+                                        <select class="mdl-select__input" id="serverID" name="serverID" disabled>
+                                            <option value=""></option>
+                                        </select>
+                                        <label class="mdl-select__label" for="serverID">Server ID</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <!-- Serial Ports button -->
+                                    <div class="mdl-select mdl-js-select mdl-select--floating-label">
+                                        <select class="mdl-select__input" id="serialPorts" name="serialPorts">
+                                            <option value="">port</option>
+                                        </select>
+                                        <label class="mdl-select__label" for="serialPorts">Ports</label>
                                     </div>
                                 </li>
                             </ul>
                         </div>
                         <div class="mdl-card__actions mdl-card--border">
-                            <a href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect" id="btnStart">Iniciar</a>
+                            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="btnStart" disabled>Iniciar</button>
                             <div class="mdl-layout-spacer"></div>
                             <i class="material-icons">location_on</i>
                         </div>
@@ -109,8 +124,8 @@
                             <div id="output"></div>
                         </div>
                         <div class="mdl-card__actions mdl-card--border">
-                            <a href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect" id="btnClear">Limpar</a>
-                            <a href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect" id="node-notifier">Notify Teste</a>
+                            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="btnClear">Limpar</button>
+                            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="node-notifier">Notify Teste</button>
                         </div>
                     </div>
                     <div class="updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--5-col-tablet mdl-cell--4-col-desktop">
@@ -156,7 +171,7 @@
             </div>
         </main>
     </div>
-
+<!--
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" style="position: fixed; left: -1000px; height: -1000px;">
         <defs>
             <mask id="piemask" maskContentUnits="objectBoundingBox">
@@ -204,8 +219,9 @@
             </g>
         </defs>
     </svg>
-
+-->
     <script src="./libs/material.min.js"></script>
+    <script src="materialSelect.js"></script>
     <script src="script.js"></script>
 </body>
 

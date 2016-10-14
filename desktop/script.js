@@ -12,13 +12,10 @@ firebase.initializeApp({
 });
 
 // let userKey = "JwyqVEHujYe3RtBCN50gbjXK1EB3";
-// let serverID = "Casa";
-// let userKey = serverID = "";
+// let serverID = "";
+let userKey = serverID = "";
 let sensors = [], alerts = [], sensor, sensorPower;
 const db = firebase.database();
-const five = require("johnny-five");
-let board = new five.Board();
-
 
 // const io = require('socket.io')(httpServer);
 
@@ -32,12 +29,47 @@ let $ = function (selector) {
     return document.querySelector(selector);
 };
 
+const five = require("johnny-five");
+//let board = new five.Board();
+let serialPort = require("browser-serialport");
+
 document.addEventListener("DOMContentLoaded", function() {
 
     let userKeyCmp = $("#userKey");
-    userKeyCmp.value = userKey;
+    userKeyCmp.addEventListener('focusout', function (event) {
+
+        if (!userKeyCmp.value) {
+            showNativeNotification('./img/ic_error_24px.svg',  "Chave Inválida", 'Insira uma nova chave, por favor.', './sounds/arpeggio.mp3', './img/ic_error_24px.svg');
+            return;
+        }
+        const refServerList = db.ref('sensors/public/'+ userKeyCmp.value);
+
+        refServerList.once("value", function (snapshot) {
+            let servers = snapshot.val();
+
+            if (!snapshot.val()) {
+                showNativeNotification('./img/ic_error_24px.svg',  "Chave Inválida", 'A Chave Inserida não existe.', './sounds/arpeggio.mp3', './img/ic_error_24px.svg');
+                return;
+            }
+            ;
+            for (server in servers) {
+                let logElement = $("#serverID");
+                logElement.innerHTML += "<option value='" + server + "'>" + server + "</option><br>";
+            }
+
+            $('#serverID').disabled = false;
+        });
+    });
+
     let serverIDCmp = $("#serverID");
-    serverIDCmp.value = serverID;
+    serverIDCmp.addEventListener('focusout', function (event) {
+        if (!userKeyCmp.value) {
+            showNativeNotification('./img/ic_error_24px.svg',  "Chave Inválida", 'Insira uma chave, por favor.', './sounds/arpeggio.mp3', './img/ic_error_24px.svg');
+            $('#btnStart').disabled = true;
+            return;
+        };
+        $('#btnStart').disabled = false;
+    });
 
     $('#btnClose').addEventListener('click', function (event) {
         window.close();
@@ -63,93 +95,126 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        let querySensor = 'sensors/public/' + userKey + "/" + serverID;
-        const refSensors = db.ref(querySensor);
+        let refSensors = db.ref('sensors/public/' + userKey + "/" + serverID);
 
-        writeLog("Sensor Chamado");
+        writeLog("Buscando Sensores!!");
 
-        refSensors.on("child_added", function (snapshot){
-            writeLog("Received");
-            writeLog(JSON.stringify(snapshot.val()));
-        });
+        let html = "", cont=0;
+        serialPort.list(function(err, ports) {
+            ports.forEach(function(p) {
+                writeLog("ports: " + JSON.stringify(p));
+                var portName = p.comName.toString();
+                writeLog("ports: " + portName);
+                html += "<option id='port" + cont + "' value='port" + portName + "'>" + portName + "</option>";
+                cont++;
+                // when user select the port
+                $("#serialPorts").on("click", "#port" + cont, p, function(data) {
 
-        //Arduino board connection
-        board.on("ready", () => {
-            let loops = 0;
+                    $("#labelPort").innerHTML("<i class='material-icons'>usb</i>");
 
-            writeLog("Arduino Connected");
-            writeLog('Arduino connected');
+                    // create the board connected to the port selected
+                    board = new five.Board({
+                        port: portName
+                    });
 
-            let motion, led, moisture, sensor, temperature;
+                    //Arduino board connection
+                    board.on("ready", () => {
+                        let loops = 0;
 
-            refSensors.on("child_added", function (snapshot) {
-                writeLog("child_added");
-                let item = snapshot.val();
-                if (item.enabled) {
-                    sensors.push(item);
+                        writeLog("Conectando Arduino!!");
 
-                    writeLog('Encontrei o sensor [' + item.name + '] conectado!!');
+                        let motion, led, moisture, sensor, temperature;
 
-                    for (let i = 0; i < sensors.length; i++) {
+                        refSensors.on("child_added", function (snapshot) {
+                            writeLog("child_added");
+                            let item = snapshot.val();
+                            if (item.enabled) {
+                                sensors.push(item);
 
-                        if (!sensors[i].enabled) continue;
+                                writeLog('Encontrei o sensor [' + item.name + '] conectado!!');
 
-                        if (!alerts) alerts = [];
+                                for (let i = 0; i < sensors.length; i++) {
 
-                        alerts[sensors[i].key] = {
-                            active: true,
-                            enabled: true,
-                            severity: "white",
-                            lastUpdate: {
-                                value: sensors[i].label
-                            },
-                            configurations: {
-                                col: 1,
-                                row: 1,
-                                draggable: false,
-                                icon: sensors[i].icon,
-                                label: sensors[i].label,
-                                localization: {image: "chuvaforte.jpg"},
-                                pin: {color: "blue"},
-                                sensors: [sensors[i].label],
-                                type: sensors[i].type,
-                                name: sensors[i].name,
-                                owner: userKey,
+                                    if (!sensors[i].enabled) continue;
 
+                                    if (!alerts) alerts = [];
+
+                                    alerts[sensors[i].key] = {
+                                        active: true,
+                                        enabled: true,
+                                        severity: "white",
+                                        lastUpdate: {
+                                            value: sensors[i].label
+                                        },
+                                        configurations: {
+                                            col: 1,
+                                            row: 1,
+                                            draggable: false,
+                                            icon: sensors[i].icon,
+                                            label: sensors[i].label,
+                                            localization: {image: "chuvaforte.jpg"},
+                                            pin: {color: "blue"},
+                                            sensors: [sensors[i].label],
+                                            type: sensors[i].type,
+                                            name: sensors[i].name,
+                                            owner: userKey,
+
+                                        }
+                                    };
+
+                                    writeLog("Conectando sensor [" + sensors[i].type + "]");
+
+                                    if (sensors[i].type == "motion") {
+                                        board.repl.inject({motion: startMotion(sensors[i])});
+                                    }
+                                    else if (sensors[i].type == "led") {
+                                        board.repl.inject({led: startLed(sensors[i])});
+                                    }
+                                    else if (sensors[i].type == "moisture") {
+                                        board.repl.inject({moisture: startMoisture(sensors[i])});
+                                    }
+                                    else if (sensors[i].type == "sensor") {
+                                        board.repl.inject({sensor: startSensor(sensors[i])});
+                                    }
+                                    else if (sensors[i].type == "thermometer") {
+                                        board.repl.inject({temperature: startThermometer(sensors[i])});
+                                    }
+                                };
                             }
-                        };
+                        });
 
-                        writeLog("Conectando sensor [" + sensors[i].type + "]");
+                        // show serial port name
+                        $("#labelPort").text(portName);
 
-                        if (sensors[i].type == "motion") {
-                            board.repl.inject({motion: startMotion(sensors[i])});
-                        }
-                        else if (sensors[i].type == "led") {
-                            board.repl.inject({led: startLed(sensors[i])});
-                        }
-                        else if (sensors[i].type == "moisture") {
-                            board.repl.inject({moisture: startMoisture(sensors[i])});
-                        }
-                        else if (sensors[i].type == "sensor") {
-                            board.repl.inject({sensor: startSensor(sensors[i])});
-                        }
-                        else if (sensors[i].type == "thermometer") {
-                            board.repl.inject({temperature: startThermometer(sensors[i])});
-                        }
-                    };
-                }
+                    });
+
+                    // when serial port error
+                    board.on("error", function(err) {
+                        // show error message
+                        $("#labelPort").text("Error!");
+                        // remove error message and return to normal state
+                        setTimout(function() {
+                            $("#labelPort").text("Ports");
+                        }, 5000);
+                    });
+
+                });
+
+                writeLog("html: " + html);
             });
-
+            // show serial ports names
+            $("#serialPorts").innerHTML(html);
         });
     });
 
     $('#simple-notifier').addEventListener('click', function (event) {
-        showNotification('./img/icons/ic_add_24px.svg', "Taxi is arrived", 'hurry up');
+        showNotification('./img/ic_add_24px.svg', "Taxi is arrived", 'hurry up');
     });
 
     $('#node-notifier').addEventListener('click', function (event) {
-        showNativeNotification(false, "Testing HTML Notify", 'hurry up', false, './img/icons/ic_add_24px.svg');
+        showNativeNotification('./img/ic_error_24px.svg', "Testing Node Notifier", 'hurry up', './sounds/arpeggio.mp3', './img/ic_add_24px.svg');
     });
+
 
     // bring window to front when open via terminal
     NW.Window.get().focus();
