@@ -11,8 +11,8 @@ firebase.initializeApp({
     storageBucket: 'guifragmentos.appspot.com',
 });
 
-let userKey = "JwyqVEHujYe3RtBCN50gbjXK1EB3";
-let serverID = "Casa";
+// let userKey = "JwyqVEHujYe3RtBCN50gbjXK1EB3";
+// let serverID = "Casa";
 // let userKey = serverID = "";
 let sensors = [], alerts = [], sensor, sensorPower;
 const db = firebase.database();

@@ -8,6 +8,7 @@
                 <h2 class="md-tittle"> Smart Sensors </h2>
                 <!-- fill up the space between left and right area -->
                 <span flex></span>
+                <div ng-if="vm.user">{{vm.user.uid}}</div>
                 <span>
                     <md-button hide show-gt-xs ng-click="vm.login()" class="md-icon-button" >
                         <md-icon md-svg-src="assets/icons/social/ic_share_24px.svg" class="md-secondary " aria-label="Add"></md-icon>
@@ -48,7 +49,7 @@
                   <img ng-if="vm.user" class="avatarImage" ng-src="{{vm.user.photoURL}}" alt="{{vm.user.name}}" />
                   <span></span>
                   <div ng-if="vm.user">{{vm.user.displayName}}</div>
-                  <div ng-if="vm.user">{{vm.user.email}}</div>
+                  <div ng-if="vm.user">{{vm.user.uid}}</div>
                 </div>
             </md-toolbar>
             <md-content>
