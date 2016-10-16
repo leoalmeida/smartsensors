@@ -14,7 +14,7 @@ firebase.initializeApp({
 // let userKey = "JwyqVEHujYe3RtBCN50gbjXK1EB3";
 // let serverID = "";
 let userKey = serverID = "";
-let sensors = [], alerts = [], sensor, sensorPower;
+let sensors = [], alerts = [], sensor, sensorPower, counter;
 const db = firebase.database();
 
 // const io = require('socket.io')(httpServer);
@@ -31,18 +31,32 @@ let $ = function (selector) {
 
 const five = require("johnny-five");
 //let board = new five.Board();
-let serialPort = require("browser-serialport");
+let serialPortLib = require("browser-serialport");
 
+
+let refSensors = refServerList = selectedPort = selectedServer = "";
 document.addEventListener("DOMContentLoaded", function() {
 
-    let userKeyCmp = $("#userKey");
+    const userKeyCmp = $("#userKey"),
+        serverIDCmp = $("#serverID"),
+        btnClose = $("#btnClose"),
+        btnClear = $("#btnClear"),
+        btnStart = $("#btnStart"),
+        btnStop = $("#btnStop"),
+        btnRefresh = $("#btnRefresh"),
+        serialPorts = $("#serialPorts"),
+        labelPort = $("#labelPort");
+
+    let cont=1;
+
+    cont=1;
     userKeyCmp.addEventListener('focusout', function (event) {
 
         if (!userKeyCmp.value) {
             showNativeNotification('./img/ic_error_24px.svg',  "Chave Inválida", 'Insira uma nova chave, por favor.', './sounds/arpeggio.mp3', './img/ic_error_24px.svg');
             return;
         }
-        const refServerList = db.ref('sensors/public/'+ userKeyCmp.value);
+        refServerList = db.ref('sensors/public/'+ userKeyCmp.value);
 
         refServerList.once("value", function (snapshot) {
             let servers = snapshot.val();
@@ -51,160 +65,141 @@ document.addEventListener("DOMContentLoaded", function() {
                 showNativeNotification('./img/ic_error_24px.svg',  "Chave Inválida", 'A Chave Inserida não existe.', './sounds/arpeggio.mp3', './img/ic_error_24px.svg');
                 return;
             }
-            ;
             for (server in servers) {
-                let logElement = $("#serverID");
-                logElement.innerHTML += "<option value='" + server + "'>" + server + "</option><br>";
+                let serverID = "server" + cont;
+                serverIDCmp.innerHTML += "<option id='" + serverID + "'  value='" + server + "'>" + server + "</option>";
+                cont++;
             }
-
-            $('#serverID').disabled = false;
+            userKeyCmp.disabled = true;
+            serverIDCmp.disabled = false;
+            serialPorts.disabled = false;
         });
     });
-
-    let serverIDCmp = $("#serverID");
     serverIDCmp.addEventListener('focusout', function (event) {
-        if (!userKeyCmp.value) {
-            showNativeNotification('./img/ic_error_24px.svg',  "Chave Inválida", 'Insira uma chave, por favor.', './sounds/arpeggio.mp3', './img/ic_error_24px.svg');
-            $('#btnStart').disabled = true;
-            return;
-        };
-        $('#btnStart').disabled = false;
-    });
+        if (!serialPorts.selectedIndex) btnStart.disabled = true;
+        else if (!serverIDCmp.selectedIndex) { btnStart.disabled = true; return; }
+        else btnStart.disabled = false;
 
-    $('#btnClose').addEventListener('click', function (event) {
+        writeLog("Servidor selecionado: " + serverIDCmp.value);
+        selectedServer = serverIDCmp.value;
+
+    });
+    serialPorts.addEventListener('focusout', function(event) {
+        if (!serverIDCmp.selectedIndex) btnStart.disabled = true;
+        else if (!serialPorts.selectedIndex) {btnStart.disabled = true; return;}
+        else btnStart.disabled = false;
+
+        writeLog("Porta selecionada: " + serialPorts.value);
+        selectedPort = serialPorts.value;
+    });
+    btnClose.addEventListener('click', function (event) {
         window.close();
     });
-
-    $('#btnClear').addEventListener('click', function (event) {
+    btnClear.addEventListener('click', function (event) {
         let logElement = $("#output");
         logElement.innerHTML = "";
         logElement.scrollTop = logElement.scrollHeight;
     });
-
-    $('#btnStart').addEventListener('click', function (event) {
+    btnStart.addEventListener('click', function (event) {
         let userKey = userKeyCmp.value;
         let serverID = serverIDCmp.value;
+        if (!userKey) { writeLog("Obrigatório escolher uma key"); return; }
+        if (!serverID) { writeLog("Obrigatório escolher um server ID"); return; }
 
-        if (!userKey) {
-            writeLog("Obrigatório escolher uma key");
-            return;
-        }
+        writeLog("Buscando Sensores públicos ");
+        writeLog("--> Servidor: " + serverID);
+        writeLog("--> Porta: " + selectedPort);
 
-        if (!serverID) {
-            writeLog("Obrigatório escolher um server ID");
-            return;
-        }
+        refSensors = db.ref('sensors/public/' + userKey + "/" + serverID);
 
-        let refSensors = db.ref('sensors/public/' + userKey + "/" + serverID);
-
-        writeLog("Buscando Sensores!!");
-
-        let html = "", cont=0;
-        serialPort.list(function(err, ports) {
-            ports.forEach(function(p) {
-                writeLog("ports: " + JSON.stringify(p));
-                var portName = p.comName.toString();
-                writeLog("ports: " + portName);
-                html += "<option id='port" + cont + "' value='port" + portName + "'>" + portName + "</option>";
-                cont++;
-                // when user select the port
-                $("#serialPorts").on("click", "#port" + cont, p, function(data) {
-
-                    $("#labelPort").innerHTML("<i class='material-icons'>usb</i>");
-
-                    // create the board connected to the port selected
-                    board = new five.Board({
-                        port: portName
-                    });
-
-                    //Arduino board connection
-                    board.on("ready", () => {
-                        let loops = 0;
-
-                        writeLog("Conectando Arduino!!");
-
-                        let motion, led, moisture, sensor, temperature;
-
-                        refSensors.on("child_added", function (snapshot) {
-                            writeLog("child_added");
-                            let item = snapshot.val();
-                            if (item.enabled) {
-                                sensors.push(item);
-
-                                writeLog('Encontrei o sensor [' + item.name + '] conectado!!');
-
-                                for (let i = 0; i < sensors.length; i++) {
-
-                                    if (!sensors[i].enabled) continue;
-
-                                    if (!alerts) alerts = [];
-
-                                    alerts[sensors[i].key] = {
-                                        active: true,
-                                        enabled: true,
-                                        severity: "white",
-                                        lastUpdate: {
-                                            value: sensors[i].label
-                                        },
-                                        configurations: {
-                                            col: 1,
-                                            row: 1,
-                                            draggable: false,
-                                            icon: sensors[i].icon,
-                                            label: sensors[i].label,
-                                            localization: {image: "chuvaforte.jpg"},
-                                            pin: {color: "blue"},
-                                            sensors: [sensors[i].label],
-                                            type: sensors[i].type,
-                                            name: sensors[i].name,
-                                            owner: userKey,
-
-                                        }
-                                    };
-
-                                    writeLog("Conectando sensor [" + sensors[i].type + "]");
-
-                                    if (sensors[i].type == "motion") {
-                                        board.repl.inject({motion: startMotion(sensors[i])});
-                                    }
-                                    else if (sensors[i].type == "led") {
-                                        board.repl.inject({led: startLed(sensors[i])});
-                                    }
-                                    else if (sensors[i].type == "moisture") {
-                                        board.repl.inject({moisture: startMoisture(sensors[i])});
-                                    }
-                                    else if (sensors[i].type == "sensor") {
-                                        board.repl.inject({sensor: startSensor(sensors[i])});
-                                    }
-                                    else if (sensors[i].type == "thermometer") {
-                                        board.repl.inject({temperature: startThermometer(sensors[i])});
-                                    }
-                                };
-                            }
-                        });
-
-                        // show serial port name
-                        $("#labelPort").text(portName);
-
-                    });
-
-                    // when serial port error
-                    board.on("error", function(err) {
-                        // show error message
-                        $("#labelPort").text("Error!");
-                        // remove error message and return to normal state
-                        setTimout(function() {
-                            $("#labelPort").text("Ports");
-                        }, 5000);
-                    });
-
-                });
-
-                writeLog("html: " + html);
-            });
-            // show serial ports names
-            $("#serialPorts").innerHTML(html);
+        board = new five.Board({
+            port: selectedPort
         });
+
+        board.on("ready", () => {
+            btnStart.disabled = true;
+            btnStop.disabled = false;
+
+            writeLog("Conectando Arduino!!");
+
+            refSensors.on("child_added", function (snapshot) {
+                let item = snapshot.val();
+                if (item.enabled) {
+                    sensors.push(item);
+
+                    writeLog('Sensor [' + item.name + '] Encontrado!!');
+
+                    for (let i = 0; i < sensors.length; i++) {
+
+                        if (!alerts) alerts = [];
+
+                        alerts[sensors[i].key] = {
+                            active: true,
+                            enabled: true,
+                            severity: "white",
+                            lastUpdate: {
+                                label: sensors[i].label
+                            },
+                            configurations: {
+                                col: 1,
+                                row: 1,
+                                draggable: false,
+                                icon: sensors[i].icon,
+                                label: sensors[i].label,
+                                localization: {image: "chuvaforte.jpg"},
+                                pin: {color: "blue"},
+                                sensors: [sensors[i].label],
+                                type: sensors[i].type,
+                                name: sensors[i].name,
+                                owner: userKey,
+
+                            }
+                        };
+
+                        writeLog("Conectando sensor [" + sensors[i].name + "]");
+
+                        if (sensors[i].type == "motion") {
+                            board.repl.inject({motion: startMotion(sensors[i])});
+                        }
+                        else if (sensors[i].type == "led") {
+                            board.repl.inject({led: startLed(sensors[i])});
+                        }
+                        else if (sensors[i].type == "moisture") {
+                            board.repl.inject({moisture: startMoisture(sensors[i])});
+                        }
+                        else if (sensors[i].type == "sensor") {
+                            board.repl.inject({sensor: startSensor(sensors[i])});
+                        }
+                        else if (sensors[i].type == "thermometer") {
+                            board.repl.inject({temperature: startThermometer(sensors[i])});
+                        }
+                    };
+                }else{
+                    writeLog("Sensor [" + item.name + "] desligado.");
+                }
+            });
+
+        });
+        board.on("error", function(err) {
+            if (err) {
+                writeLog("Erro ao conectar na porta: " + selectedPort);
+                writeLog("Erro: " + JSON.stringify(err));
+            }
+            setTimeout(function() {
+                writeLog("Timeout ao conectar na porta: " + selectedPort);
+            }, 5000);
+        });
+        //btnStart.disabled = false;
+        //btnStop.disabled = true;
+    });
+    btnStop.addEventListener('click', function (event) {
+        board = "";
+        btnStart.disabled = false;
+        btnStop.disabled = true;
+    });
+    btnRefresh.addEventListener('click', function (event) {
+        serialPortList(serialPorts);
+        btnStart.disabled = true;
     });
 
     $('#simple-notifier').addEventListener('click', function (event) {
@@ -224,46 +219,59 @@ document.addEventListener("DOMContentLoaded", function() {
         NW.App.quit();
     });
 
+    let serialPortList = function(serialPorts){
+        serialPortLib.list(function(err, ports) {
+            writeLog("Verificando portas!!");
+
+            serialPorts.innerHTML = "<option value=''></option>";
+
+            ports.forEach(function(p) {
+                let portID = "port" + cont;
+                serialPorts.innerHTML += "<option id='" + portID + "' value='" + p.comName.toString() + "'>" + p.comName.toString() + "</option>";
+                cont++;
+            });
+
+            serialPorts.selectedIndex = 0;
+        });
+    };
+
+    serialPortList(serialPorts);
 });
+
 let startMotion = function (sensor) {
     let motion = new five.Motion(sensor.configurations.pin);
     motion.active = true;
     motion.key = sensor.key;
-    // writeLog("Size: " + sensor.configurations.events.length);
-
-    /*for (let i=0; i< sensor.configurations.events.length; i++){
-     writeLog("Size: " + sensor.configurations.events[i]);
-     motion.on(sensor.configurations.events[i], function (data) {
-     writeLog("This:"+this, Date.now());
-     writeLog("Value:"+data.value, Date.now());
-     writeLog("DetectedMotion:"+data.detectedMotion, Date.now());
-     writeLog("iIsCalibrated:"+data.isCalibrated, Date.now());
-     });
-     }*/
 
     motion.on("calibrated", function () {
-        writeLog("Sensor Calibrated", Date.now());
+        writeLog("Sensor " + motion.key + " Calibrado", Date.now());
     });
 
     motion.on("motionstart", function () {
-        writeLog("motion started", Date.now());
+        writeLog("Sensor " + motion.key );
+        writeLog("Identificou movimentação", Date.now());
     });
 
     motion.on("motionend", function () {
-        writeLog("motion ended", Date.now());
+        writeLog("Sensor " + motion.key );
+        writeLog("Fim de movimentação ", Date.now());
     });
 
-    motion.on("data", function (data) {
+    motion.on("change", function (data) {
 
         if (data.detectedMotion == motion.lastReading) return;
 
         motion.lastReading = data.detectedMotion;
-        writeLog("leitura:" + data);
+        writeLog("Sensor: " + motion.key);
+        writeLog("Leitura:" + JSON.stringify(data));
 
-        alerts[motion.key].lastUpdate.data = data;
-
-        writeLog("The reading value has changed.");
-
+        alerts[motion.key].lastUpdate = {
+            date: Date.now(),
+            unit: "",
+            value: (data.detectedMotion?"!":""),
+            raw: data
+        };
+        writeLog("--> Atualizando alerta.");
         if (data.detectedMotion) {
             motion.alert = true;
             alerts[motion.key].active = true;
@@ -278,6 +286,7 @@ let startMotion = function (sensor) {
             removeAlert("public", motion.key);
         }
         updateReadings(alerts[motion.key].lastUpdate, motion.key);
+        writeLog("--> Alerta atualizado.");
     });
     return motion;
 };
@@ -395,48 +404,59 @@ let startMoisture = function (sensor) {
 };
 let startThermometer = function (sensor) {
 
+    writeLog("Temperatura: " + sensor.key);
+    writeLog("-->controller: " + sensor.configurations.controller);
+    writeLog("-->freq: " + sensor.configurations.loop);
+    writeLog("-->threshold: " + sensor.configurations.threshold);
+    writeLog("-->pin: " + sensor.configurations.pin);
+
+    // VOUT = 1500 mV at 150°C
+    // VOUT = 250 mV at 25°C
+    // VOUT = –550 mV at –55°C
+    // 10mV = 1°C
+
     let temperature = new five.Thermometer({
         controller: sensor.configurations.controller,
         freq : sensor.configurations.loop,
         threshold : sensor.configurations.threshold,
         pin: sensor.configurations.pin,
-        toCelsius: function(raw) { // optional
-            return (raw * sensor.configurations.sensivity) + sensor.configurations.offset;
+        toCelsius: function(raw) {
+                return Math.round(( raw * 100 ) / 1024);
         }
     });
     temperature.active = true;
     temperature.key = sensor.key;
-    // writeLog("Size: " + sensor.configurations.events.length);
+    temperature.lastReading = 0;
 
-
-    temperature.on("data", function() {
+    temperature.on("change", function(data) {
         if (this.C == temperature.lastReading) return;
 
         temperature.lastReading = this.C;
 
-        writeLog("celsius: %d", this.C);
-        writeLog("fahrenheit: %d", this.F);
-        writeLog("kelvin: %d", this.K);
+        writeLog("Sensor: " + temperature.key);
+        writeLog("-->Celsius:" + this.C);
 
-        alerts[temperature.key].lastUpdate.data = {
-            celsius: this.C,
-            fahrenheit: this.F,
-            kelvin: this.K
+        alerts[temperature.key].lastUpdate = {
+            date: Date.now(),
+            unit: "°C",
+            value: this.C,
+            raw: {
+                celsius: this.C,
+                fahrenheit: this.F,
+                kelvin: this.K
+            }
         };
-
-        writeLog("The reading value has changed.");
-        writeLog("The reading value has changed.");
-
-        if (this.C > 35) {
+        writeLog("--> Atualizando alerta.");
+        if (this.C > 28) {
             temperature.alert = true;
             alerts[temperature.key].active = true;
             alerts[temperature.key].severity = "red";
             alerts[temperature.key].startDate = Date.now();
             updateAlert("public", temperature.key, alerts[temperature.key]);
-        } else if (this.C < 10) {
+        } else if (this.C < 15) {
             temperature.alert = true;
             alerts[temperature.key].active = true;
-            alerts[temperature.key].severity = "yellow";
+            alerts[temperature.key].severity = "blue";
             alerts[temperature.key].startDate = Date.now();
             updateAlert("public", temperature.key, alerts[temperature.key]);
         } else {
@@ -447,6 +467,8 @@ let startThermometer = function (sensor) {
             removeAlert("public", temperature.key);
         }
         updateReadings(alerts[temperature.key].lastUpdate, temperature.key);
+
+        writeLog("Alerta atualizado.");
 
     });
 
@@ -470,10 +492,14 @@ let startSensor = function (sensor) {
 
         if (this.scaledReadingValue == anySensor.lastReading) return;
 
-        alerts[anySensor.key].lastUpdate.data = this;
+        alerts[anySensor.key].lastUpdate = {
+            date: Date.now(),
+            unit: sensor.configurations.unit,
+            value: this.scaledReadingValue,
+            raw: this
+        };
         alerts[anySensor.key].lastReading = this.scaledReadingValue;
 
-        writeLog("The reading value has changed.");
         writeLog("The reading value has changed.");
 
         writeLog("New reading: " + this.scaledReadingValue );
@@ -506,19 +532,21 @@ let startSensor = function (sensor) {
 
 let updateAlert = function (accessType, key ,alert) {
     firebase.database().ref('alerts/' + accessType + '/' + key).set(alert)
-    writeLog("updated  " + 'alerts/' + accessType + '/'+ key);
+    // writeLog("Atualizando alerta:  " + key);
 };
 
 let removeAlert = function (accessType, key) {
     firebase.database().ref('alerts/' + accessType + '/'+ key).remove();
-    writeLog("removed  " + 'alerts/' + accessType + '/'+ key);
+    // writeLog("Removendo alerta:  " + key);
 };
 
 let updateReadings = function (reading, key) {
-    writeLog("updating  " + key);
+    // writeLog("Atualizando leitura:  " + key);
     let sessionsRef = firebase.database().ref('readings/'+ key);
     sessionsRef.update(reading);
-    writeLog("updated  " + key);
+    // writeLog("Leitura atualizada:  " + key);
+
+    refSensors.child(key+'/readings').update(reading);
 };
 
 //Socket connection handler
@@ -538,6 +566,9 @@ let updateReadings = function (reading, key) {
 
 let writeLog = function (msg) {
     var logElement = $("#output");
+
+    if (logElement.innerHTML.split(/'<br>'/).length > 20) logElement.innerHTML = "";
+
     logElement.innerHTML += msg + "<br>";
     logElement.scrollTop = logElement.scrollHeight;
 };

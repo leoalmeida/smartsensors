@@ -75,7 +75,7 @@
         <main class="mdl-layout__content mdl-color--grey-100">
             <div class="mdl-grid content">
                 <div class="cards mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-grid">
-                    <div class="options mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--5-col-tablet mdl-cell--4-col-desktop">
+                    <div class="options mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-cell--4-col-desktop">
                         <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
                             <h2 class="mdl-card__title-text">Configurações</h2>
                         </div>
@@ -102,21 +102,24 @@
                                 <li>
                                     <!-- Serial Ports button -->
                                     <div class="mdl-select mdl-js-select mdl-select--floating-label">
-                                        <select class="mdl-select__input" id="serialPorts" name="serialPorts">
-                                            <option value="">port</option>
+                                        <select class="mdl-select__input" id="serialPorts" name="serialPorts" disabled>
+                                            <option value=""></option>
                                         </select>
                                         <label class="mdl-select__label" for="serialPorts">Ports</label>
                                     </div>
+                                    <button id="btnRefresh" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                                        <i class="material-icons">refresh</i>
+                                    </button>
                                 </li>
                             </ul>
                         </div>
                         <div class="mdl-card__actions mdl-card--border">
-                            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="btnStart" disabled>Iniciar</button>
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnStart" disabled><i class="material-icons">play_for_work</i> Iniciar</button>
                             <div class="mdl-layout-spacer"></div>
-                            <i class="material-icons">location_on</i>
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect" id="btnStop" disabled><i class="material-icons">pan_tool</i> Parar</button>
                         </div>
                     </div>
-                    <div class="updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--3-col-tablet mdl-cell--4-col-desktop">
+                    <div class="options mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-cell--4-col-desktop">
                         <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
                             <h2 class="mdl-card__title-text">Logs</h2>
                         </div>
@@ -124,11 +127,12 @@
                             <div id="output"></div>
                         </div>
                         <div class="mdl-card__actions mdl-card--border">
-                            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="btnClear">Limpar</button>
-                            <button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="node-notifier">Notify Teste</button>
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="btnClear">Limpar</button>
+                            <div class="mdl-layout-spacer"></div>
+                            <button class="mdl-button mdl-js-button mdl-button--raised raised mdl-js-ripple-effect" id="node-notifier">Notify Teste</button>
                         </div>
                     </div>
-                    <div class="updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--5-col-tablet mdl-cell--4-col-desktop">
+                    <div class="updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-cell--4-col-desktop">
                         <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
                             <h2 class="mdl-card__title-text">Últimas Atualizações</h2>
                         </div>
