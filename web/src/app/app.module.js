@@ -24,23 +24,23 @@
     ];
 
     angular
-      .module('app', dependencyModules.concat(myAppComponents))
-      .config(function($mdThemingProvider) {
-          var customPaletteMap = $mdThemingProvider.extendPalette('blue-grey', {
-            'contrastDefaultColor': 'light',
-            'contrastDarkColors': ['50'],
-            '50': 'ffffff'
-          });
-          $mdThemingProvider.definePalette('customPaletteMap', customPaletteMap);
-          $mdThemingProvider.theme('default')
-            .primaryPalette('customPaletteMap', {
-                'default': '500',
-                'hue-2': '300',
-                'hue-3': '100'
+        .module('app', dependencyModules.concat(myAppComponents))
+        .config(function($mdThemingProvider) {
+            var customPaletteMap = $mdThemingProvider.extendPalette('blue-grey', {
+                'contrastDefaultColor': 'light',
+                'contrastDarkColors': ['50'],
+                '50': 'ffffff'
+            });
+            $mdThemingProvider.definePalette('customPaletteMap', customPaletteMap);
+            $mdThemingProvider.theme('default')
+                .primaryPalette('customPaletteMap', {
+                    'default': '500',
+                    'hue-2': '300',
+                    'hue-3': '100'
             })
             .accentPalette('light-blue');
-          $mdThemingProvider.theme('input', 'default')
+            $mdThemingProvider.theme('input', 'default')
             .primaryPalette('grey');
-      });
+        });
 
 })(angular);

@@ -30,7 +30,12 @@ build/Release
 node_modules
 jspm_packages
 build
-Resources
+/Resources
+/scss
+/plugins
+/platforms
+/hooks
+ionic
 
 # Optional npm cache directory
 .npm

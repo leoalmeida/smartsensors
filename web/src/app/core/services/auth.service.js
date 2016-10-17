@@ -5,13 +5,12 @@
         .module('app.core')
         .factory('AuthService', AuthService);
 
-    AuthService.$inject = ['$rootScope', 'firebase', '$firebaseAuth', '$firebaseArray'];
+    AuthService.$inject = ['$rootScope', 'firebase', '$firebaseAuth', '$firebaseArray', '$firebaseObject'];
 
-    function AuthService($rootScope, firebase, $firebaseAuth, $firebaseArray) {
+    function AuthService($rootScope, firebase, $firebaseAuth, $firebaseArray, $firebaseObject) {
 
-        var root = new firebase.database().ref();
+        var root = new firebase.database().ref('users');
         var authObj = $firebaseAuth();
-        var usersList = $firebaseArray(root.child('users'));
 
         this.user = authObj.currentUser;
 
@@ -30,12 +29,24 @@
             return firebaseAuthObject.$createUserWithEmailAndPassword(user.email, user.password);
         }*/
         function updateUser(newObject) {
-            var updated = [];
-            //updated[newObject.uid] = usersList.$getRecord(newObject.uid)
-            //if (!updated[newObject.uid]){
-                updated[newObject.uid] = newObject;
-                updated = usersList.$add(updated);
-            //}
+            var uid = newObject.uid; var updated = [];
+
+            var obj = $firebaseObject(root.child(uid));
+
+            obj.$loaded().then( function (data) {
+                if (!data.uid){
+                    obj.$value = {
+                        "displayName": newObject.displayName,
+                        "email": newObject.email,
+                        "emailVerified": newObject.emailVerified,
+                        "isAnonymous": newObject.isAnonymous,
+                        "photoURL": newObject.photoURL,
+                        "uid": uid,
+                        "providerData": newObject.providerData
+                    };
+                    updated = obj.$save();
+                }
+            });
             return updated;
         }
 
