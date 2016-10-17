@@ -6,10 +6,10 @@
         .controller('RecipeCreatorController', RecipeCreatorController);
 
 
-    RecipeCreatorController.$inject = ['$scope', '$routeParams', 'CONSTANTS', 'SensorsService', 'RecipesService'];
+    RecipeCreatorController.$inject = ['$scope', '$timeout', '$routeParams', 'CONSTANTS', 'SensorsService', 'RecipesService'];
 
 
-    function RecipeCreatorController($scope, $routeParams, CONSTANTS, sensorsService, recipesService) {
+    function RecipeCreatorController($scope, $timeout, $routeParams, CONSTANTS, sensorsService, recipesService) {
         var vm = this;
         var key = $routeParams.id;
 
@@ -62,6 +62,33 @@
         vm.selected = null;
         vm.actions = {"actions": [{"and": {icon: "assets/icons/social/ic_share_24px.svg"}}, {"or": {"icon": "assets/icons/action/ic_account_balance_24px.svg"}}]};
         vm.recipe = {"sensors": []};
+
+
+
+        vm.hidden = false;
+        vm.isOpen = false;
+        vm.hover = false;
+
+        // On opening, add a delayed property which shows tooltips after the speed dial has opened
+        // so that they have the proper position; if closing, immediately hide the tooltips
+        $scope.$watch('vm.pallete1.isOpen', function(isOpen) {
+            if (isOpen) {
+                $timeout(function() {
+                    $scope.tooltipVisible = self.isOpen;
+                }, 600);
+            } else {
+                $scope.tooltipVisible = self.isOpen;
+            }
+        });
+        $scope.$watch('vm.pallete2.isOpen', function(isOpen) {
+            if (isOpen) {
+                $timeout(function() {
+                    $scope.tooltipVisible = self.isOpen;
+                }, 600);
+            } else {
+                $scope.tooltipVisible = self.isOpen;
+            }
+        });
 
         // Model to JSON for demo purpose
         $scope.$watch('vm.selected', function(model) {

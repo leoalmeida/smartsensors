@@ -37,68 +37,59 @@
         </md-card>
 
         <span layout-fill >
-            <md-fab-toolbar class="floating-component-left-bottom"
-                            md-direction="right">
-                <md-fab-trigger class="align-with-text">
+            <md-fab-speed-dial ng-hide="vm.pallete1.hidden" md-direction="right" md-open="vm.pallete1.isOpen"
+                               class="md-scale floating-component-left-2x" ng-class="{ 'md-hover-full': vm.pallete1.hover }">
+                <md-fab-trigger>
                     <md-button aria-label="menu" class="md-fab md-primary">
+                        <md-tooltip md-direction="up" md-visible="tooltipVisible">Sensores</md-tooltip>
                         <md-icon md-svg-src="assets/icons/navigation/ic_menu_24px.svg"></md-icon>
                     </md-button>
                 </md-fab-trigger>
+                 <md-fab-actions dnd-list="sensors">
+                    <div ng-repeat="sensor in vm.sensors | PublicSensorFilter: {column: 'enabled', value: true} as filteredSensors">
+                        <md-button aria-label="{{sensor.label}}"
+                                   dnd-draggable="sensor"
+                                   dnd-moved="filteredSensors.splice($index, 1)"
+                                   dnd-effect-allowed="move"
+                                   dnd-selected="vm.selected = sensor"
+                                   ng-class="{'selected': vm.selected === sensor}"
+                                   class="md-fab md-raised md-mini">
+                            <md-tooltip md-direction="up" md-visible="tooltipVisible"
+                                        md-autohide="false">
+                                {{sensor.name}}
+                            </md-tooltip>
+                            <md-icon md-svg-src="{{sensor.icon}}" aria-label="{{sensor.name}}"></md-icon>
+                        </md-button>
+                    </div>
+                </md-fab-actions>
+            </md-fab-speed-dial>
 
-                <md-toolbar>
-                    <md-fab-actions class="md-toolbar-tools">
-                        <div dnd-list="sensor">
-                            <md-button ng-repeat="sensor in vm.sensors | PublicSensorFilter: {column: 'enabled', value: true} as filteredSensors"
-                                       aria-label="{{sensor.label}}"
-                                       dnd-draggable="sensor"
-                                       dnd-moved="alert(filteredSensors[$index])"
-                                       dnd-effect-allowed="move"
-                                       dnd-selected="vm.selected = sensor"
-                                       ng-class="{'selected': vm.selected === sensor}"
-                                       class="md-fab md-primary">
-                                <md-icon md-svg-src="{{sensor.icon}}"></md-icon>
-                            </md-button>
-                        </div>
-                    </md-fab-actions>
-                </md-toolbar>
-            </md-fab-toolbar>
-        </span>
-        <span layout-fill >
-            <md-fab-toolbar class="floating-component-right-bottom"
-                            md-direction="left">
-                <md-fab-trigger class="align-with-text">
+            <md-fab-speed-dial ng-hide="vm.pallete2.hidden" md-direction="right" md-open="vm.pallete2.isOpen"
+                               class="md-scale floating-component-left" ng-class="{ 'md-hover-full': vm.pallete2.hover }">
+
+                <md-fab-trigger>
                     <md-button aria-label="menu" class="md-fab md-primary">
+                        <md-tooltip md-direction="up" md-visible="tooltipVisible">Ações</md-tooltip>
                         <md-icon md-svg-src="assets/icons/navigation/ic_menu_24px.svg"></md-icon>
                     </md-button>
                 </md-fab-trigger>
-
-                <md-toolbar>
-                    <md-fab-actions class="md-toolbar-tools">
-                        <div dnd-list="actions">
-                            <md-button ng-repeat="action in vm.actions"
-                                       aria-label="{{action}}"
-                                       dnd-draggable="sensor"
-                                       dnd-moved="alert(filteredSensors[$index])"
-                                       dnd-effect-allowed="move"
-                                       dnd-selected="vm.selected = sensor"
-                                       ng-class="{'selected': vm.selected === action}"
-                                       class="md-fab md-primary">
-                                <md-icon md-svg-src="{{action.icon}}"></md-icon>
-                            </md-button>
-                        </div>
-
-                        <!--<md-button aria-label="comment" class="md-icon-button">
-                            <md-icon md-svg-src="assets/icons/social/ic_share_24px.svg"></md-icon>
+                <md-fab-actions dnd-list="actions">
+                    <div ng-repeat="action in vm.actions">
+                        <md-button aria-label="{{action}}"
+                                   dnd-draggable="sensor"
+                                   dnd-effect-allowed="move"
+                                   dnd-selected="vm.selected = action"
+                                   ng-class="{'selected': vm.selected === action}"
+                                   class="md-fab md-raised md-mini">
+                            <md-tooltip md-direction="up" md-visible="tooltipVisible"
+                                        md-autohide="false">
+                                {{action.name}}
+                            </md-tooltip>
+                            <md-icon md-svg-src="{{action.icon}}" aria-label="{{action.name}}"></md-icon>
                         </md-button>
-                        <md-button aria-label="label" class="md-icon-button">
-                            <md-icon md-svg-src="assets/icons/action/ic_account_balance_24px.svg"></md-icon>
-                        </md-button>
-                        <md-button aria-label="photo" class="md-icon-button">
-                            <md-icon md-svg-src="assets/icons/action/ic_account_box_24px.svg"></md-icon>
-                        </md-button>-->
-                    </md-fab-actions>
-                </md-toolbar>
-            </md-fab-toolbar>
+                    </div>
+                </md-fab-actions>
+            </md-fab-speed-dial>
         </span>
     </div>
     <!--<md-card>
