@@ -1,39 +1,45 @@
 <div flex-gt-sm="100" flex>
     <md-toolbar layout="row" class="md-hue-3">
         <div class="md-toolbar-tools">
-            <span>{{vm.SCREENCONFS.LIST.TITLE}}</span>
+            <span>{{vm.SCREENCONFIG.LIST.TITLE}}</span>
             <span flex></span>
             <md-button class="md-primary md-raised edgePadding" aria-label="Novo Servidor" ng-click="vm.newServer($even)">
                 Novo Servidor
             </md-button>
         </div>
     </md-toolbar>
-    <md-content>
-        <md-list ng-animate="'animate'" class="md-dense" ng-repeat="item in vm.listItems">
-            <md-subheader class="md-no-sticky md-accent">
-                <md-button class="md-fab md-mini" aria-label="Novo Sensor" ng-click="vm.newSensor(item.$id)">
-                    <md-icon md-svg-icon="assets/icons/{{vm.SCREENCONFS.LIST.ICONNEW}}"></md-icon>
-                </md-button>
-                <span>{{item.$id}}</span>
-            </md-subheader>
-            <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFS.LIST.CONNECTED.TITLE}}</md-subheader>
-            <md-list-item ng-click="vm.navigateTo(item.$id, sensor.key, $event)"  ng-repeat="sensor in item | SensorFilter: {column: 'enabled', value: true} as filteredSensors">
-                <md-icon md-svg-icon="{{sensor.icon}}"></md-icon>
-                <h4> {{ sensor.name }} </h4>
-                <span flex></span>
-                <h4> {{ sensor.readings.value }} {{ sensor.readings.unit }} </h4>
-                <md-switch class="md-secondary" ng-model="sensor.enabled" ng-change="vm.toggleState(item.$id)"></md-switch>
-            </md-list-item>
-            <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFS.LIST.DISCONNECTED.TITLE}}</md-subheader>
-            <md-list-item ng-click="vm.navigateTo(item.$id, sensor.key, $event)"  ng-repeat="sensor in item | SensorFilter: {column: 'enabled', value: false} as filteredSensors">
-                <md-icon class="md-primary md-hue-3" md-svg-icon="{{sensor.icon}}"></md-icon>
-                <span class="md-primary md-hue-3"> {{ sensor.name }} </span>
-                <span flex></span>
-                <md-switch class="md-secondary" ng-model="sensor.enabled" ng-change="vm.toggleState(item.$id)"></md-switch>
-            </md-list-item>
-            <md-divider></md-divider>
-        </md-list>
-        <md-divider ></md-divider>
+    <md-content style="padding-bottom: 60px">
+        <md-nav-bar md-selected-nav-item="vm.currentNavItem" nav-bar-aria-label="navigation links">
+            <md-nav-item md-nav-click="goto('{{$index}}')" name="{{$index}}" ng-repeat="item in vm.listItems track by $index">{{item.$id}}</md-nav-item>
+        </md-nav-bar>
+        <div ng-if="vm.currentNavItem>-1">
+            <md-list ng-animate="'animate'" class="md-dense">
+                <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFIG.LIST.CONNECTED.TITLE}}</md-subheader>
+                <md-list-item ng-click="vm.navigateTo(vm.listItems[vm.currentNavItem].$id, sensor.key, $event)"  ng-repeat="sensor in vm.listItems[vm.currentNavItem] | SensorFilter: {column: 'enabled', value: true} as filteredSensors">
+                    <md-icon md-svg-icon="{{sensor.icon}}"></md-icon>
+                    <h4> {{ sensor.name }} </h4>
+                    <span flex></span>
+                    <md-icon ng-if="sensor.readings.value=='!'"
+                             style="color:#FA8072;"
+                             aria-label="announcement"
+                             md-svg-icon="{{vm.SCREENCONFIG.ICONS.WARNING}}"></md-icon>
+                    <h4 ng-if="sensor.readings.value!='!'"> {{ sensor.readings.value }} {{ sensor.readings.unit }} </h4>
+                    <span flex="5"></span>
+                    <md-switch class="md-secondary" ng-model="sensor.enabled" ng-change="vm.toggleState(currentNavItem.$id)"></md-switch>
+                </md-list-item>
+                <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFIG.LIST.DISCONNECTED.TITLE}}</md-subheader>
+                <md-list-item ng-click="vm.navigateTo(vm.listItems[vm.currentNavItem].$id, sensor.key, $event)"  ng-repeat="sensor in vm.listItems[vm.currentNavItem] | SensorFilter: {column: 'enabled', value: false} as filteredSensors">
+                    <md-icon class="md-primary md-hue-3" md-svg-icon="{{sensor.icon}}"></md-icon>
+                    <span class="md-primary md-hue-3"> {{ sensor.name }} </span>
+                    <span flex></span>
+                    <md-switch class="md-secondary" ng-model="sensor.enabled" ng-change="vm.toggleState(vm.listItems[vm.currentNavItem].$id)"></md-switch>
+                </md-list-item>
+                <md-divider></md-divider>
+            </md-list>
+            <md-button class="md-fab md-mini floating-component" aria-label="Novo Sensor" ng-click="vm.newSensor(vm.listItems[vm.currentNavItem].$id)">
+                <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.NEW}}"></md-icon>
+            </md-button>
+        </div>
     </md-content>
 </div>
 
@@ -43,7 +49,6 @@
       <span>Detalhes</span>
     </div>
   </md-toolbar>
-
   <md-content>
     <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
         <md-card-title>

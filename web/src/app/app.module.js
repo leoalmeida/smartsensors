@@ -6,6 +6,7 @@
         'ngAnimate',
         'ngMessages',
         'ngRoute',
+        'dndLists',
         'btford.socket-io',
         'angular-web-notification',
         'firebase',
@@ -18,6 +19,7 @@
         'app.friends',
         'app.groups',
         'app.alerts',
+        'app.recipes',
         'app.sensors'
     ];
 

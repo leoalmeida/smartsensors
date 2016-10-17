@@ -16,6 +16,7 @@
             users: firebaseObject('users'),
             subscriptions: firebaseObject('subscriptions'),
             groups: firebaseObject('groups'),
+            recipes: firebaseObject('recipes'),
             alerts: firebaseObject('alerts'),
             sensors: firebaseObject('sensors'),
             readings: firebaseObject('readings'),

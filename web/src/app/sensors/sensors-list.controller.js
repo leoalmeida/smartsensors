@@ -11,8 +11,13 @@
   function SensorListController(currentUser, $location, CONSTANTS, sensorsService, $mdDialog) {
     var vm = this;
 
-    vm.SCREENCONFS = CONSTANTS.SCREENCONFIG.SENSORS;
+    vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SENSORS;
     vm.listItems = sensorsService.getOwn(currentUser);
+
+    vm.currentNavItem = -1;
+    vm.listItems.$loaded().then(function (snapshot) {
+              vm.currentNavItem = 0;
+    });
 
     vm.readingPeriod = 1000;
 

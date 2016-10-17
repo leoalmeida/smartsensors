@@ -19,7 +19,7 @@
                 <md-grid-tile-header layout-padding class="darkAlphaBackground" >
                     <md-card-header>
                         <md-card-avatar>
-                            <img class="md-user-avatar" style="color:#FA8072;" ng-src="{{item.configurations.icon}}"/>
+                            <img class="md-user-avatar" ng-src="{{item.configurations.icon}}"/>
                         </md-card-avatar>
                         <md-card-header-text>
                             <span class="md-title"><strong>{{item.configurations.name}}</strong> ({{item.configurations.label}})</span>
@@ -29,48 +29,47 @@
                         </md-card-header-text>
                     </md-card-header>
                 </md-grid-tile-header>
-                <img ng-src="{{item.configurations.localization.image}}" class="md-card-image" alt="Image" />
+                <img ng-src="assets/images/{{item.configurations.localization.image}}" class="md-card-image" alt="Image" />
                 <md-grid-content ng-class="item.severity">
                     <md-card-actions layout="row" layout-align="start center" >
-                        <p><md-icon ng-if="item.lastUpdate.value=='!'" style="color:#FA8072; max-height: 18px"
-                                 aria-label="announcement" md-svg-icon="{{vm.SCREENCONFIG.ICONS.WARNING}}">
-                        </md-icon></p>
-                        <label ng-if="item.lastUpdate.unit"><strong>{{item.lastUpdate.value}}{{item.lastUpdate.unit}}</strong>  </label>
-
-
                         <md-card-icon-actions>
                             <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Favorite">
-                                <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ASSESSMENT}}"></md-icon>
+                                <md-icon md-svg-src="assets/icons/action/ic_assessment_24px.svg"></md-icon>
                             </md-button>
                             <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Settings">
-                                <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ACCOUNTS}}"></md-icon>
+                                <md-icon md-svg-src="assets/icons/action/ic_account_circle_24px.svg"></md-icon>
                             </md-button>
                             <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Share">
-                                <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.FAVORITE}}"></md-icon>
+                                <md-icon md-svg-src="assets/icons/action/ic_favorite_24px.svg"></md-icon>
                             </md-button>
                         </md-card-icon-actions>
+                        <label><strong>
+                            <md-icon ng-if="!item.lastUpdate.unit" md-svg-src="assets/icons/action/ic_announcement_24px.svg"></md-icon>
+                            <span ng-if="item.lastUpdate.unit">{{item.lastUpdate.value}}{{item.lastUpdate.unit}}</span>
+                        </strong></label>
+                        <md-button>Assinar</md-button>
                     </md-card-actions>
                 </md-grid-content>
 
 
-                <!-- <img ng-src="{{item.localization.image}}" class="md-card-image" alt="image caption"  layout-fill/>
+                <!-- <img ng-src="assets/images/{{item.localization.image}}" class="md-card-image" alt="image caption"  layout-fill/>
 
                 <div class="alert-selected" >
                     <div flex layout-xs="column" layout="row" class="alert-content">
                         <div layout="row" flex-gt-sm="40" >
-                            <img ng-src="{{item.configurations.icon}}" class="card-image" alt="Washed Out">
+                            <img ng-src="assets/images/{{item.configurations.icon}}" class="card-image" alt="Washed Out">
                         </div>
                         <div layout="column" flex-gt-sm="60" >
                             <div layout-align="center center">alerta: {{item.configurations.label}} ({{item.$key}})</div>
                             <div layout-align="space-around center">
                                 <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Favorite">
-                                    <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ACCOUNTS}}"></md-icon>
+                                    <md-icon md-svg-src="assets/icons/action/ic_account_circle_24px.svg"></md-icon>
                                 </md-button>
                                 <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Settings">
-                                    <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ACCOUNTS}}"></md-icon>
+                                    <md-icon md-svg-src="assets/icons/action/ic_account_circle_24px.svg"></md-icon>
                                 </md-button>
                                 <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Share">
-                                    <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ACCOUNTS}}"></md-icon>
+                                    <md-icon md-svg-src="assets/icons/action/ic_account_circle_24px.svg"></md-icon>
                                 </md-button>
                             </div>
                         </div>
@@ -106,7 +105,7 @@
             <md-card md-theme="{{ showDarkTheme ? 'dark-blue' : 'default' }}" md-theme-watch ng-click="navigateTo(item.routeLink)">
                 <md-card-header>
                     <md-card-avatar>
-                        <img ng-src="{{item.configurations.icon}}"/>
+                        <img ng-src="assets/images/{{item.configurations.icon}}"/>
                     </md-card-avatar>
                     <md-card-header-text>
                         <span class="md-title">{{item.configurations.name}}</span>

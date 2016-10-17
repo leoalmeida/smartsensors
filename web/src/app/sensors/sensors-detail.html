@@ -3,7 +3,7 @@
         <md-toolbar class="md-menu-toolbar">
             <div layout="row">
                 <md-toolbar-filler layout layout-align="center center">
-                    <md-icon md-svg-src="assets/icons/action/ic_account_box_24px.svg" aria-label="Clientes Logo"></md-icon>
+                    <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ACCOUNTS}}" aria-label="Clientes Logo"></md-icon>
                 </md-toolbar-filler>
                 <div>
                     <h2 class="md-toolbar-tools">{{vm.activity}}</h2>
@@ -152,7 +152,7 @@
                     <md-card>
                         <md-card-header>
                             <md-card-avatar>
-                                <md-icon class="md-avatar-icon" md-svg-icon="assets/icons/action/ic_info_outline_24px.svg"></md-icon>
+                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.AVATAR}}"></md-icon>
                             </md-card-avatar>
                             <md-card-header-text>
                                 <span class="md-title">Configurações</span>
@@ -250,7 +250,7 @@
                     <md-card>
                         <md-card-header>
                             <md-card-avatar>
-                                <md-icon class="md-avatar-icon" md-svg-icon="assets/icons/action/ic_info_outline_24px.svg"></md-icon>
+                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.AVATAR}}"></md-icon>
                             </md-card-avatar>
                             <md-card-header-text>
                                 <span class="md-title">Histórico de Leituras</span>
@@ -268,11 +268,11 @@
                 </section>
                 <div layout-gt-xs="row" flex>
                     <md-button flex class="md-primary" type="submit" >
-                        <md-icon class="md-secondary"  aria-label="Submeter Cliente" md-svg-icon="assets/icons/editor/ic_publish_24px.svg"></md-icon>
+                        <md-icon class="md-secondary"  aria-label="Submeter" md-svg-icon="{{vm.SCREENCONFIG.ICONS.PUBLISH}}"></md-icon>
                         Finalizar
                     </md-button>
                     <md-button flex class="md-warn" ng-click="vm.cancel()" >
-                        <md-icon class="md-secondary" aria-label="Submeter Cliente" md-svg-icon="assets/icons/content/ic_delete_sweep_24px.svg"></md-icon>
+                        <md-icon class="md-secondary" aria-label="Cancelar" md-svg-icon="{{vm.SCREENCONFIG.ICONS.DELETE}}"></md-icon>
                         Cancelar
                     </md-button>
                 </div>

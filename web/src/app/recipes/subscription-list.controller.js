@@ -16,7 +16,7 @@
 
         vm.anyalerts = vm.anygroups = true;
 
-        vm.SCREENCONFS = CONSTANTS.SCREENCONFIG.GROUPS;
+        vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SUBSCRIPTIONS;
 
         vm.listItems = {};
         vm.listItems.subscribed = subscriptionsService.getOwn(currentUser);

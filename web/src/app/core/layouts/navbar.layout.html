@@ -3,29 +3,28 @@
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <md-button  class="md-icon-button md-primary" ng-click="vm.toggleLeft()" >
-                    <md-icon md-svg-src="assets/icons/navigation/ic_menu_24px.svg"></md-icon>
+                    <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.MENU}}"></md-icon>
                 </md-button>
-                <h2 class="md-tittle"> Smart Sensors </h2>
+                <h2 class="md-tittle">{{vm.SCREENCONFIG.TITLE}}</h2>
                 <!-- fill up the space between left and right area -->
                 <span flex></span>
-                <div ng-if="vm.user">{{vm.user.uid}}</div>
                 <span>
                     <md-button hide show-gt-xs ng-click="vm.login()" class="md-icon-button" >
-                        <md-icon md-svg-src="assets/icons/social/ic_share_24px.svg" class="md-secondary " aria-label="Add"></md-icon>
+                        <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ADD}}" class="md-secondary " aria-label="Add"></md-icon>
                     </md-button>
                     <md-button hide show-gt-xs ng-click="vm.login()" class="md-icon-button" >
-                        <md-icon md-svg-src="assets/icons/social/ic_group_add_24px.svg" class="md-secondary " aria-label="Send Msg "></md-icon>
+                        <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.SUBSCRIBE}}" class="md-secondary " aria-label="Send Msg "></md-icon>
                     </md-button>
                     <md-button hide show-gt-xs ng-click="vm.login()" class="md-icon-button" >
-                        <md-icon md-svg-src="assets/icons/communication/ic_forum_24px.svg" class="md-secondary " aria-label="Send Msg "></md-icon>
+                        <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.MSGS}}" class="md-secondary " aria-label="Send Msg "></md-icon>
                     </md-button>
                     <md-button hide show-gt-xs ng-click="vm.login()" class="md-icon-button" >
-                        <md-icon md-svg-src="assets/icons/social/ic_notifications_active_24px.svg" class="md-secondary " aria-label="Send Msg "></md-icon>
+                        <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.NOTIFICATIONS}}" class="md-secondary " aria-label="Send Msg "></md-icon>
                     </md-button>
                 </span>
                 <md-menu md-position-mode="target-right target">
                     <div aria-label="Open menu" class="md-button md-fab" ng-click="$mdOpenMenu($event)" >
-                        <img ng-if="!vm.user" class="avatarImage imageZoom" ng-src="assets/icons/action/ic_lock_24px.svg" alt="Profile" />
+                        <img ng-if="!vm.user" class="avatarImage imageZoom" ng-src="{{vm.SCREENCONFIG.ICONS.LOCKED}}" alt="Profile" />
                         <img ng-if="vm.user" class="avatarImage imageZoom" ng-src="{{vm.user.photoURL}}" alt="{{vm.user.name}}" />
                     </div>
                     <md-menu-content width="5" class="lightAlphaBackground" >
@@ -36,6 +35,15 @@
             </div>
         </md-toolbar>
         <md-divider ng-if="item.separator"></md-divider>
+        <div layout="row" layout-padding layout-wrap layout-fill layout-align="center center" ng-cloak>
+            <md-whiteframe class="md-whiteframe-1dp" flex-sm="45" flex-gt-sm="35" flex-gt-md="25" layout  layout-align="center center" ng-if="vm.user" >
+                <span>
+                    <label><strong>
+                        {{vm.user.uid}}
+                    </strong></label>
+                </span>
+            </md-whiteframe>
+        </div>
     </md-content>
 
     <md-sidenav class="md-sidenav-left"
@@ -45,7 +53,7 @@
             <md-toolbar class="light-blue md-tall md-hue-2">
                 <span flex></span>
                 <div layout="column" class="md-toolbar-tools-bottom inset">
-                    <img ng-if="!vm.user" class="avatarImage" ng-src="assets/icons/action/ic_lock_24px.svg" alt="Profile" />
+                    <img ng-if="!vm.user" class="avatarImage" ng-src="{{vm.SCREENCONFIG.ICONS.LOCKED}}" alt="Profile" />
                   <img ng-if="vm.user" class="avatarImage" ng-src="{{vm.user.photoURL}}" alt="{{vm.user.name}}" />
                   <span></span>
                   <div ng-if="vm.user">{{vm.user.displayName}}</div>
@@ -57,7 +65,7 @@
                     <span ng-repeat="item in vm.menuItems">
                         <md-subheader ng-if="item.header" class="md-no-sticky">{{item.title}}</md-subheader>
                         <md-divider ng-if="item.separator"></md-divider>
-                        <md-list-item ng-click="vm.navigateTo(item.options.link)" ng-if="!item.layout">
+                        <md-list-item ng-click="vm.navigateTo(item.options.link)" ng-if="!item.layout && item.options.available">
                             <md-icon md-svg-icon="{{item.options.icon}}"></md-icon>
                             <p>{{ item.name }}</p>
                         </md-list-item>

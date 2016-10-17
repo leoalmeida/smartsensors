@@ -23,6 +23,7 @@
         var vm = this;
 
         vm.menuItems = CONSTANTS.MENU;
+        vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.MENU;
         vm.status = false;
 
         vm.close = close;

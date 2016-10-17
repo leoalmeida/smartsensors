@@ -8,11 +8,13 @@
         .controller('HomeController', HomeController);
 
 
-    HomeController.$inject = ['$rootScope', 'currentUser', 'AlertService', '$mdDialog', 'ToastService', 'NotifyService', 'SubscriptionsService', '$filter'];
+    HomeController.$inject = ['$rootScope', 'CONSTANTS','currentUser', 'AlertService', '$mdDialog', 'ToastService', 'NotifyService', 'SubscriptionsService', '$filter'];
 
-    function HomeController($rootScope, currentUser, alertService, $mdDialog, toastService, notifyService, subscriptionsService, $filter) {
+    function HomeController($rootScope, CONSTANTS, currentUser, alertService, $mdDialog, toastService, notifyService, subscriptionsService, $filter) {
 
         var vm = this;
+
+        vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.HOME;
 
         vm.subscribedItems = subscriptionsService.getOwn(currentUser);
 

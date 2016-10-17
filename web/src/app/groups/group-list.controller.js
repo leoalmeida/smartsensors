@@ -14,7 +14,7 @@
 
         var vm = this;
 
-        vm.SCREENCONFS = CONSTANTS.SCREENCONFIG.GROUPS;
+        vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.GROUPS;
 
         vm.listItems = {};
 

@@ -13,6 +13,8 @@
       var vm = this;
       var key = $routeParams.id;
 
+      vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SENSORS;
+
       vm.currentNavItem = 'localization';
       vm.serverID =  $routeParams.location;
       vm.accessType =  $routeParams.accessType;

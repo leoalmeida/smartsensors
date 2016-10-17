@@ -9,26 +9,6 @@
 
   function config($routeProvider) {
         $routeProvider
-            .when('/alerts', {
-                templateUrl: 'app/alerts/alert-list.html',
-                controller: 'AlertController',
-                controllerAs: 'vm',
-                resolve: {
-                    "currentUser": ["AuthService", function(authService) {
-                        return authService.firebaseAuthObject.$requireSignIn();
-                    }]
-                }
-            })
-            .when('/alerts/creator', {
-                templateUrl: 'app/alerts/alert-editor.html',
-                controller: 'AlertCreatorController',
-                controllerAs: 'vm',
-                resolve: {
-                    "currentUser": ["AuthService", function(authService) {
-                        return authService.firebaseAuthObject.$requireSignIn();
-                    }]
-                }
-            })
             .when('/map', {
                 templateUrl: 'app/alerts/map-details.html',
                 controller: 'MapController',

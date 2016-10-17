@@ -1,0 +1,137 @@
+<md-content layout="column" ng-cloak class="md-padding" style="padding-bottom: 100px">
+    <div class="page-container">
+        <div class="container" ng-show="vm.progress">
+            <md-progress-linear md-mode="query" ng-disabled="!vm.progress"></md-progress-linear>
+            <div class="bottom-block">
+                <span>Enviando ...</span>
+            </div>
+        </div>
+
+        <md-card flex>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Receita</span>
+                    <span class="md-subhead">Prepare a sua receita abaixo</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content >
+                <div class="simpleDemo row">
+                    <div ng-repeat="list in vm.recipe">
+                        <md-content layout-gt-md="row" layout-padding>
+                            <div class="md-media-xl" dnd-list="list" layout="row">
+                                <div ng-repeat="item in list"
+                                    dnd-draggable="item"
+                                    dnd-moved="alert(list[$index])"
+                                    dnd-effect-allowed="move"
+                                    dnd-selected="vm.selected = item"
+                                    ng-class="{'selected': vm.selected === item}" flex>
+                                    <md-button class="md-fab md-primary">
+                                        <md-icon md-svg-src="{{item.icon}}"></md-icon>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-content>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+
+        <span layout-fill >
+            <md-fab-toolbar class="floating-component-left-bottom"
+                            md-direction="right">
+                <md-fab-trigger class="align-with-text">
+                    <md-button aria-label="menu" class="md-fab md-primary">
+                        <md-icon md-svg-src="assets/icons/navigation/ic_menu_24px.svg"></md-icon>
+                    </md-button>
+                </md-fab-trigger>
+
+                <md-toolbar>
+                    <md-fab-actions class="md-toolbar-tools">
+                        <div dnd-list="sensor">
+                            <md-button ng-repeat="sensor in vm.sensors | PublicSensorFilter: {column: 'enabled', value: true} as filteredSensors"
+                                       aria-label="{{sensor.label}}"
+                                       dnd-draggable="sensor"
+                                       dnd-moved="alert(filteredSensors[$index])"
+                                       dnd-effect-allowed="move"
+                                       dnd-selected="vm.selected = sensor"
+                                       ng-class="{'selected': vm.selected === sensor}"
+                                       class="md-fab md-primary">
+                                <md-icon md-svg-src="{{sensor.icon}}"></md-icon>
+                            </md-button>
+                        </div>
+
+                        <!--<md-button aria-label="comment" class="md-icon-button">
+                            <md-icon md-svg-src="assets/icons/social/ic_share_24px.svg"></md-icon>
+                        </md-button>
+                        <md-button aria-label="label" class="md-icon-button">
+                            <md-icon md-svg-src="assets/icons/action/ic_account_balance_24px.svg"></md-icon>
+                        </md-button>
+                        <md-button aria-label="photo" class="md-icon-button">
+                            <md-icon md-svg-src="assets/icons/action/ic_account_box_24px.svg"></md-icon>
+                        </md-button>-->
+                    </md-fab-actions>
+                </md-toolbar>
+            </md-fab-toolbar>
+        </span>
+        <span layout-fill >
+            <md-fab-toolbar class="floating-component-right-bottom"
+                            md-direction="left">
+                <md-fab-trigger class="align-with-text">
+                    <md-button aria-label="menu" class="md-fab md-primary">
+                        <md-icon md-svg-src="assets/icons/navigation/ic_menu_24px.svg"></md-icon>
+                    </md-button>
+                </md-fab-trigger>
+
+                <md-toolbar>
+                    <md-fab-actions class="md-toolbar-tools">
+                        <div dnd-list="actions">
+                            <md-button ng-repeat="action in vm.actions"
+                                       aria-label="{{action}}"
+                                       dnd-draggable="sensor"
+                                       dnd-moved="alert(filteredSensors[$index])"
+                                       dnd-effect-allowed="move"
+                                       dnd-selected="vm.selected = sensor"
+                                       ng-class="{'selected': vm.selected === action}"
+                                       class="md-fab md-primary">
+                                <md-icon md-svg-src="{{action.icon}}"></md-icon>
+                            </md-button>
+                        </div>
+
+                        <!--<md-button aria-label="comment" class="md-icon-button">
+                            <md-icon md-svg-src="assets/icons/social/ic_share_24px.svg"></md-icon>
+                        </md-button>
+                        <md-button aria-label="label" class="md-icon-button">
+                            <md-icon md-svg-src="assets/icons/action/ic_account_balance_24px.svg"></md-icon>
+                        </md-button>
+                        <md-button aria-label="photo" class="md-icon-button">
+                            <md-icon md-svg-src="assets/icons/action/ic_account_box_24px.svg"></md-icon>
+                        </md-button>-->
+                    </md-fab-actions>
+                </md-toolbar>
+            </md-fab-toolbar>
+        </span>
+    </div>
+    <!--<md-card>
+        <md-card-content>
+            <div class="simpleDemo row">
+                <span class="md-title">Receita</span>
+                <md-content layout-gt-md="row" layout-padding>
+                    <div dnd-list="filteredSensors">
+                        <span ng-repeat="sensor in vm.sensors | PublicSensorFilter: {column: 'enabled', value: true} as filteredSensors"
+                                   aria-label="{{sensor.label}}"
+                                   dnd-draggable="sensor"
+                                   dnd-moved="alert(filteredSensors[sensor.$key])"
+                                   dnd-effect-allowed="move"
+                                   dnd-selected="vm.selected = sensor"
+                                   ng-class="{'selected': vm.selected === sensor}"
+                                   class="md-fab md-primary">
+                            <md-icon md-svg-src="{{sensor.icon}}"></md-icon>
+                        </span>
+                    </div>
+                </md-content>
+            </div>
+        </md-card-content>
+    </md-card>-->
+</md-content>
+
+

@@ -1,0 +1,78 @@
+<div flex-gt-sm="100" flex>
+    <md-toolbar layout="row" class="md-hue-3">
+        <div class="md-toolbar-tools">
+            <span>{{vm.SCREENCONFIG.LIST.TITLE}}</span>
+            <span flex></span>
+            <md-button class="md-raised" aria-label="Learn More">
+                Learn More
+            </md-button>
+            <md-button class="md-fab md-mini" aria-label="Favorite" ng-click="vm.newItem()">
+                <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.NEW}}"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-content>
+        <md-list ng-animate="'animate'" class="md-dense">
+            <md-divider></md-divider>
+            <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFIG.LIST.SUBSCRIBED.TITLE}}</md-subheader>
+            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.subscribed">
+                <img alt="{{ item.name }}" ng-src="{{item.avatar}}" class="md-avatar" />
+                <div class="md-list-item-text" >
+                    <h3>{{ item.name }}</h3>
+                    <h4>{{ item.description }}</h4>
+                </div>
+                <span flex></span>
+                <h4> {{ item.members.length }} </h4>
+                <md-icon md-svg-icon="{{vm.SCREENCONFIG.LIST.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
+                <span flex></span>
+                <md-switch class="md-secondary" ng-model="item.status" ng-change="vm.toggleState(item)"></md-switch>
+            </md-list-item>
+            <md-divider></md-divider>
+        </md-list>
+        <md-divider ></md-divider>
+        <md-list ng-animate="'animate'" class="md-dense">
+            <md-divider></md-divider>
+            <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFIG.LIST.ALERTS.TITLE}}</md-subheader>
+            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.alerts | SubscriptionFilter:{values: vm.listItems.subscribed, type:'alert', reversal: true} as filteredAlerts" >
+                <img alt="{{ item.configurations.name }}" ng-src="{{item.configurations.localization.image}}" class="md-avatar" />
+                <div class="md-list-item-text" >
+                    <h3>{{ item.configurations.name }}</h3>
+                    <h4>{{ item.configurations.type }}</h4>
+                </div>
+                <span flex></span>
+                <h4> {{ item.subscribers.length }} </h4>
+                <md-icon md-svg-icon="{{vm.SCREENCONFIG.LIST.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
+                <span flex></span>
+                <md-switch class="md-secondary" ng-model="item.subscribed" ng-change="vm.subscribeToAlert(item)"></md-switch>
+            </md-list-item>
+            <md-divider></md-divider>
+        </md-list>
+        <md-divider ></md-divider>
+    </md-content>
+</div>
+
+<div hide flex-gt-sm="50"  flex>
+    <md-toolbar layout="row" class="md-hue-3">
+        <div class="md-toolbar-tools">
+            <span>Detalhes</span>
+        </div>
+    </md-toolbar>
+
+    <md-content>
+        <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Card with image</span>
+                    <span class="md-subhead">Large</span>
+                </md-card-title-text>
+                <md-card-title-media>
+                    <div class="md-media-lg card-media"></div>
+                </md-card-title-media>
+            </md-card-title>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button>Action 1</md-button>
+                <md-button>Action 2</md-button>
+            </md-card-actions>
+        </md-card>
+    </md-content>
+</div>
