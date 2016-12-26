@@ -13,6 +13,8 @@
         var vm = this;
         var key = $routeParams.id;
 
+        vm.debugger = false;
+
         vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.RECIPES;
 
         vm.models =  {

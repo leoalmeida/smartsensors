@@ -37,35 +37,9 @@
                         </md-card-actions>
                 </md-card-content>
             </md-card>
-            <!--<div flex-sm="25" flex-gt-md="20" >
-                <md-card layout-wrap class="box">
-                    <md-card-header>
-                        <md-card-avatar>
-                          <img class="md-user-avatar" src="assets/icons/editor/ic_mode_edit_24px.svg"/>
-                        </md-card-avatar>
-                        <md-card-header-text>
-                          <span class="md-title">Selected</span>
-                          <span class="md-subhead"><strong>Tipo: </strong> {{vm.models.selected.type}}</span>
-                        </md-card-header-text>
-                    </md-card-header>
-                    <md-card-content >
-                        <div layout="column" layout-wrap>
-                            <md-radio-group ng-model="vm.models.selected.rule.sign" class="md-primary" ng-disabled="!vm.models.selected.type">
-                              <md-radio-button ng-repeat="sign in vm.signTypes"
-                                                ng-value="sign.value">
-                                                {{sign.display}}
-                              </md-radio-button>
-                            </md-radio-group>
-                            <md-input-container ng-if="vm.models.selected" class="md-icon-float" >
-                              <input ng-model="vm.models.selected.rule.valuevm.models.selected.rule.value" type="number" ng-disabled="!vm.models.selected.type">
-                            </md-input-container>
-                        </div>
-                    </md-card-content>
-                </md-card>
-            </div>-->
         </md-content>
 
-        <md-card flex layout-wrap>
+        <md-card flex layout-wrap ng-if="vm.debugger">
           <md-card-title>
               <md-card-title-text>
                   <span class="md-headline">JSON</span>
