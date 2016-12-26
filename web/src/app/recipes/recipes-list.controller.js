@@ -14,9 +14,18 @@
 
         var vm = this;
 
+        vm.helpResult = '  ';
+        vm.customFullscreen = false;
+
         vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.RECIPES;
 
-        vm.listItems = recipesService.getAll();
+        vm.listItems = recipesService.getPublic();
+        //vm.listItems = recipesService.getOwn(currentUser);
+
+        vm.currentNavItem = -1;
+        vm.listItems.$loaded().then(function (snapshot) {
+            vm.currentNavItem = 0;
+        });
 
         vm.toggleState = function (item){
             var ret = vm.listItems.$save(vm.listItems.$indexFor(item.$id));
@@ -33,6 +42,37 @@
         vm.navigateTo = function(key, $event){
             $location.path( "/recipes/public/edit/" + key);
         };
+
+        vm.showHelp = function(ev) {
+            $mdDialog.show({
+                controller: HelpController,
+                templateUrl: 'app/recipes/help.tmpl.html',
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose:true,
+                fullscreen: vm.customFullscreen // Only for -xs, -sm breakpoints.
+            })
+                .then(function(answer) {
+                    vm.helpResult = 'A informação foi "' + answer + '".';
+                }, function() {
+                    vm.helpResult = 'Cancelado.';
+                });
+        };
+
+        function HelpController($scope, $mdDialog) {
+            $scope.hide = function() {
+                $mdDialog.hide();
+            };
+
+            $scope.cancel = function() {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function(answer) {
+                $mdDialog.hide(answer);
+            };
+        }
+
 
     }
 

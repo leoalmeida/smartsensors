@@ -1,8 +1,6 @@
 (function(angular) {
     'use strict';
 
-
-
     angular
         .module('app.home')
         .controller('HomeController', HomeController);
@@ -22,12 +20,12 @@
 
         vm.alertItems.$watch(function (event) {
             if (event.event === 'child_changed'){
-                var alert = vm.alertItems.$getRecord(event.key);
-                var message = alert.configurations.name + " atualizada para " + alert.lastUpdate.value + (alert.lastUpdate.unit || "");
-                toastService.showMessage(message);
-                notifyService.notify(message, "");
-                console.log(event);
-                console.log(message);
+              var alert = vm.alertItems.$getRecord(event.key);
+              var message = alert.configurations.name + " atualizada para " + alert.lastUpdate.value + (alert.lastUpdate.unit || "");
+              toastService.showMessage(message);
+              notifyService.notify(message, "");
+              console.log(event);
+              console.log(message);
             }
         });
 

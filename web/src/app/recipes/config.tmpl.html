@@ -1,0 +1,66 @@
+<md-dialog aria-label="Ajuda">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <md-button class="md-icon-button" aria-label="Configurations" ng-disabled="true">
+                    <md-icon md-svg-icon="assets/icons/editor/ic_mode_edit_24px.svg"></md-icon>
+                </md-button>
+                <span>
+                    <h4 >
+                        <span class="md-title"><strong>Configuração: </strong> </span>
+                    <span class="md-subhead">
+                        {{ vm.models.selected.type | TitleCaseFilter }}
+                    </span>
+                    </h4>
+                </span>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="vm.cancel()">
+                    <md-icon md-svg-src="assets/icons/navigation/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                        <div layout="row" layout-wrap ng-repeat="rule in vm.models.selected.rules" ng-if="vm.models.selected.type" flex >
+                            <md-input-container class="md-icon-float" flex="35">
+                                <label>Regra</label>
+                                <md-select ng-model="rule.sign">
+                                    <md-option ng-repeat="sign in vm.signTypes" ng-value="sign.value" ng-disabled="$index === -1">
+                                        {{sign.display}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-input-container flex>
+                                <label>Valor</label>
+                                <input ng-model="rule.value" type="number">
+                            </md-input-container>
+                            <md-input-container class="md-icon-float" flex ng-if="!$last">
+                                <label>Conector</label>
+                                <md-select ng-model="rule.connector" >
+                                    <md-option ng-repeat="connector in vm.connectors" ng-value="connector.value">
+                                        {{connector.label}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                            <span>
+                                <md-button class="md-icon-button" aria-label="More" ng-click="vm.addRule($event)">
+                                    <md-icon md-svg-icon="assets/icons/content/ic_add_circle_24px.svg"></md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" aria-label="Remove" ng-click="vm.removeRule($index)">
+                                    <md-icon md-svg-icon="assets/icons/content/ic_remove_circle_24px.svg"></md-icon>
+                                </md-button>
+                            </span>
+                        </div>
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-click="vm.closeDialog('changed')">
+                OK
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

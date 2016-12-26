@@ -7,6 +7,6 @@
       .module('app.core')
       .constant('API', {
           contacts: host + 'apis/user/'
-    });
+      });
 
 })(angular);

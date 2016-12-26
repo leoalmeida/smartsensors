@@ -3,8 +3,8 @@
         <div class="md-toolbar-tools">
             <span>{{vm.SCREENCONFIG.LIST.TITLE}}</span>
             <span flex></span>
-            <md-button class="md-raised" aria-label="Learn More">
-                Learn More
+            <md-button class="md-raised" aria-label="Ajuda?" ng-click="vm.showHelp($event)">
+                Ajuda?
             </md-button>
         </div>
     </md-toolbar>
@@ -12,13 +12,13 @@
         <md-list ng-animate="'animate'" class="md-dense" >
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFIG.LIST.SUBSCRIBED.TITLE}}</md-subheader>
-            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems  | filter:{ enabled: true }">
-                <img alt="{{ item.configurations.name }}" ng-src="{{item.configurations.localization.image}}" class="md-avatar" />
+            <md-list-item class="md-3-line" ng-click="vm.navigateTo(vm.listItems[vm.currentNavItem].$id, $event)" ng-repeat="item in vm.listItems | RecipesFilter: {column: 'enabled', value: true} as filteredRecipes">
+                <img alt="{{ item.icon }}" ng-src="{{item.icon}}" class="md-avatar" />
                 <div class="md-list-item-text" >
-                    <h3>{{ item.configurations.name }}</h3>
-                    <h4>{{ item.configurations.type }}</h4>
-                    <p ng-if="item.active">{{vm.SCREENCONFIG.LIST.ACTIVE.TITLE}}</p>
-                    <p ng-if="!item.active">{{vm.SCREENCONFIG.LIST.NOTACTIVE.TITLE}}</p>
+                    <h3>{{ item.label }}</h3>
+                    <h4>{{ item.container.size }}</h4>
+                    <p ng-if="item.enabled">{{vm.SCREENCONFIG.LIST.ACTIVE.TITLE}}</p>
+                    <p ng-if="!item.enabled">{{vm.SCREENCONFIG.LIST.NOTACTIVE.TITLE}}</p>
                 </div>
                 <span flex></span>
                 <h4> {{ vm.subscribersQty(item.subscribers) }} </h4>

@@ -39,7 +39,7 @@
                     }]
                 }
             }).when('/recipes/:accessType/:type/:id', {
-                templateUrl: 'app/recipes/sensors-editor.html',
+                templateUrl: 'app/recipes/recipes-editor.html',
                 controller: 'RecipeCreatorController',
                 controllerAs: 'vm',
                 resolve: {

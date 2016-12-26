@@ -1,41 +1,29 @@
 // node-webkit
-let NW = require('nw.gui');
+let win = chrome.app.window;
 
-nw.require("nwjs-j5-fix").fix();
-
-let firebase = require("firebase");
-firebase.initializeApp({
-    apiKey: 'AIzaSyCCO7zMiZZTav3eDQlD6JnVoEcEVXkodns',
-    authDomain: 'guifragmentos.firebaseapp.com',
-    databaseURL: 'https://guifragmentos.firebaseio.com',
-    storageBucket: 'guifragmentos.appspot.com',
-});
+//nw.require("nwjs-j5-fix").fix();
 
 // let userKey = "JwyqVEHujYe3RtBCN50gbjXK1EB3";
 // let serverID = "";
 let userKey = serverID = "";
-let sensors = [], alerts = [], sensor, sensorPower, counter;
-const db = firebase.database();
+let sensors = [], sensor, sensorPower, counter;
 
 // const io = require('socket.io')(httpServer);
-
-const refAlerts = db.ref('alerts/public/');
-
-refAlerts.once("value", function (snapshot) {
-    alerts = snapshot.val() ;
-});
 
 let $ = function (selector) {
     return document.querySelector(selector);
 };
 
-const five = require("johnny-five");
+let five,serialPortLib;
+
+//const five = require("johnny-five");
 //let board = new five.Board();
-let serialPortLib = require("browser-serialport");
+//let serialPortLib = require("browser-serialport");
 
 
 let refSensors = refServerList = selectedPort = selectedServer = "";
-document.addEventListener("DOMContentLoaded", function() {
+
+chrome.app.runtime.onLaunched.addListener(function() {
 
     const userKeyCmp = $("#userKey"),
         serverIDCmp = $("#serverID"),
@@ -212,10 +200,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     // bring window to front when open via terminal
-    NW.Window.get().focus();
+    win.focus();
 
     // for nw-notify frameless windows
-    NW.Window.get().on('close', function() {
+    win.on('close', function() {
         NW.App.quit();
     });
 
@@ -587,7 +575,7 @@ let showNotification = function (icon, title, body) {
 
     notification.onclose = function () {
         writeLog("Notification closed");
-        NW.Window.get().focus();
+        win.focus();
     };
 
     notification.onshow = function () {
@@ -605,7 +593,7 @@ let showNativeNotification = function (icon, title, message, sound, image) {
     } catch (error) {
         console.error(error);
         if (error.message == "Cannot find module 'node-notifier'") {
-            window.alert("Can not load module 'node-notifier'.\nPlease run 'npm install'");
+            window.current().alert("Can not load module 'node-notifier'.\nPlease run 'npm install'");
         }
         return false;
     }
@@ -627,7 +615,7 @@ let showNativeNotification = function (icon, title, message, sound, image) {
     }, function (err, response) {
         if (response == "Activate\n") {
             writeLog("node-notifier: notification clicked");
-            NW.Window.get().focus();
+            win.focus();
         }
     });
 

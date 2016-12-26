@@ -1,0 +1,55 @@
+{
+  "rules": {
+    "alerts": {
+      "public": {
+        ".indexOn": "owner/id"
+      },
+      ".read": true,
+      ".write": true
+    },
+    "groups": {
+      ".read": true,
+      ".write": true
+    },
+    "recipes": {
+      ".read": true,
+      ".write": true
+    },
+    "servers": {
+      ".read": true,
+      ".write": true
+    },
+    "configurations": {
+      ".read": true,
+      ".write": true
+    },
+    "map-info": {
+      ".read": true,
+      ".write": true
+    },
+    "sensors": {
+      ".read": true,
+      ".write": true
+    },
+    "readings": {
+      ".read": true,
+      ".write": true
+    },
+    "subscriptions": {
+      ".read": true,
+      ".write": true
+    },
+    "textMessages": {
+      ".read": true,
+      ".write": true
+    },
+    "users": {
+      ".read": true,
+      ".write": true
+    },
+    "another_resource": {
+      ".read": "auth.uid === 'BYFzjIrm1BTaVbPtliezzU8KgHv2'",
+      ".write": "auth.uid === 'BYFzjIrm1BTaVbPtliezzU8KgHv2'"
+    }
+  }
+}

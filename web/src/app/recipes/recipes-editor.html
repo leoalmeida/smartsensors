@@ -6,34 +6,74 @@
                 <span>Enviando ...</span>
             </div>
         </div>
+        <md-button class="md-fab md-warn md-hue-2 floating-component fl-right fl-secondary" aria-label="Cancel" ng-click="vm.submit()">
+            <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.GOBACK}}"></md-icon>
+        </md-button>
+        <md-button class="md-fab md-hue-2 floating-component fl-right fl-primary" aria-label="Submit" ng-click="vm.submit()">
+            <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.PUBLISH}}"></md-icon>
+        </md-button>
+        <md-content layout="row" layout-wrap>
 
-        <md-card flex>
-            <md-card-title>
-                <md-card-title-text>
-                    <span class="md-headline">Receita</span>
-                    <span class="md-subhead">Prepare a sua receita abaixo</span>
-                </md-card-title-text>
-            </md-card-title>
-            <md-card-content >
-                <div class="simpleDemo row">
-                    <div ng-repeat="list in vm.recipe">
-                        <md-content layout-gt-md="row" layout-padding>
-                            <div class="md-media-xl" dnd-list="list" layout="row">
-                                <div ng-repeat="item in list"
-                                    dnd-draggable="item"
-                                    dnd-moved="alert(list[$index])"
-                                    dnd-effect-allowed="move"
-                                    dnd-selected="vm.selected = item"
-                                    ng-class="{'selected': vm.selected === item}" flex>
-                                    <md-button class="md-fab md-primary">
-                                        <md-icon md-svg-src="{{item.icon}}"></md-icon>
-                                    </md-button>
-                                </div>
-                            </div>
-                        </md-content>
-                    </div>
-                </div>
-            </md-card-content>
+        </md-content>
+        <md-content layout="row" layout-xs="column">
+            <md-card class="dropzone" flex layout-wrap ng-repeat="list in vm.models.recipes">
+                    <md-card-header>
+                        <md-card-avatar>
+                            <img class="md-user-avatar" src="{{list.icon}}"/>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-headline">
+                                <md-input-container md-no-float>
+                                    <label>Receita</label>
+                                    <input ng-model="list.label">
+                                </md-input-container>
+                            </span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-content layout="row" >
+                        <div ng-include="'container.html'" class="box" flex></div>
+                        <md-card-actions class="trashcan" layout="column" aria-label="Remove" dnd-list="[]" layout-align="center center" flex="10">
+                                <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.REMOVE}}" aria-label="Remove"></md-icon>
+                        </md-card-actions>
+                </md-card-content>
+            </md-card>
+            <!--<div flex-sm="25" flex-gt-md="20" >
+                <md-card layout-wrap class="box">
+                    <md-card-header>
+                        <md-card-avatar>
+                          <img class="md-user-avatar" src="assets/icons/editor/ic_mode_edit_24px.svg"/>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                          <span class="md-title">Selected</span>
+                          <span class="md-subhead"><strong>Tipo: </strong> {{vm.models.selected.type}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-content >
+                        <div layout="column" layout-wrap>
+                            <md-radio-group ng-model="vm.models.selected.rule.sign" class="md-primary" ng-disabled="!vm.models.selected.type">
+                              <md-radio-button ng-repeat="sign in vm.signTypes"
+                                                ng-value="sign.value">
+                                                {{sign.display}}
+                              </md-radio-button>
+                            </md-radio-group>
+                            <md-input-container ng-if="vm.models.selected" class="md-icon-float" >
+                              <input ng-model="vm.models.selected.rule.valuevm.models.selected.rule.value" type="number" ng-disabled="!vm.models.selected.type">
+                            </md-input-container>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>-->
+        </md-content>
+
+        <md-card flex layout-wrap>
+          <md-card-title>
+              <md-card-title-text>
+                  <span class="md-headline">JSON</span>
+              </md-card-title-text>
+          </md-card-title>
+          <md-card-content>
+            <pre class="code">{{vm.modelAsJson}}</pre>
+          </md-card-content>
         </md-card>
 
         <span layout-fill >
@@ -42,23 +82,20 @@
                 <md-fab-trigger>
                     <md-button aria-label="menu" class="md-fab md-primary">
                         <md-tooltip md-direction="up" md-visible="tooltipVisible">Sensores</md-tooltip>
-                        <md-icon md-svg-src="assets/icons/navigation/ic_menu_24px.svg"></md-icon>
+                        <md-icon md-svg-src="assets/icons/action/ic_settings_input_antenna_24px.svg"></md-icon>
                     </md-button>
                 </md-fab-trigger>
-                 <md-fab-actions dnd-list="sensors">
-                    <div ng-repeat="sensor in vm.sensors | PublicSensorFilter: {column: 'enabled', value: true} as filteredSensors">
-                        <md-button aria-label="{{sensor.label}}"
-                                   dnd-draggable="sensor"
-                                   dnd-moved="filteredSensors.splice($index, 1)"
-                                   dnd-effect-allowed="move"
-                                   dnd-selected="vm.selected = sensor"
-                                   ng-class="{'selected': vm.selected === sensor}"
-                                   class="md-fab md-raised md-mini">
+                 <md-fab-actions>
+                    <div ng-repeat="item in vm.sensors | PublicSensorFilter: {column: 'enabled', value: true} as filteredSensors"
+                            dnd-draggable="{id: item.id, key: item.key, type: 'sensor', name: item.name, icon: item.icon, rules: [{}]}"
+                            dnd-effect-allowed="copy"
+                            dnd-copied="item.id = item.id + 1">
+                        <md-button class="md-fab md-raised md-mini">
                             <md-tooltip md-direction="up" md-visible="tooltipVisible"
                                         md-autohide="false">
-                                {{sensor.name}}
+                                {{item.name}}
                             </md-tooltip>
-                            <md-icon md-svg-src="{{sensor.icon}}" aria-label="{{sensor.name}}"></md-icon>
+                            <md-icon md-svg-src="{{item.icon}}" aria-label="{{item.name}}"></md-icon>
                         </md-button>
                     </div>
                 </md-fab-actions>
@@ -69,50 +106,110 @@
 
                 <md-fab-trigger>
                     <md-button aria-label="menu" class="md-fab md-primary">
-                        <md-tooltip md-direction="up" md-visible="tooltipVisible">Ações</md-tooltip>
-                        <md-icon md-svg-src="assets/icons/navigation/ic_menu_24px.svg"></md-icon>
+                        <md-tooltip md-direction="up" md-visible="tooltipVisible">Conectores</md-tooltip>
+                        <md-icon md-svg-src="assets/icons/hardware/ic_device_hub_24px.svg"></md-icon>
                     </md-button>
                 </md-fab-trigger>
-                <md-fab-actions dnd-list="actions">
-                    <div ng-repeat="action in vm.actions">
-                        <md-button aria-label="{{action}}"
-                                   dnd-draggable="sensor"
-                                   dnd-effect-allowed="move"
-                                   dnd-selected="vm.selected = action"
-                                   ng-class="{'selected': vm.selected === action}"
-                                   class="md-fab md-raised md-mini">
+                <md-fab-actions>
+                    <div ng-repeat="item in vm.connectors"
+                              dnd-draggable="item"
+                              dnd-effect-allowed="copy"
+                              dnd-copied="item.id = item.id + 1">
+                        <md-button class="md-fab md-raised md-mini">
                             <md-tooltip md-direction="up" md-visible="tooltipVisible"
                                         md-autohide="false">
-                                {{action.name}}
+                                {{item.label}}
                             </md-tooltip>
-                            <md-icon md-svg-src="{{action.icon}}" aria-label="{{action.name}}"></md-icon>
+                            <md-icon md-svg-src="{{item.icon}}" aria-label="{{item.label}}"></md-icon>
                         </md-button>
                     </div>
                 </md-fab-actions>
             </md-fab-speed-dial>
         </span>
     </div>
-    <!--<md-card>
-        <md-card-content>
-            <div class="simpleDemo row">
-                <span class="md-title">Receita</span>
-                <md-content layout-gt-md="row" layout-padding>
-                    <div dnd-list="filteredSensors">
-                        <span ng-repeat="sensor in vm.sensors | PublicSensorFilter: {column: 'enabled', value: true} as filteredSensors"
-                                   aria-label="{{sensor.label}}"
-                                   dnd-draggable="sensor"
-                                   dnd-moved="alert(filteredSensors[sensor.$key])"
-                                   dnd-effect-allowed="move"
-                                   dnd-selected="vm.selected = sensor"
-                                   ng-class="{'selected': vm.selected === sensor}"
-                                   class="md-fab md-primary">
-                            <md-icon md-svg-src="{{sensor.icon}}"></md-icon>
-                        </span>
-                    </div>
-                </md-content>
-            </div>
-        </md-card-content>
-    </md-card>-->
 </md-content>
 
+<!-- Template for a normal list item -->
+<script type="text/ng-template" id="container.html">
+  <div  dnd-list="list.container"
+        dnd-disable-if="list.container.length >= list.max">
+    <div class="llist"
+        ng-repeat="item in list.container"
+        dnd-draggable="item"
+        dnd-type="item.type"
+        dnd-disable-if="item.type == 'unknown'"
+        dnd-moved="list.container.splice($index, 1)"
+        dnd-effect-allowed="move"
+        dnd-selected="vm.models.selected = item"
+        ng-class="{'selected': vm.models.selected === item}"
+        ng-include="item.type + '.html'"
+        layout="row" layout-align="center center" layout-fill flex>
+    </div>
+    <div class="llist dndPlaceholder">
+        <strong>{{vm.models.allowedTypes.join(' ou ')}}</strong>
+    </div>
+  </div>
+</script>
 
+<script type="text/ng-template" id="list.html">
+      <div  dnd-list="list"
+            dnd-disable-if="list.length >= item.max" layout="row" layout-wrap>
+        <div class="llist"
+            ng-repeat="item in list"
+            dnd-draggable="item"
+            dnd-type="item.type"
+            dnd-disable-if="item.type == 'unknown'"
+            dnd-moved="list.splice($index, 1)"
+            dnd-effect-allowed="move"
+            dnd-selected="vm.models.selected = item"
+            ng-class="{'selected': vm.models.selected === item}"
+            ng-include="item.type + '.html'"
+            layout="row" layout-align="center center" flex>
+        </div>
+        <div class="dndPlaceholder">
+            <strong>{{list.allowedTypes.join(' ou ')}}</strong>
+        </div>
+      </div>
+</script>
+<!-- This template is responsible for rendering a container element. It uses
+ the above list template to render each container column -->
+<script type="text/ng-template" id="connector.html">
+    <md-whiteframe class="md-whiteframe-1dp"  layout class="container-element box">
+      <div layout-align="center center"  flex>
+        <md-card-header>
+          <md-card-avatar>
+              <md-icon md-svg-src="{{item.icon}}"></md-icon>
+          </md-card-avatar>
+          <md-card-header-text>
+            <span class="md-title">Conector</span>
+            <span class="md-subhead"><strong>Tipo: </strong>{{item.label}}</span>
+          </md-card-header-text>
+        </md-card-header>
+        <md-content>
+          <div layout="column" ng-repeat="list in item.objects" ng-include="'list.html'"></div>
+        </md-content>
+      </div>
+    </md-whiteframe>
+</script>
+
+<!-- Template for a normal list item -->
+<script type="text/ng-template" id="sensor.html">
+    <md-whiteframe class="md-whiteframe-1dp" layout>
+      <div layout="row" layout-align="center center" flex>
+          <md-button class="md-fab md-primary" ng-click="vm.showConfig($event)">
+              <md-icon md-svg-src="{{item.icon}}"></md-icon>
+          </md-button>
+          <span>Sensor: <strong>{{item.name}}</strong></span>
+          <span flex></span>
+          <div>
+            <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
+                <md-chip-template>
+                    <span>
+                        <strong>{{$chip.sign}} {{$chip.value}}</strong>
+                    </span>
+                </md-chip-template>
+            </md-chips>
+          </div>
+      </div>
+    </md-whiteframe>
+</script>

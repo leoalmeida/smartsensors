@@ -11,7 +11,7 @@
 
         var recipesRef = firebaseDataService.recipes;
         var database = recipesRef.$id;
-        var recipesList = firebaseDataService.getFirebaseArray(recipesRef.$id);
+        var recipesList = firebaseDataService.getFirebaseArray(database);
         var configRef = firebaseDataService.configurations;
 
 
@@ -42,7 +42,7 @@
         }
 
         function addOne(currentUser, type, newObject) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type ).$add(newObject);
+            return firebaseDataService.getFirebaseArray(database + '/' + type ).$add(newObject);
         }
 
         function removeOne(currentUser, type, key) {
@@ -50,7 +50,8 @@
         }
 
         function getOwn(currentUser) {
-            return firebaseDataService.getFirebaseArray(database + '/private/' + currentUser.uid);
+            //return firebaseDataService.getFirebaseArray(database + '/private/' + currentUser.uid);
+            return firebaseDataService.getFirebaseArray(database + '/public/', currentUser.uid);
         }
 
     }

@@ -7,7 +7,6 @@
         'ngMessages',
         'ngRoute',
         'dndLists',
-        'btford.socket-io',
         'angular-web-notification',
         'firebase',
         'ngMap'];
@@ -18,8 +17,8 @@
         'app.notifications',
         'app.friends',
         'app.groups',
-        'app.alerts',
         'app.recipes',
+        'app.alerts',
         'app.sensors'
     ];
 
@@ -37,10 +36,10 @@
                     'default': '500',
                     'hue-2': '300',
                     'hue-3': '100'
-            })
-            .accentPalette('light-blue');
+                })
+                .accentPalette('light-blue');
             $mdThemingProvider.theme('input', 'default')
-            .primaryPalette('grey');
+                .primaryPalette('grey');
         });
 
 })(angular);
