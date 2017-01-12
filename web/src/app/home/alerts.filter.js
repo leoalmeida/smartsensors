@@ -33,11 +33,11 @@
                     if ((findValue && !list.reversal) || (!findValue && list.reversal))
                         r.push(arr[i][j]);
                 }*/
-                if (list.values[i].type == list.type) {
-                     var findValue = list.values.some(elem => (elem.type == list.type && elem.$id == arr[i].$id));
+                //if (list.values[i].type == list.type) {
+                     var findValue = list.values.some(elem => (elem.type == list.type && elem.id == arr[i].$id));
                      if ((findValue && !list.reversal) || (!findValue && list.reversal))
                         r.push(arr[i]);
-                }
+                //}
             }
             return r;
         };
