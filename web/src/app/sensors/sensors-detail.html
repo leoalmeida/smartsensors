@@ -198,13 +198,13 @@
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.loop">
                                     <label>Loop</label>
                                     <input  type="number" step="any"
-                                           name="loop" ng-model="vm.sensor.configurations.loop" min="100"  value="1000"
+                                           name="loop" ng-model="vm.sensor.configurations.loop" min="100"
                                            max="9999" />
                                 </md-input-container>
                                 <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.maxval">
                                     <label>Fluxo</label>
                                     <input type="number" step="any"
-                                           name="offset" ng-model="vm.sensor.configurations.maxval" min="0" value="1000"
+                                           name="offset" ng-model="vm.sensor.configurations.maxval" min="0"
                                            max="10000" />
                                 </md-input-container>
                                 <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.threshold">
@@ -216,13 +216,13 @@
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.min">
                                     <label>Min</label>
                                     <input  type="number" step="any"
-                                           name="min" ng-model="vm.sensor.configurations.min" min="0" value="0"
+                                           name="min" ng-model="vm.sensor.configurations.min" min="0"
                                            max="100" />
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.maxval">
                                     <label>Max</label>
                                     <input  type="number" step="any"
-                                           name="max" ng-model="vm.sensor.configurations.maxval" min="0"  value="1"
+                                           name="max" ng-model="vm.sensor.configurations.maxval" min="0"
                                            max="100" />
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.unit">

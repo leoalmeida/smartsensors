@@ -23,6 +23,8 @@
                              style="color:#FA8072;"
                              aria-label="announcement"
                              md-svg-icon="{{vm.SCREENCONFIG.ICONS.WARNING}}"></md-icon>
+                    <h4> {{ sensor.configurations.pin }} </h4>
+                    <span flex="5"></span>
                     <h4 ng-if="sensor.readings.value!='!'"> {{ sensor.readings.value }} {{ sensor.readings.unit }} </h4>
                     <span flex="5"></span>
                     <md-switch class="md-secondary" ng-model="sensor.enabled" ng-change="vm.toggleState(vm.listItems[vm.currentNavItem].$id)"></md-switch>
