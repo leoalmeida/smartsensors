@@ -32,7 +32,7 @@
                 <img ng-src="{{item.configurations.localization.image}}" class="md-card-image" alt="Image" />
                 <md-grid-content ng-class="item.severity">
                     <md-card-actions layout="row" layout-align="start center" >
-                        <p><md-icon ng-if="item.lastUpdate.value=='!'" style="color:#FA8072; max-height: 18px"
+                        <p><md-icon ng-if="item.lastUpdate.value==1" style="color:#FA8072; max-height: 18px"
                                  aria-label="announcement" md-svg-icon="{{vm.SCREENCONFIG.ICONS.WARNING}}">
                         </md-icon></p>
                         <label ng-if="item.lastUpdate.unit"><strong>{{item.lastUpdate.value}}{{item.lastUpdate.unit}}</strong>  </label>

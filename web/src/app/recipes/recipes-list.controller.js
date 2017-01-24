@@ -1,8 +1,6 @@
 (function(angular) {
     'use strict';
 
-
-
     angular
         .module('app.recipes')
         .controller('RecipesController', RecipesController);
@@ -15,7 +13,6 @@
         var vm = this;
 
         vm.helpResult = '  ';
-        vm.customFullscreen = false;
 
         vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.RECIPES;
 
@@ -42,6 +39,7 @@
         vm.navigateTo = function(key, $event){
             $location.path( "/recipes/public/edit/" + key);
         };
+
 
         vm.showHelp = function(ev) {
             $mdDialog.show({

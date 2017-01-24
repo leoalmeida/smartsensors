@@ -12,14 +12,46 @@
         <md-button class="md-fab md-hue-2 floating-component fl-right fl-primary" aria-label="Submit" ng-click="vm.submit()">
             <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.PUBLISH}}"></md-icon>
         </md-button>
-        <md-content layout="row" layout-wrap>
+        <md-content>
+            <md-card flex layout-wrap >
+                <md-card-content layout="row">
+                    <ng-map class="md-card-image"  zoom="{{vm.mapZoom}}" center="{{vm.mapCenter}}" default-style="true">
+                        <info-window id="external" template="/app/core/layouts/infowindow-template.html"></info-window>
+                        <marker
+                                class="custom-marker"
+                                ng-repeat="(id, marker) in vm.sensors2 track by $index"
+                                id="{{id}}"
+                                on-click="vm.showDetail(event, id)"
+                                position="{{marker.configurations.address.latlng}}"
+                                icon="{{marker.point}}"
+                                shape="{{vm.shape}}"
+                                no-watcher="true"
+                                dnd-draggable="{id: marker.id, key: marker.key, type: 'sensor', name: marker.name, icon: marker.icon, rules: [{}]}"
+                                dnd-effect-allowed="copy"
+                                dnd-copied="marker.id = marker.id + 1">
+                        </marker>
+                    </ng-map>
 
-        </md-content>
-        <md-content layout="row" layout-xs="column">
+                    <md-card-actions layout="column" ng-if="vm.sensors">
+                        <div ng-repeat="item in vm.sensors2 as filteredSensors"
+                             dnd-draggable="{id: item.id, key: item.key, type: 'sensor', name: item.name, icon: item.icon, rules: [{}]}"
+                             dnd-effect-allowed="copy"
+                             dnd-copied="item.id = item.id + 1">
+                            <md-button class="md-fab md-raised md-mini">
+                                <md-tooltip md-direction="up" md-visible="tooltipVisible"
+                                            md-autohide="false">
+                                    {{item.name}}
+                                </md-tooltip>
+                                <md-icon md-svg-src="{{item.icon}}" aria-label="{{item.name}}"></md-icon>
+                            </md-button>
+                        </div>
+                    </md-card-actions>
+                </md-card-content>
+            </md-card>
             <md-card class="dropzone" flex layout-wrap ng-repeat="list in vm.models.recipes">
                     <md-card-header>
                         <md-card-avatar>
-                            <img class="md-user-avatar" src="{{list.icon}}"/>
+                            <img class="md-user-avatar" ng-src="{{list.icon}}"/>
                         </md-card-avatar>
                         <md-card-header-text>
                             <span class="md-headline">
@@ -39,6 +71,8 @@
             </md-card>
         </md-content>
 
+
+
         <md-card flex layout-wrap ng-if="vm.debugger">
           <md-card-title>
               <md-card-title-text>
@@ -50,8 +84,8 @@
           </md-card-content>
         </md-card>
 
-        <span layout-fill >
-            <md-fab-speed-dial ng-hide="vm.pallete1.hidden" md-direction="right" md-open="vm.pallete1.isOpen"
+        <span layout-fill  ng-if="vm.sensors">
+           <!-- <md-fab-speed-dial ng-hide="vm.pallete1.hidden" md-direction="right" md-open="vm.pallete1.isOpen"
                                class="md-scale floating-component-left-2x" ng-class="{ 'md-hover-full': vm.pallete1.hover }">
                 <md-fab-trigger>
                     <md-button aria-label="menu" class="md-fab md-primary">
@@ -64,6 +98,30 @@
                             dnd-draggable="{id: item.id, key: item.key, type: 'sensor', name: item.name, icon: item.icon, rules: [{}]}"
                             dnd-effect-allowed="copy"
                             dnd-copied="item.id = item.id + 1">
+                        <md-button class="md-fab md-raised md-mini">
+                            <md-tooltip md-direction="up" md-visible="tooltipVisible"
+                                        md-autohide="false">
+                                {{item.name}}
+                            </md-tooltip>
+                            <md-icon md-svg-src="{{item.icon}}" aria-label="{{item.name}}"></md-icon>
+                        </md-button>
+                    </div>
+                </md-fab-actions>
+            </md-fab-speed-dial>-->
+
+            <md-fab-speed-dial ng-hide="vm.pallete3.hidden" md-direction="right" md-open="vm.pallete3.isOpen"
+                               class="md-scale floating-component-left-2x" ng-class="{ 'md-hover-full': vm.pallete1.hover }">
+                <md-fab-trigger>
+                    <md-button aria-label="menu" class="md-fab md-primary">
+                        <md-tooltip md-direction="up" md-visible="tooltipVisible">Ações</md-tooltip>
+                        <md-icon md-svg-src="assets/icons/action/ic_settings_input_antenna_24px.svg"></md-icon>
+                    </md-button>
+                </md-fab-trigger>
+                 <md-fab-actions>
+                    <div ng-repeat="item in vm.sensors | PublicSensorFilter: {'0':{'column': 'style','value': 'action'},'1':{'column': 'enabled', 'value': true}} as filteredActions"
+                         dnd-draggable="{id: item.id, key: item.key, type: 'action', name: item.name, icon: item.icon, rules: [{}]}"
+                         dnd-effect-allowed="copy"
+                         dnd-copied="item.id = item.id + 1">
                         <md-button class="md-fab md-raised md-mini">
                             <md-tooltip md-direction="up" md-visible="tooltipVisible"
                                         md-autohide="false">
@@ -169,7 +227,7 @@
 <!-- Template for a normal list item -->
 <script type="text/ng-template" id="sensor.html">
     <md-whiteframe class="md-whiteframe-1dp" layout>
-      <div layout="row" layout-align="center center" flex>
+      <div layout="column" layout-gt-sm="row" layout-align="center center" flex>
           <md-button class="md-fab md-primary" ng-click="vm.showConfig($event)">
               <md-icon md-svg-src="{{item.icon}}"></md-icon>
           </md-button>
@@ -186,4 +244,15 @@
           </div>
       </div>
     </md-whiteframe>
+</script>
+
+<script class="custom-info-window" id="cached-info-window-template.html" type="text/ng-template">
+    <div  ng-non-bindable="">
+        <h3> {{vm.selected.label}} </h3>
+        <br/> ID: {{id}} {{vm.selected.key}}
+        <br/> Nome: {{vm.selected.name}}
+        <br/> Tipo: {{vm.selected.type}}
+        <br/> Latitude: {{vm.selected.configurations.address.latlng[0]}}
+        <br/> Longitude: {{vm.selected.configurations.address.latlng[1]}}
+    </div>
 </script>

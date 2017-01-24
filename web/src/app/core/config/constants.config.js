@@ -85,10 +85,10 @@
             LIST: {
                 TITLE: "Lista de Sensores",
                 CONNECTED: {
-                    TITLE: "Sensores Conectados"
+                    TITLE: "Sensores Habilitados"
                 },
                 DISCONNECTED: {
-                    TITLE: "Sensores Desconectados"
+                    TITLE: "Sensores Bloqueados"
                 }
             },
             ICONS:{

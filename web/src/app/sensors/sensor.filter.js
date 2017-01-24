@@ -32,7 +32,11 @@
                         if (Object.isSealed(arr[i][akeys[j]][bkeys[k]])) continue;
                         ckeys = Object.keys(arr[i][akeys[j]][bkeys[k]]); cl = ckeys.length;
                         for (m = 0; m < cl; m += 1) {
-                            if (arr[i][akeys[j]][bkeys[k]][ckeys[m]][list.column] == list.value) {
+                            var push = false;
+                            for (var ind = 0; ind < list.length; ind += 1) {
+                                push = (arr[i][akeys[j]][bkeys[k]][ckeys[m]][list[ind].column] == list[ind].value);
+                            }
+                            if (push) {
                                 r.push(arr[i][akeys[j]][bkeys[k]][ckeys[m]]);
                             }
                         }

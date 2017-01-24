@@ -1,15 +1,29 @@
 (function(angular) {
     'use strict';
 
+    var icons = {
+        point: {
+            url: "assets/icons/action/ic_alarm_24px.svg",
+            size: [32, 32],
+            origin: [0,0],
+            anchor: [0,32]
+        }
+    };
+
+    var shape = {
+        coords: [1, 1, 1, 20, 18, 20, 18 , 1],
+        type: 'poly'
+    };
+
     angular
         .module('app.recipes')
         .controller('RecipeCreatorController', RecipeCreatorController);
 
 
-    RecipeCreatorController.$inject = ['$scope', '$location', 'currentUser', '$timeout', '$routeParams', 'CONSTANTS', '$mdDialog', 'SensorsService', 'RecipesService', 'NotifyService'];
+    RecipeCreatorController.$inject = ['$scope', '$filter', '$location', 'currentUser', '$timeout', '$routeParams', 'CONSTANTS', '$mdDialog', 'SensorsService', 'RecipesService', 'NotifyService',  'NgMap', 'refDataInfoService'];
 
 
-    function RecipeCreatorController($scope, $location, currentUser, $timeout, $routeParams, CONSTANTS, $mdDialog, sensorsService, recipesService, notifyService) {
+    function RecipeCreatorController($scope, $filter, $location, currentUser, $timeout, $routeParams, CONSTANTS, $mdDialog, sensorsService, recipesService, notifyService, NgMap, refDataInfoService) {
         var vm = this;
         var key = $routeParams.id;
 
@@ -82,25 +96,56 @@
             $location.path("/" + key);
         };
 
-        vm.configurations = sensorsService.getAllConfigurations();
-        vm.configurations.$loaded().then(function(snapshot) {
-            vm.analogicpins = snapshot.analogicpins;
-            vm.digitalpins = snapshot.digitalpins;
-            vm.units = snapshot.units;
-            vm.icons = snapshot.icons;
-            vm.types = snapshot.types;
-            vm.states = snapshot.states;
-            vm.countries = snapshot.country;
-            vm.addressTypes = snapshot.addressTypes;
-            vm.localTypes = snapshot.localTypes;
-            vm.signTypes = snapshot.signTypes;
-            vm.connectors = snapshot.connectorsTypes;
+        var loadInfoData = function() {
+            var infoData = this.data;
+            vm.pins = infoData.pins;
+            vm.units = infoData.units;
+            vm.icons = infoData.icons;
+            vm.types = infoData.types;
+            vm.states = infoData.states;
+            vm.countries = infoData.country;
+            vm.addressTypes = infoData.addressTypes;
+            vm.localTypes = infoData.localTypes;
+            vm.signTypes = infoData.signTypes;
+            vm.connectors = infoData.connectorsTypes;
             for (var i=0; i< vm.connectors.length; i++) {
-              vm.connectors[i].objects = [[]];
+                vm.connectors[i].objects = [[]];
             }
+        };
+        vm.configurations = refDataInfoService.getRefDataInfo('refdata', loadInfoData);
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        vm.mapZoom=17;
+        vm.mapCenter = [-21.980892, -47.881379];
+        vm.point = icons.point;
+        vm.shape = shape;
+        vm.sensors = [];
+        vm.actions = [];
+
+        NgMap.getMap().then(function(map) {
+            vm.map = map;
+            var list = sensorsService.getAll();
+            list.$loaded()
+                .then(function(data) {
+                    vm.sensors = data;
+                    //console.log(JSON.stringify(data));
+                    vm.sensors2 = $filter('PublicSensorFilter')(data, {"0": {"column": "style","value": "sensor"},"1": {"column": "enabled","value": true}});
+                    vm.actions = $filter('PublicSensorFilter')(data, {"0": {"column": "style","value": "action"},"1": {"column": "enabled","value": true}});
+                }, function(error) {
+                    console.error("Error:", error);
+                });
+
         });
 
-        vm.sensors = sensorsService.getAll();
+        vm.toggleBounce = function() {
+            if (this.getAnimation() != null) {
+                this.setAnimation(null);
+            } else {
+                this.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        };
+
         vm.selected = null;
 
         // On opening, add a delayed property which shows tooltips after the speed dial has opened
@@ -168,6 +213,13 @@
                                     }, function() {
                                         vm.helpResult = ' ';
                                     });
+        };
+
+        vm.showDetail = function(event, marker) {
+            vm.mapCenter = event.latLng;
+            vm.selected = vm.sensors2[marker];
+            vm.map.showInfoWindow('external', this);
+
         };
     }
 

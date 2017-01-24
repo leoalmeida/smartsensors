@@ -109,6 +109,7 @@
               unit: "%",
               value: 0
           };
+          vm.sensor.connected = false;
           vm.sensor.enabled = false;
           vm.isPrivateAccess = false;
       }

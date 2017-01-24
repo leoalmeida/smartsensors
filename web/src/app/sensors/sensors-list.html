@@ -15,7 +15,7 @@
         <div ng-if="vm.currentNavItem>-1">
             <md-list ng-animate="'animate'" class="md-dense">
                 <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFIG.LIST.CONNECTED.TITLE}}</md-subheader>
-                <md-list-item ng-click="vm.navigateTo(vm.listItems[vm.currentNavItem].$id, sensor.key, $event)"  ng-repeat="sensor in vm.listItems[vm.currentNavItem] | SensorFilter: {column: 'enabled', value: true} as filteredSensors">
+                <md-list-item style="background-color: {{sensor.connected?'rgba(0, 230, 184, 0.2)':'rgba(255, 77, 77, 0.2)'}}" ng-click="vm.navigateTo(vm.listItems[vm.currentNavItem].$id, sensor.key, $event)"  ng-repeat="sensor in vm.listItems[vm.currentNavItem] | SensorFilter: {column: 'enabled', value: true} as filteredSensors">
                     <md-icon md-svg-icon="{{sensor.icon}}"></md-icon>
                     <h4> {{ sensor.name }} </h4>
                     <span flex></span>
