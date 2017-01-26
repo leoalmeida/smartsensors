@@ -1,0 +1,74 @@
+<md-dialog aria-label="Ajuda" flex="80">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <md-button class="md-icon-button" aria-label="Configurations" ng-disabled="true">
+                    <md-icon md-svg-icon="assets/icons/editor/ic_mode_edit_24px.svg"></md-icon>
+                </md-button>
+                <span>
+                    <h4 >
+                        <span class="md-title"><strong>Configuração: </strong> </span>
+                    <span class="md-subhead">
+                        {{ vm.models.selected.type | TitleCaseFilter }}
+                    </span>
+                    </h4>
+                </span>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="vm.cancel()">
+                    <md-icon md-svg-src="assets/icons/navigation/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout="row" layout-wrap ng-repeat="rule in vm.models.selected.rules" ng-if="vm.models.selected.type" flex >
+                    <md-input-container class="md-icon-float" flex="20">
+                        <label>Ações</label>
+                        <md-select ng-model="rule.actions" id="ruleAction">
+                            <md-option ng-repeat="action in rule.actions"  ng-value="action.changedAttribute" ng-disabled="$index === -1">
+                                {{action.changedAttribute}}
+                            </md-option>
+                        </md-select>
+                        <!--"actions": [{}]-->
+                    </md-input-container>
+                    <section flex layout="row" layout-align="center center" layout-wrap>
+                        <md-button class="md-icon-button" aria-label="Change" ng-click="vm.changeAction($event, $index)">
+                            <md-icon md-svg-icon="assets/icons/editor/ic_mode_edit_24px.svg"></md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button" aria-label="More" ng-click="vm.addAction($event, $index)">
+                            <md-icon md-svg-icon="assets/icons/content/ic_add_circle_24px.svg"></md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button" aria-label="Remove" ng-click="vm.removeAction($index)">
+                            <md-icon md-svg-icon="assets/icons/content/ic_remove_circle_24px.svg"></md-icon>
+                        </md-button>
+                    </section>
+                    <md-input-container class="md-icon-float" flex="20">
+                        <label>Alerta</label>
+                        <!--"alert": {"activate": true, "severity": "", "lastUpdate": true}-->
+                    </md-input-container>
+                    <md-input-container flex="20">
+                        <label>Resultado</label>
+                        <input ng-model="rule.result" type="string">
+                    </md-input-container>
+                    <section flex layout="row" layout-align="center center" layout-wrap>
+                        <md-button class="md-icon-button" aria-label="More" ng-click="vm.addRule($event)">
+                            <md-icon md-svg-icon="assets/icons/content/ic_add_circle_24px.svg"></md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button" aria-label="Remove" ng-click="vm.removeRule($index)">
+                            <md-icon md-svg-icon="assets/icons/content/ic_remove_circle_24px.svg"></md-icon>
+                        </md-button>
+                    </section>
+                </div>
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-click="vm.closeDialog('changed')">
+                OK
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

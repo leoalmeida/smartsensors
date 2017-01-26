@@ -27,14 +27,14 @@
                     <span flex="5"></span>
                     <h4 ng-if="sensor.readings.value!='!'"> {{ sensor.readings.value }} {{ sensor.readings.unit }} </h4>
                     <span flex="5"></span>
-                    <md-switch class="md-secondary" ng-model="sensor.enabled" ng-change="vm.toggleState(vm.listItems[vm.currentNavItem].$id)"></md-switch>
+                    <md-switch class="md-secondary" ng-model="sensor.connected" ng-change="vm.toggleState(vm.listItems[vm.currentNavItem].$id)"></md-switch>
                 </md-list-item>
                 <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFIG.LIST.DISCONNECTED.TITLE}}</md-subheader>
                 <md-list-item ng-click="vm.navigateTo(vm.listItems[vm.currentNavItem].$id, sensor.key, $event)"  ng-repeat="sensor in vm.listItems[vm.currentNavItem] | SensorFilter: {column: 'enabled', value: false} as filteredSensors">
                     <md-icon class="md-primary md-hue-3" md-svg-icon="{{sensor.icon}}"></md-icon>
                     <span class="md-primary md-hue-3"> {{ sensor.name }} </span>
                     <span flex></span>
-                    <md-switch class="md-secondary" ng-model="sensor.enabled" ng-change="vm.toggleState(vm.listItems[vm.currentNavItem].$id)"></md-switch>
+                    <!--<md-switch class="md-secondary" ng-model="sensor.enabled" ng-change="vm.toggleState(vm.listItems[vm.currentNavItem].$id)"></md-switch>-->
                 </md-list-item>
                 <md-divider></md-divider>
             </md-list>

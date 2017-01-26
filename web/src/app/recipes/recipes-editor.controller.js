@@ -34,12 +34,15 @@
         vm.models =  {
             selected: null,
             templates: [
-              {type: "sensor", id: 3},
-              {type: "connector", id: 2, objects: [[],[]]},
-              {type: "container", id: 1, objects: []}
+                {type: "action", id: 4},
+                {type: "sensor", id: 3},
+                {type: "connector", id: 2, objects: [[],[]]},
+                {type: "container", id: 1, objects: []}
             ],
-            allowedTypes: ['connector']
+            allowedTypes: ['connector','sensor'],
+            actionAllowedTypes: ['action']
         };
+
         if ($routeParams.type === "edit") {
             vm.activity = "Alterar Receita";
             vm.models.recipes = [];
@@ -56,8 +59,11 @@
                 icon: "assets/icons/action/ic_class_24px.svg",
                 enabled: true,
                 label: "",
+                key: "",
                 max: 1,
+                maxActions: 2,
                 container: [],
+                actionContainer: [],
                 subscribers: [
                     currentUser.uid
                 ]
@@ -130,8 +136,8 @@
                 .then(function(data) {
                     vm.sensors = data;
                     //console.log(JSON.stringify(data));
-                    vm.sensors2 = $filter('PublicSensorFilter')(data, {"0": {"column": "style","value": "sensor"},"1": {"column": "enabled","value": true}});
-                    vm.actions = $filter('PublicSensorFilter')(data, {"0": {"column": "style","value": "action"},"1": {"column": "enabled","value": true}});
+                    vm.sensors2 = $filter('PublicSensorFilter')(data, [{"column": "style", "value": "sensor", "extension": "configurations"},{"column": "enabled","value": true}]);
+                    vm.actions = $filter('PublicSensorFilter')(data, [{"column": "style", "value": "action", "extension": "configurations"},{"column": "enabled","value": true}]);
                 }, function(error) {
                     console.error("Error:", error);
                 });
@@ -153,7 +159,7 @@
         vm.hidden = false;
         vm.isOpen = false;
         vm.hover = false;
-        $scope.$watch('vm.pallete1.isOpen', function(isOpen) {
+        $scope.$watch('vm.pallete2.isOpen', function(isOpen) {
             if (isOpen) {
                 $timeout(function() {
                     $scope.tooltipVisible = self.isOpen;
@@ -162,7 +168,7 @@
                 $scope.tooltipVisible = self.isOpen;
             }
         });
-        $scope.$watch('vm.pallete2.isOpen', function(isOpen) {
+        $scope.$watch('vm.pallete3.isOpen', function(isOpen) {
             if (isOpen) {
                 $timeout(function() {
                     $scope.tooltipVisible = self.isOpen;
@@ -177,10 +183,11 @@
             vm.modelAsJson = angular.toJson(model, true);
         }, true);
 
+
         vm.helpResult = '  ';
         vm.customFullscreen = false;
 
-        vm.showConfig = function(ev) {
+        vm.showConfig = function(ev, type) {
             $mdDialog.show({
                 controller: function DialogController($scope, $mdDialog) {
                     vm.hide = function() {
@@ -192,18 +199,33 @@
                     vm.cancel = function() {
                         $mdDialog.cancel();
                     };
+                    vm.changeAction = function() {
+
+                    };
+                    vm.addAction = function() {
+
+                    };
+                    vm.removeAction = function() {
+
+                    };
                     vm.addRule = function() {
-                        vm.models.selected.rules[vm.models.selected.rules.length-1].connector="&&";
-                        vm.models.selected.rules.push({"sign": ">","value": 0,"connector": ""});
+                        if (vm.models.selected.type == "sensor") {
+                            vm.models.selected.rules[vm.models.selected.rules.length - 1].ogicalOperator = "&&";
+                            vm.models.selected.rules.push({"compareOperator": ">","expectedResult": 0, "evaluatedAttribute": "", "ogicalOperator": "", "evaluatedObjectKey": vm.models.selected.key});
+                        } else if (vm.models.selected.type == "action"){
+                            vm.models.selected.rules.push({"actions": [{}],"alert": {"activate": true, "severity": "", "lastUpdate": true}, "result": "", "type": ""});
+                        }
                     };
                     vm.removeRule = function(index) {
                         vm.models.selected.rules.splice(index, 1);
-                        vm.models.selected.rules[vm.models.selected.rules.length-1].connector="";
+                        if (vm.models.selected.type == "sensor") {
+                            vm.models.selected.rules[vm.models.selected.rules.length - 1].connector = "";
+                        }
                     };
                 },
                 parent: angular.element(document.body),
                 targetEvent: ev,
-                templateUrl: 'app/recipes/config.tmpl.html',
+                templateUrl: 'app/recipes/config.'+ type +'.tmpl.html',
                 clickOutsideToClose:true,
                 scope: $scope,
                 preserveScope: true

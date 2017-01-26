@@ -14,7 +14,7 @@
         </md-button>
         <md-content>
             <md-card flex layout-wrap >
-                <md-card-content layout="row">
+                <md-card-content layout="column">
                     <ng-map class="md-card-image"  zoom="{{vm.mapZoom}}" center="{{vm.mapCenter}}" default-style="true">
                         <info-window id="external" template="/app/core/layouts/infowindow-template.html"></info-window>
                         <marker
@@ -32,7 +32,7 @@
                         </marker>
                     </ng-map>
 
-                    <md-card-actions layout="column" ng-if="vm.sensors">
+                    <md-card-actions layout="row" ng-if="vm.sensors">
                         <div ng-repeat="item in vm.sensors2 as filteredSensors"
                              dnd-draggable="{id: item.id, key: item.key, type: 'sensor', name: item.name, icon: item.icon, rules: [{}]}"
                              dnd-effect-allowed="copy"
@@ -64,10 +64,11 @@
                     </md-card-header>
                     <md-card-content layout="row" >
                         <div ng-include="'container.html'" class="box" flex></div>
+                        <div ng-include="'actionList.html'" class="box" flex></div>
                         <md-card-actions class="trashcan" layout="column" aria-label="Remove" dnd-list="[]" layout-align="center center" flex="10">
                                 <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.REMOVE}}" aria-label="Remove"></md-icon>
                         </md-card-actions>
-                </md-card-content>
+                    </md-card-content>
             </md-card>
         </md-content>
 
@@ -118,7 +119,7 @@
                     </md-button>
                 </md-fab-trigger>
                  <md-fab-actions>
-                    <div ng-repeat="item in vm.sensors | PublicSensorFilter: {'0':{'column': 'style','value': 'action'},'1':{'column': 'enabled', 'value': true}} as filteredActions"
+                    <div ng-repeat="item in vm.actions"
                          dnd-draggable="{id: item.id, key: item.key, type: 'action', name: item.name, icon: item.icon, rules: [{}]}"
                          dnd-effect-allowed="copy"
                          dnd-copied="item.id = item.id + 1">
@@ -161,90 +162,139 @@
     </div>
 </md-content>
 
-<!-- Template for a normal list item -->
+<!-- Template for a Sensor list -->
 <script type="text/ng-template" id="container.html">
-  <div  dnd-list="list.container"
+    <div class="md-padding" >
+        <h2>Regras</h2>
+    </div>
+    <div  dnd-list="list.container"
         dnd-disable-if="list.container.length >= list.max">
-    <div class="llist"
-        ng-repeat="item in list.container"
-        dnd-draggable="item"
-        dnd-type="item.type"
-        dnd-disable-if="item.type == 'unknown'"
-        dnd-moved="list.container.splice($index, 1)"
-        dnd-effect-allowed="move"
-        dnd-selected="vm.models.selected = item"
-        ng-class="{'selected': vm.models.selected === item}"
-        ng-include="item.type + '.html'"
-        layout="row" layout-align="center center" layout-fill flex>
-    </div>
-    <div class="llist dndPlaceholder">
-        <strong>{{vm.models.allowedTypes.join(' ou ')}}</strong>
-    </div>
-  </div>
-</script>
-
-<script type="text/ng-template" id="list.html">
-      <div  dnd-list="list"
-            dnd-disable-if="list.length >= item.max" layout="row" layout-wrap>
         <div class="llist"
-            ng-repeat="item in list"
+            ng-repeat="item in list.container"
             dnd-draggable="item"
             dnd-type="item.type"
             dnd-disable-if="item.type == 'unknown'"
-            dnd-moved="list.splice($index, 1)"
+            dnd-moved="list.container.splice($index, 1)"
             dnd-effect-allowed="move"
             dnd-selected="vm.models.selected = item"
             ng-class="{'selected': vm.models.selected === item}"
             ng-include="item.type + '.html'"
-            layout="row" layout-align="center center" flex>
+            layout="row" layout-align="center center" layout-fill flex>
+        </div>
+        <div class="llist dndPlaceholder">
+            <strong>{{vm.models.allowedTypes.join(' ou ')}}</strong>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="connector.html">
+    <md-whiteframe class="md-whiteframe-1dp"  layout class="container-element box">
+        <div layout-align="center center"  flex>
+            <md-card-header>
+                <md-card-avatar>
+                    <md-icon md-svg-src="{{item.icon}}"></md-icon>
+                </md-card-avatar>
+                <md-card-header-text>
+                    <span class="md-title">Conector</span>
+                    <span class="md-subhead"><strong>Tipo: </strong>{{item.label}}</span>
+                </md-card-header-text>
+            </md-card-header>
+            <md-content>
+                <div layout="column" ng-repeat="list in item.objects" ng-include="'list.html'"></div>
+            </md-content>
+        </div>
+    </md-whiteframe>
+</script>
+
+<script type="text/ng-template" id="list.html">
+    <div  dnd-list="list"
+          dnd-disable-if="list.length >= item.max" layout="row" layout-wrap>
+        <div class="llist"
+             ng-repeat="item in list"
+             dnd-draggable="item"
+             dnd-type="item.type"
+             dnd-disable-if="item.type == 'unknown'"
+             dnd-moved="list.splice($index, 1)"
+             dnd-effect-allowed="move"
+             dnd-selected="vm.models.selected = item"
+             ng-class="{'selected': vm.models.selected === item}"
+             ng-include="item.type + '.html'"
+             layout="row" layout-align="center center" flex>
         </div>
         <div class="dndPlaceholder">
             <strong>{{list.allowedTypes.join(' ou ')}}</strong>
         </div>
-      </div>
+    </div>
 </script>
-<!-- This template is responsible for rendering a container element. It uses
- the above list template to render each container column -->
-<script type="text/ng-template" id="connector.html">
-    <md-whiteframe class="md-whiteframe-1dp"  layout class="container-element box">
-      <div layout-align="center center"  flex>
-        <md-card-header>
-          <md-card-avatar>
-              <md-icon md-svg-src="{{item.icon}}"></md-icon>
-          </md-card-avatar>
-          <md-card-header-text>
-            <span class="md-title">Conector</span>
-            <span class="md-subhead"><strong>Tipo: </strong>{{item.label}}</span>
-          </md-card-header-text>
-        </md-card-header>
-        <md-content>
-          <div layout="column" ng-repeat="list in item.objects" ng-include="'list.html'"></div>
-        </md-content>
-      </div>
+
+<script type="text/ng-template" id="sensor.html">
+    <md-whiteframe class="md-whiteframe-1dp" layout>
+        <div layout="column" layout-gt-sm="row" layout-align="center center" flex>
+            <md-button class="md-fab md-primary" ng-click="vm.showConfig($event, item.type)">
+                <md-icon md-svg-src="{{item.icon}}"></md-icon>
+            </md-button>
+            <span>Sensor: <strong>{{item.name}}</strong></span>
+            <span flex></span>
+            <div>
+                <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
+                    <md-chip-template>
+                    <span>
+                        <strong>{{$chip.evaluatedAttribute}} {{$chip.compareOperator}} {{$chip.expectedResult}}</strong>
+                    </span>
+                    </md-chip-template>
+                </md-chips>
+            </div>
+        </div>
     </md-whiteframe>
 </script>
 
-<!-- Template for a normal list item -->
-<script type="text/ng-template" id="sensor.html">
+<!-- Template for an Action list-->
+<script type="text/ng-template" id="actionList.html">
+    <div class="md-padding">
+        <h2>Ações</h2>
+    </div>
+    <div  dnd-list="list.actionContainer"
+          dnd-disable-if="list.actionContainer.length >= list.maxActions" layout="column" layout-wrap>
+        <div class="llist"
+             ng-repeat="item in list.actionContainer"
+             dnd-draggable="item"
+             dnd-type="item.type"
+             dnd-disable-if="item.type == 'unknown'"
+             dnd-moved="list.actionContainer.splice($index, 1)"
+             dnd-effect-allowed="move"
+             dnd-selected="vm.models.selected = item"
+             ng-class="{'selected': vm.models.selected === item}"
+             ng-include="item.type + '.html'"
+             layout-align="center center" flex>
+        </div>
+        <div class="dndPlaceholder">
+            <strong>{{vm.models.actionAllowedTypes.join(' ou ')}}</strong>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="action.html">
     <md-whiteframe class="md-whiteframe-1dp" layout>
-      <div layout="column" layout-gt-sm="row" layout-align="center center" flex>
-          <md-button class="md-fab md-primary" ng-click="vm.showConfig($event)">
-              <md-icon md-svg-src="{{item.icon}}"></md-icon>
-          </md-button>
-          <span>Sensor: <strong>{{item.name}}</strong></span>
-          <span flex></span>
-          <div>
-            <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
-                <md-chip-template>
+        <div layout="column" layout-gt-sm="row" layout-align="center center" flex>
+            <md-button class="md-fab md-primary" ng-click="vm.showConfig($event, item.type)">
+                <md-icon md-svg-src="{{item.icon}}"></md-icon>
+            </md-button>
+            <span>Action: <strong>{{item.name}}</strong></span>
+            <span flex></span>
+            <div>
+                <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
+                    <md-chip-template>
                     <span>
-                        <strong>{{$chip.sign}} {{$chip.value}}</strong>
+                        <strong>{{$chip.result}}</strong>
                     </span>
-                </md-chip-template>
-            </md-chips>
-          </div>
-      </div>
+                    </md-chip-template>
+                </md-chips>
+            </div>
+        </div>
     </md-whiteframe>
 </script>
+
+
 
 <script class="custom-info-window" id="cached-info-window-template.html" type="text/ng-template">
     <div  ng-non-bindable="">
