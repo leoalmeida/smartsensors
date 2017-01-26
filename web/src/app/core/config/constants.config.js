@@ -98,7 +98,9 @@
                 WARNING: "assets/icons/alert/ic_warning_48px.svg",
                 AVATAR: "assets/icons/action/ic_info_outline_48px.svg",
                 PUBLISH: "assets/icons/editor/ic_publish_48px.svg",
-                DELETE: "assets/icons/content/ic_delete_sweep_48px.svg"
+                DELETE: "assets/icons/content/ic_delete_sweep_48px.svg",
+                ON: "assets/icons/device/ic_signal_wifi_4_bar_24px.svg",
+                OFF: "assets/icons/device/ic_signal_wifi_off_24px.svg"
             }
         },
         GROUPS: {

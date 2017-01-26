@@ -31,7 +31,8 @@
             addOne: addOne,
             removeOne: removeOne,
             getAllConfigurations: getAllConfigurations,
-            getOwnServers: getOwnServers
+            getOwnServers: getOwnServers,
+            getServerStatus: getServerStatus
         };
 
         return service;
@@ -49,16 +50,24 @@
         }
 
         function getOne(type, currentUser, location, key) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/' + key);
+            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/sensors/' + key);
+        }
+
+        function getServerStatus(type, currentUser, location) {
+            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/connected');
         }
 
         function addOne(currentUser, type, location, newObject) {
-            firebaseDataService.getFirebaseArray('servers/' + currentUser.uid + '/' + location).$save();
-            return firebaseDataService.getFirebaseArray(database + '/' + type + '/' + currentUser.uid + '/' + location).$add(newObject);
+            firebaseDataService.getFirebaseArray('servers/' + currentUser.uid + '/' + location + '/sensors/').$save();
+            return firebaseDataService.getFirebaseArray(database + '/' + type + '/' + currentUser.uid + '/' + location + '/sensors/').$add(newObject);
         }
 
-        function removeOne(type, key) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type).remove(key);
+        function removeOne(currentUser, type, location, key) {
+            return firebaseDataService.getFirebaseObject(database + '/' + type+ '/' + currentUser.uid + '/' + location + '/sensors/').remove(key);
+        }
+
+        function removeOneServer(currentUser, type, key) {
+            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid).remove(key);
         }
 
         function getAllConfigurations() {
@@ -66,7 +75,7 @@
         }
 
         function getOwnServers(currentUser) {
-            return firebaseDataService.getFirebaseArray('servers/', currentUser.uid);
+            return firebaseDataService.getFirebaseArray(database + '/' + type + '/' + currentUser.uid);
         }
 
         /* service.save = function(contact) {

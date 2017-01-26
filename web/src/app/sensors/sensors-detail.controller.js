@@ -15,7 +15,7 @@
 
       vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SENSORS;
 
-      vm.currentNavItem = 'localization';
+      vm.currentNavItem = 'main';
       vm.serverID =  $routeParams.location;
       vm.accessType =  $routeParams.accessType;
       vm.activityType = $routeParams.type;
@@ -49,7 +49,7 @@
           vm.sensorTypes = snapshot.sensorTypes;
       });
 
-
+      vm.serverStatus = sensorsService.getServerStatus(vm.accessType, currentUser, vm.serverID);
 
       vm.asyncSelectSensorType = function(type) {
           var deferred = $q.defer();
@@ -73,23 +73,24 @@
           vm.sensor = {};
           vm.sensor = sensorsService.getOne(vm.accessType, currentUser, vm.serverID, key);
 
-          vm.sensor.$loaded().then(function(x) {
+          vm.sensor.$loaded().then(function(data) {
               if (vm.sensor.localization) {
                   vm.position = {pos: [vm.sensor.localization.latitude, vm.sensor.localization.longitude]};
                   vm.mapCenter = {lat: vm.sensor.localization.latitude, lng: vm.sensor.localization.longitude};
                   vm.address = vm.sensor.localization.address;
               }
-              // vm.selectedSensorConfig = vm.sensor.;
 
               vm.asyncSelectSensorType(vm.sensorTypes)
                   .then(function(sensorConfig) {
-                  vm.selectedSensorConfig = sensorConfig;
+                      vm.selectedSensorConfig = sensorConfig;
                       vm.sensorConfig = sensorConfig;
                       vm.selectSensorType();
                   }, function() {
                   vm.selectedSensorConfig = undefined;
                       vm.sensorConfig = undefined;
               });
+
+              //vm.selectedSensorConfig.type = vm.sensor.type;
 
           }, function (errorObject) {
               console.log("The read failed: " + errorObject.code);
@@ -132,6 +133,7 @@
       };
 
       vm.selectSensorType = function () {
+
           vm.sensor.type = vm.selectedSensorConfig.type;
           vm.sensorConfig = vm.selectedSensorConfig;
           vm.sensor.icon = "assets/icons/" + vm.selectedSensorConfig.type + ".svg";
