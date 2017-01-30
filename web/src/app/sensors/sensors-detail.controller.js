@@ -49,7 +49,12 @@
           vm.sensorTypes = snapshot.sensorTypes;
       });
 
-      vm.serverStatus = sensorsService.getServerStatus(vm.accessType, currentUser, vm.serverID);
+      //vm.serverStatus = sensorsService.getServerStatus(vm.accessType, currentUser, vm.serverID);
+
+      var obj = sensorsService
+          .getServerStatus(vm.accessType, currentUser, vm.serverID)
+
+      vm.serverStatus = obj;
 
       vm.asyncSelectSensorType = function(type) {
           var deferred = $q.defer();

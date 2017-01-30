@@ -21,11 +21,18 @@
 
     vm.readingPeriod = 1000;
 
-    vm.toggleState = function (item){
+    vm.toggleState = function (location, key){
         // if (vm.sensors[$key]) sensorsSocket.emit('moisture:on');
         // else sensorsSocket.emit('moisture:off');
 
-        var ret = vm.listItems.$save(vm.listItems.$indexFor(item));
+        sensorsService
+            .getOne("public", currentUser, location, key)
+            .$loaded().then(function (snapshot) {
+            snapshot.connected = (snapshot.connected?false:true);
+            snapshot.$save();
+        });
+
+        //var ret = vm.listItems.$save(item);
     };
 
     vm.newSensor = function(serverID){

@@ -27,7 +27,7 @@
                     <span flex="5"></span>
                     <h4 ng-if="sensor.readings.value!='!'"> {{ sensor.readings.value }} {{ sensor.readings.unit }} </h4>
                     <span flex="5"></span>
-                    <md-switch class="md-secondary" ng-model="sensor.connected" ng-change="vm.toggleState(vm.listItems[vm.currentNavItem].sensors.$id)"></md-switch>
+                    <md-switch class="md-secondary" ng-model="sensor.connected" ng-change="vm.toggleState(vm.listItems[vm.currentNavItem].$id, sensor.key)"></md-switch>
                 </md-list-item>
                 <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFIG.LIST.DISCONNECTED.TITLE}}</md-subheader>
                 <md-list-item ng-click="vm.navigateTo(vm.listItems[vm.currentNavItem].$id, sensor.key, $event)"  ng-repeat="sensor in vm.listItems[vm.currentNavItem].sensors | SensorFilter: {column: 'enabled', value: false} as filteredSensors">
