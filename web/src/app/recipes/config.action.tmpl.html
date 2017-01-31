@@ -22,43 +22,43 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
-                <div layout="row" layout-wrap ng-repeat="rule in vm.models.selected.rules" ng-if="vm.models.selected.type" flex >
-                    <md-input-container class="md-icon-float" flex="20">
-                        <label>Ações</label>
-                        <md-select ng-model="rule.actions" id="ruleAction">
-                            <md-option ng-repeat="action in rule.actions"  ng-value="action.changedAttribute" ng-disabled="$index === -1">
-                                {{action.changedAttribute}}
-                            </md-option>
-                        </md-select>
-                        <!--"actions": [{}]-->
-                    </md-input-container>
-                    <section flex layout="row" layout-align="center center" layout-wrap>
-                        <md-button class="md-icon-button" aria-label="Change" ng-click="vm.changeAction($event, $index)">
-                            <md-icon md-svg-icon="assets/icons/editor/ic_mode_edit_24px.svg"></md-icon>
-                        </md-button>
-                        <md-button class="md-icon-button" aria-label="More" ng-click="vm.addAction($event, $index)">
-                            <md-icon md-svg-icon="assets/icons/content/ic_add_circle_24px.svg"></md-icon>
-                        </md-button>
-                        <md-button class="md-icon-button" aria-label="Remove" ng-click="vm.removeAction($index)">
-                            <md-icon md-svg-icon="assets/icons/content/ic_remove_circle_24px.svg"></md-icon>
-                        </md-button>
-                    </section>
-                    <md-input-container class="md-icon-float" flex="20">
-                        <label>Alerta</label>
-                        <!--"alert": {"activate": true, "severity": "", "lastUpdate": true}-->
-                    </md-input-container>
-                    <md-input-container flex="20">
-                        <label>Resultado</label>
-                        <input ng-model="rule.result" type="string">
-                    </md-input-container>
-                    <section flex layout="row" layout-align="center center" layout-wrap>
-                        <md-button class="md-icon-button" aria-label="More" ng-click="vm.addRule($event)">
-                            <md-icon md-svg-icon="assets/icons/content/ic_add_circle_24px.svg"></md-icon>
-                        </md-button>
-                        <md-button class="md-icon-button" aria-label="Remove" ng-click="vm.removeRule($index)">
-                            <md-icon md-svg-icon="assets/icons/content/ic_remove_circle_24px.svg"></md-icon>
-                        </md-button>
-                    </section>
+                <div layout="column" layout-wrap ng-repeat="rule in vm.models.selected.rules" ng-if="vm.models.selected.type" flex >
+                    <label>Cenário: <strong>{{vm.getScenario($index)}}</strong></label>
+                    <div layout="row">
+                        <div layout="row" flex="50">
+                            <md-input-container class="md-icon-float" flex>
+                                <label>Ações</label>
+                                <md-select ng-model="rule.actions" id="ruleAction">
+                                    <md-option ng-repeat="action in rule.actions"  ng-value="action.changedAttribute" ng-disabled="$index === -1">
+                                        {{action.changedAttribute}} = {{action.changedValue}}
+                                    </md-option>
+                                </md-select>
+                                <!--"actions": [{}]-->
+                            </md-input-container>
+                            <section flex layout="row" layout-align="center start" layout-wrap>
+                                <md-button class="md-icon-button" aria-label="Change" ng-click="vm.changeAction($event, $index)">
+                                    <md-icon md-svg-icon="assets/icons/editor/ic_mode_edit_24px.svg"></md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" aria-label="More" ng-click="vm.addAction($event, $index)">
+                                    <md-icon md-svg-icon="assets/icons/content/ic_add_circle_24px.svg"></md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" aria-label="Remove" ng-click="vm.removeAction($index)">
+                                    <md-icon md-svg-icon="assets/icons/content/ic_remove_circle_24px.svg"></md-icon>
+                                </md-button>
+                            </section>
+                        </div>
+                        <div layout="row"  flex="50">
+                            <md-input-container class="md-icon-float" flex>
+                                <label>Alerta</label>
+                                <!--"alert": {"activate": true, "severity": "", "lastUpdate": true}-->
+                            </md-input-container>
+                            <section flex layout="row" layout-align="center start" layout-wrap>
+                                <md-button class="md-icon-button" aria-label="Change" ng-click="vm.changeAlert($event, $index)">
+                                    <md-icon md-svg-icon="assets/icons/editor/ic_mode_edit_24px.svg"></md-icon>
+                                </md-button>
+                            </section>
+                        </div>
+                    </div>
                 </div>
 
             </div>

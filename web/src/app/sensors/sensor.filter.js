@@ -30,21 +30,21 @@
                     bkeys = Object.keys(arr[i][akeys[j]]); bl = bkeys.length;
                     for (k = 0; k < bl; k += 1) {
                         if (Object.isSealed(arr[i][akeys[j]][bkeys[k]])) continue;
-                        ckeys = Object.keys(arr[i][akeys[j]][bkeys[k]]); cl = ckeys.length;
+                        ckeys = Object.keys(arr[i][akeys[j]][bkeys[k]].sensors); cl = ckeys.length;
                         for (m = 0; m < cl; m += 1) {
                             var push = false;
                             for (var ind = 0; ind < list.length; ind += 1) {
                                 if (list[ind].extension) {
-                                    console.log("A: " + arr[i][akeys[j]][bkeys[k]][ckeys[m]][list[ind].extension][list[ind].column] + " B: " + list[ind].value + "\n");
-                                    push = (arr[i][akeys[j]][bkeys[k]][ckeys[m]][list[ind].extension][list[ind].column] == list[ind].value);
+                                    console.log("A: " + arr[i][akeys[j]][bkeys[k]].sensors[ckeys[m]][list[ind].extension][list[ind].column] + " B: " + list[ind].value + "\n");
+                                    push = (arr[i][akeys[j]][bkeys[k]].sensors[ckeys[m]][list[ind].extension][list[ind].column] == list[ind].value);
                                 }else{
-                                    console.log("A: " + arr[i][akeys[j]][bkeys[k]][ckeys[m]][list[ind].column] + " B: " + list[ind].value + "\n");
-                                    push = (arr[i][akeys[j]][bkeys[k]][ckeys[m]][list[ind].column] == list[ind].value);
+                                    console.log("A: " + arr[i][akeys[j]][bkeys[k]].sensors[ckeys[m]][list[ind].column] + " B: " + list[ind].value + "\n");
+                                    push = (arr[i][akeys[j]][bkeys[k]].sensors[ckeys[m]][list[ind].column] == list[ind].value);
                                 }
                                 if (!push) break;
                             }
                             if (push) {
-                                r.push(arr[i][akeys[j]][bkeys[k]][ckeys[m]]);
+                                r.push(arr[i][akeys[j]][bkeys[k]].sensors[ckeys[m]]);
                             }
                         }
                     }

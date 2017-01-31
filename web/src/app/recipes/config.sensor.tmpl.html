@@ -22,7 +22,9 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
-                        <div layout="row" layout-wrap ng-repeat="rule in vm.models.selected.rules" ng-if="vm.models.selected.type" flex >
+                <div layout="column" layout-wrap ng-repeat="scenario in vm.models.selected.scenarios as scn" ng-if="vm.models.selected.type" flex >
+                    <label>Cenário: <strong>{{scenario.label}}</strong></label>
+                        <div layout="row" layout-wrap ng-repeat="rule in scenario.rules" flex>
                             <md-input-container flex>
                                 <label>Atributo</label>
                                 <input ng-model="rule.evaluatedAttribute" type="text">
@@ -48,15 +50,15 @@
                                 </md-select>
                             </md-input-container>
                             <section flex layout="row" layout-align="center center" layout-wrap>
-                                <md-button class="md-icon-button" aria-label="More" ng-click="vm.addRule($event)">
+                                <md-button class="md-icon-button" aria-label="More" ng-click="vm.addRule(scenario.scenario)">
                                     <md-icon md-svg-icon="assets/icons/content/ic_add_circle_24px.svg"></md-icon>
                                 </md-button>
-                                <md-button class="md-icon-button" aria-label="Remove" ng-click="vm.removeRule($index)">
+                                <md-button class="md-icon-button" aria-label="Remove" ng-click="vm.removeRule(scenario.scenario, $index)">
                                     <md-icon md-svg-icon="assets/icons/content/ic_remove_circle_24px.svg"></md-icon>
                                 </md-button>
                             </section>
                         </div>
-
+                </div>
             </div>
         </md-dialog-content>
 

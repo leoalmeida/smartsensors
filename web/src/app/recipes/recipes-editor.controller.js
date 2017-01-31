@@ -45,17 +45,138 @@
 
         if ($routeParams.type === "edit") {
             vm.activity = "Alterar Receita";
-            vm.models.recipes = [];
-            recipesService.getOne(key).$loaded().then(function(x) {
-                vm.models.recipes.push(x);
-            }, function (errorObject) {
-                console.log("The read failed: " + errorObject.code);
-                return errorObject;
-            });
+
+            //vm.models.recipe = recipesService.getOne(key);
+            vm.models.recipe = {
+                    "actionContainer" : [ {
+                        "icon" : "assets/icons/led.svg",
+                        "key" : "-KTkKh9ItnL1n6Ymfni8",
+                        "name" : "Controlador de Água",
+                        "rules" : [ {
+                            "actions" : [ {
+                                "changedAttribute" : "value",
+                                "changedValue" : false
+                            } ],
+                            "alert" : {
+                                "activate" : false,
+                                "lastUpdate" : true,
+                                "severity" : "green"
+                            },
+                            "type" : "sensor"
+                        }, {
+                            "actions" : [ {
+                                "changedAttribute" : "value",
+                                "changedValue" : true
+                            } ],
+                            "alert" : {
+                                "activate" : true,
+                                "lastUpdate" : true,
+                                "severity" : "red"
+                            },
+                            "type" : "sensor"
+                        } ],
+                        "type" : "action"
+                    }, {
+                        "icon" : "assets/icons/led.svg",
+                        "key" : "-KTkKh9ItnL1n6Ymfnil",
+                        "name" : "Led",
+                        "rules" : [ {
+                            "actions" : [ {
+                                "changedAttribute" : "connected",
+                                "changedValue" : true
+                            } ],
+                            "alert" : {
+                                "activate" : true,
+                                "lastReading" : true,
+                                "lastUpdate" : true,
+                                "severity" : "red"
+                            },
+                            "type" : "sensor"
+                        }, {
+                            "actions" : [ {
+                                "changedAttribute" : "value",
+                                "changedValue" : false
+                            } ],
+                            "alert" : {
+                                "activate" : false,
+                                "lastReading" : true,
+                                "lastUpdate" : true,
+                                "severity" : "green"
+                            },
+                            "type" : "sensor"
+                        } ],
+                        "type" : "action"
+                    } ],
+                    "alert" : {
+                        "active" : false,
+                        "configurations" : {
+                            "col" : 1,
+                            "draggable" : false,
+                            "icon" : "assets/icons/action/ic_class_24px.svg",
+                            "key" : "-KZm41c1lLpEk7CHDOU3",
+                            "label" : "001",
+                            "localization" : {
+                                "image" : "assets/images/profile_header0.png"
+                            },
+                            "name" : "Controle de Água",
+                            "owner" : "Leonardo Almeida",
+                            "pin" : {
+                                "color" : "yellow"
+                            },
+                            "row" : 1,
+                            "sensors" : [ "-KToB_eh1EVnQutA9h_M", "-KTkKh9ItnL1n6Ymfnil" ],
+                            "type" : "actionperformed"
+                        },
+                        "lastReading" : "",
+                        "lastUpdate" : "",
+                        "severity" : "",
+                        "startDate" : ""
+                    },
+                    "container" : [ {
+                        "icon" : "assets/icons/motion.svg",
+                        "key" : "-KToB_eh1EVnQutA9h_M",
+                        "name" : "Motion",
+                        "rules" : [{
+                            "compareOperator" : "==",
+                            "evaluatedAttribute" : "value",
+                            "evaluatedObjectKey" : "-KToB_eh1EVnQutA9h_M",
+                            "expectedResult" : 1,
+                            "logicalOperator" : ""
+                        }],
+                        "scenarios" : [
+                            {"label" : "Movimento Identificado",
+                            "scenario" : 0,
+                            "rules" : [{
+                                "compareOperator" : "==",
+                                "evaluatedAttribute" : "value",
+                                "expectedResult" : 1,
+                                "logicalOperator" : ""
+                            }]
+                            },
+                            {"label" : "Sem Movimento",
+                            "scenario" : 1,
+                            "rules" : [{
+                                    "compareOperator" : "==",
+                                    "evaluatedAttribute" : "value",
+                                    "expectedResult" : 1,
+                                    "logicalOperator" : ""
+                                }]
+                            }
+                        ],
+                        "type" : "sensor"
+                    } ],
+                    "enabled" : true,
+                    "icon" : "assets/icons/action/ic_class_24px.svg",
+                    "key" : "-KZm41c1lLpEk7CHDOU3",
+                    "label" : "Controle de Água",
+                    "max" : 1,
+                    "maxActions" : 2,
+                    "subscribers" : [ "0000", "1111" ]
+            };
 
         } else {
             vm.activity = "Nova Receita";
-            vm.models.recipes = [{
+            vm.models.recipe = {
                 icon: "assets/icons/action/ic_class_24px.svg",
                 enabled: true,
                 label: "",
@@ -67,7 +188,7 @@
                 subscribers: [
                     currentUser.uid
                 ]
-            }]
+            }
         };
 
         var item = key;
@@ -75,19 +196,19 @@
         vm.submit = function () {
 
             /*if (item) {
-                vm.models.recipes.$save();
+                vm.models.recipe.$save();
             } else{
                 item = recipesService.pushNewItem(vm.recipe);
             }*/
 
             if ($routeParams.type === "edit") {
-                vm.models.recipes[0].$save();
-                var message =  'Receita ' + vm.models.recipes.label + ' foi atualizada.';
+                vm.models.recipe.$save();
+                var message =  'Receita ' + vm.models.recipe.label + ' foi atualizada.';
                 notifyService.notify('Receita atualizada', message);
             } else{
                 vm.accessType = vm.isPrivateAccess ? "private": "public";
-                item = recipesService.addOne(currentUser, vm.accessType , vm.models.recipes[0]);
-                var message =  'Receita ' + vm.models.recipes.label + ' encontrada.';
+                item = recipesService.addOne(currentUser, vm.accessType , vm.models.recipe);
+                var message =  'Receita ' + vm.models.recipe.label + ' encontrada.';
                 notifyService.notify('Nova receita encontrada', message);
             }
             vm.navigateTo("recipes");
@@ -120,7 +241,7 @@
         };
         vm.configurations = refDataInfoService.getRefDataInfo('refdata', loadInfoData);
 
-        var infoWindow = new google.maps.InfoWindow();
+        //var infoWindow = new google.maps.InfoWindow();
 
         vm.mapZoom=17;
         vm.mapCenter = [-21.980892, -47.881379];
@@ -199,6 +320,9 @@
                     vm.cancel = function() {
                         $mdDialog.cancel();
                     };
+                    vm.changeAlert = function() {
+
+                    };
                     vm.changeAction = function() {
 
                     };
@@ -208,19 +332,22 @@
                     vm.removeAction = function() {
 
                     };
-                    vm.addRule = function() {
+                    vm.addRule = function(scenario) {
                         if (vm.models.selected.type == "sensor") {
-                            vm.models.selected.rules[vm.models.selected.rules.length - 1].ogicalOperator = "&&";
-                            vm.models.selected.rules.push({"compareOperator": ">","expectedResult": 0, "evaluatedAttribute": "", "ogicalOperator": "", "evaluatedObjectKey": vm.models.selected.key});
+                            vm.models.selected.scenarios[scenario].rules[vm.models.selected.scenarios[scenario].rules.length - 1].logicalOperator = "&&";
+                            vm.models.selected.scenarios[scenario].rules.push({"compareOperator": ">","expectedResult": 0, "evaluatedAttribute": "", "logicalOperator": "", "evaluatedObjectKey": vm.models.selected.key});
                         } else if (vm.models.selected.type == "action"){
-                            vm.models.selected.rules.push({"actions": [{}],"alert": {"activate": true, "severity": "", "lastUpdate": true}, "result": "", "type": ""});
+                            vm.models.selected.rules.push({"actions": [{}],"alert": {"activate": true, "severity": "", "lastUpdate": true}, "type": ""});
                         }
                     };
-                    vm.removeRule = function(index) {
-                        vm.models.selected.rules.splice(index, 1);
+                    vm.removeRule = function(scenario, index) {
+                        vm.models.selected.scenarios[scenario].rules.splice(index, 1);
                         if (vm.models.selected.type == "sensor") {
-                            vm.models.selected.rules[vm.models.selected.rules.length - 1].connector = "";
+                            vm.models.selected.scenarios[scenario].rules[vm.models.selected.scenarios[scenario].rules.length - 1].connector = "";
                         }
+                    };
+                    vm.getScenario = function(index) {
+                        return vm.models.recipe.container[0].scenarios[index].label;
                     };
                 },
                 parent: angular.element(document.body),
