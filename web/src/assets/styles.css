@@ -39,6 +39,12 @@
     left: 7px;
     bottom: 67px;
 }
+.floating-component-left-3x{
+    position: fixed;
+    z-index: 30;
+    left: 7px;
+    bottom: 127px;
+}
 .fabSpeedDialdemoMoreOptions .md-fab-top-right {
     top: 16px; }
 
@@ -657,4 +663,26 @@ md-content .dropzone .selected md-card {
     max-height: 300px;
     overflow-x:hidden;
     overflow-y:visible;
+}
+
+.sensorAlphaHeaderBackground {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.actionAlphaHeaderBackground {
+    background-color: rgba(35, 98, 163, 0.5);
+    color: rgb(238, 238, 238);
+}
+
+.actionTraillerText {
+    color: rgb(35, 98, 163);
+}
+
+.alertAlphaHeaderBackground {
+    background-color: rgba(255, 160, 3, 0.5);
+    color: rgb(238, 238, 238);
+}
+
+.alertTraillerText {
+    color: rgb(255, 160, 3);
 }

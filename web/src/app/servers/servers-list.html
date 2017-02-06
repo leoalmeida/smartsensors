@@ -1,0 +1,65 @@
+<div flex-gt-sm="100" flex>
+    <md-toolbar layout="row" class="md-hue-3">
+        <div class="md-toolbar-tools">
+            <span>{{vm.SCREENCONFIG.LIST.TITLE}}</span>
+        </div>
+    </md-toolbar>
+    <md-content style="padding-bottom: 60px">
+        <md-nav-bar md-selected-nav-item="vm.currentNavItem" nav-bar-aria-label="navigation links">
+            <md-nav-item md-nav-click="goto('{{$index}}')" name="{{$index}}" style="background-color: {{vm.listItems[$index].connected?'rgba(0, 230, 184, 0.2)':'rgba(255, 77, 77, 0.2)'}}" ng-repeat="item in vm.listItems track by $index">{{item.id}}</md-nav-item>
+        </md-nav-bar>
+        <div ng-if="vm.currentNavItem>-1">
+            <section layout="column" layout-gt-md="row" flex>
+                <md-card>
+                    <md-card-header>
+                        <md-card-avatar>
+                            <md-icon class="md-avatar-icon" md-svg-icon="assets/icons/action/ic_info_outline_24px.svg"></md-icon>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-title">{{vm.listItems[vm.currentNavItem].id}}</span>
+                        </md-card-header-text>
+                        <span layout-padding layout-align="center center">
+                            <span style="background-color: {{(vm.listItems[vm.currentNavItem].connected)?'rgba(0, 204, 102,0.5)':'rgba(230, 46, 0,0.5)'}}">
+                                        <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="vm.listItems[vm.currentNavItem].connected" aria-label="on"></md-icon>
+                                        <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!vm.listItems[vm.currentNavItem].connected" aria-label="off"></md-icon>
+                                {{(vm.listItems[vm.currentNavItem].connected)?'Servidor Online':'Servidor Offline'}}
+                            </span>
+                        </span>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-content layout="column" layout-gt-xs="row" layout-padding>
+                        </md-content>
+                    </md-card-content>
+                </md-card>
+            </section>
+            <md-button class="md-fab md-mini floating-component" aria-label="Novo Servidor" ng-click="vm.newServer(vm.listServers[vm.currentNavItem].id)">
+                <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.NEW}}"></md-icon>
+            </md-button>
+        </div>
+    </md-content>
+</div>
+
+<div hide flex-gt-sm="50"  flex>
+  <md-toolbar layout="row" class="md-hue-3">
+    <div class="md-toolbar-tools">
+      <span>Detalhes</span>
+    </div>
+  </md-toolbar>
+  <md-content>
+    <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">Card with image</span>
+            <span class="md-subhead">Large</span>
+          </md-card-title-text>
+          <md-card-title-media>
+            <div class="md-media-lg card-media"></div>
+          </md-card-title-media>
+        </md-card-title>
+        <md-card-actions layout="row" layout-align="end center">
+          <md-button>Action 1</md-button>
+          <md-button>Action 2</md-button>
+        </md-card-actions>
+      </md-card>
+  </md-content>
+</div>

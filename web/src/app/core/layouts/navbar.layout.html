@@ -39,7 +39,7 @@
             <md-whiteframe class="md-whiteframe-1dp" flex-sm="45" flex-gt-sm="35" flex-gt-md="25" layout  layout-align="center center" ng-if="vm.user" >
                 <span>
                     <label><strong>
-                        {{vm.user.uid}}
+                        {{vm.user.email}}
                     </strong></label>
                 </span>
             </md-whiteframe>
@@ -57,7 +57,7 @@
                   <img ng-if="vm.user" class="avatarImage" ng-src="{{vm.user.photoURL}}" alt="{{vm.user.name}}" />
                   <span></span>
                   <div ng-if="vm.user">{{vm.user.displayName}}</div>
-                  <div ng-if="vm.user">{{vm.user.uid}}</div>
+                  <div ng-if="vm.user">{{vm.user.email}}</div>
                 </div>
             </md-toolbar>
             <md-content>

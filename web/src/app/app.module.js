@@ -19,7 +19,10 @@
         'app.groups',
         'app.recipes',
         'app.alerts',
-        'app.sensors'
+        'app.sensors',
+        'app.actuators',
+        'app.servers',
+        'app.info'
     ];
 
     angular

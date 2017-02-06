@@ -6,12 +6,14 @@
                     <md-icon md-svg-icon="assets/icons/editor/ic_mode_edit_24px.svg"></md-icon>
                 </md-button>
                 <span>
-                    <h4 >
-                        <span class="md-title"><strong>Configuração: </strong> </span>
-                    <span class="md-subhead">
-                        {{ vm.models.selected.type | TitleCaseFilter }}
-                    </span>
-                    </h4>
+                    <h3>
+                        <span class="md-subhead">Configuração: </span>
+                        <span class="md-title">
+                            <strong>
+                                {{ vm.models.selected.type.display }}
+                            </strong>
+                        </span>
+                    </h3>
                 </span>
                 <span flex></span>
                 <md-button class="md-icon-button" ng-click="vm.cancel()">
@@ -22,18 +24,18 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
-                <div layout="column" layout-wrap ng-repeat="rule in vm.models.selected.rules" ng-if="vm.models.selected.type" flex >
-                    <label>Cenário: <strong>{{vm.getScenario($index)}}</strong></label>
-                    <div layout="row">
-                        <div layout="row" flex="50">
-                            <md-input-container class="md-icon-float" flex>
-                                <label>Ações</label>
-                                <md-select ng-model="rule.actions" id="ruleAction">
-                                    <md-option ng-repeat="action in rule.actions"  ng-value="action.changedAttribute" ng-disabled="$index === -1">
-                                        {{action.changedAttribute}} = {{action.changedValue}}
-                                    </md-option>
-                                </md-select>
-                                <!--"actions": [{}]-->
+                <div layout="column" layout-wrap ng-repeat="scenario in vm.getScenarios()" flex >
+                    <div layout="column" layout-wrap ng-if="vm.models.selected.type" flex >
+                        <label>Cenário: <strong>{{scenario.label}}</strong></label>
+
+                        <div layout="row" layout-wrap ng-repeat="action in vm.models.selected.rules[$index].actions" flex>
+                            <md-input-container flex>
+                                <label>Atributo alterado</label>
+                                <input ng-model="action.changedAttribute" type="text">
+                            </md-input-container>
+                            <md-input-container flex>
+                                <label>Novo valor</label>
+                                <input ng-model="action.changedValue" type="text">
                             </md-input-container>
                             <section flex layout="row" layout-align="center start" layout-wrap>
                                 <md-button class="md-icon-button" aria-label="Change" ng-click="vm.changeAction($event, $index)">
@@ -47,20 +49,8 @@
                                 </md-button>
                             </section>
                         </div>
-                        <div layout="row"  flex="50">
-                            <md-input-container class="md-icon-float" flex>
-                                <label>Alerta</label>
-                                <!--"alert": {"activate": true, "severity": "", "lastUpdate": true}-->
-                            </md-input-container>
-                            <section flex layout="row" layout-align="center start" layout-wrap>
-                                <md-button class="md-icon-button" aria-label="Change" ng-click="vm.changeAlert($event, $index)">
-                                    <md-icon md-svg-icon="assets/icons/editor/ic_mode_edit_24px.svg"></md-icon>
-                                </md-button>
-                            </section>
-                        </div>
                     </div>
                 </div>
-
             </div>
         </md-dialog-content>
 

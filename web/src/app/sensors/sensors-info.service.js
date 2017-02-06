@@ -18,9 +18,8 @@
 
     function SensorsService(firebaseDataService) {
 
-        var sensorsRef = firebaseDataService.sensors;
-        var database = sensorsRef.$id;
-        var sensorsList = firebaseDataService.getFirebaseArray(sensorsRef.$id);
+        var database = firebaseDataService.sensors;
+        var sensorsList = firebaseDataService.getRefFirebaseArray(database);
         var configRef = firebaseDataService.configurations;
 
         var service = {
@@ -46,11 +45,12 @@
         }
 
         function getOwn(currentUser) {
-            return firebaseDataService.getFirebaseArray(database + '/public/', currentUser.uid);
+            //return firebaseDataService.getFirebaseArray(database + '/public/', currentUser.uid);
+            return firebaseDataService.getRefFirebaseArray(database, 'owner', currentUser.uid);
         }
 
-        function getOne(type, currentUser, location, key) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/sensors/' + key);
+        function getOne(key) {
+            return firebaseDataService.getRefFirebaseObject(database, key);
         }
 
         function getServerStatus(type, currentUser, location) {
@@ -58,12 +58,12 @@
         }
 
         function addOne(currentUser, type, location, newObject) {
-            firebaseDataService.getFirebaseArray('servers/' + currentUser.uid + '/' + location + '/sensors/').$save();
-            return firebaseDataService.getFirebaseArray(database + '/' + type + '/' + currentUser.uid + '/' + location + '/sensors/').$add(newObject);
+//            firebaseDataService.getFirebaseArray('servers/' + currentUser.uid + '/' + location + '/sensors/').$save();
+            return firebaseDataService.getFirebaseArray(database + '/' + type ).$add(newObject);
         }
 
         function removeOne(currentUser, type, location, key) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type+ '/' + currentUser.uid + '/' + location + '/sensors/').remove(key);
+            return firebaseDataService.getFirebaseObject(database + '/' + type ).remove(key);
         }
 
         function removeOneServer(currentUser, type, key) {

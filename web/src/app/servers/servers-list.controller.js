@@ -3,31 +3,30 @@
 
 
   angular
-      .module('app.sensors')
-      .controller('SensorListController', SensorListController);
+      .module('app.servers')
+      .controller('ServerListController', ServerListController);
 
-  SensorListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'SensorsService', 'ServersService', '$mdDialog'];
+  ServerListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'ServersService', '$mdDialog'];
 
-  function SensorListController(currentUser, $location, CONSTANTS, sensorsService, serversService, $mdDialog) {
+  function ServerListController(currentUser, $location, CONSTANTS, serversService, $mdDialog) {
     var vm = this;
 
-    vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SENSORS;
-    vm.listItems = sensorsService.getOwn(currentUser);
-    vm.currentNavItem = -1;
+    vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SERVERS;
+    vm.listItems = serversService.getOwn(currentUser);
 
-    vm.listServers = serversService.getOwn(currentUser);
-    vm.listServers.$loaded().then(function (snapshot) {
-          vm.currentNavItem = 0;
+    vm.currentNavItem = -1;
+    vm.listItems.$loaded().then(function (snapshot) {
+              vm.currentNavItem = 0;
     });
 
     vm.readingPeriod = 1000;
 
     vm.toggleState = function (location, key){
-        // if (vm.sensors[$key]) sensorsSocket.emit('moisture:on');
-        // else sensorsSocket.emit('moisture:off');
+        // if (vm.servers[$key]) serversSocket.emit('moisture:on');
+        // else serversSocket.emit('moisture:off');
 
-        sensorsService
-            .getOne(key)
+        serversService
+            .getOne("public", currentUser, location, key)
             .$loaded().then(function (snapshot) {
             snapshot.connected = (snapshot.connected?false:true);
             snapshot.$save();
@@ -36,12 +35,8 @@
         //var ret = vm.listItems.$save(item);
     };
 
-    vm.newSensor = function(serverID){
-        $location.path( "/sensors/public/" + serverID + "/new");
-    };
-
     vm.navigateTo = function(serverID, key, $event){
-        $location.path( "/sensors/public/" + serverID + "/edit/" + key );
+        $location.path( "/servers/public/" + serverID + "/edit/" + key);
     };
 
     vm.newServer = function(ev) {
@@ -53,7 +48,7 @@
             .placeholder('Nome do servidor...')
             .targetEvent(ev)
             .ariaLabel('Nome do servidor')
-            .ok('Criar Sensor')
+            .ok('Criar Server')
             .cancel('Voltar')
             .openFrom({
                 top: -50,
@@ -65,7 +60,7 @@
             });
 
         $mdDialog.show(confirm).then(function(result) {
-            vm.newSensor(result);
+            vm.listItems.$add({"connected": false, "id": result, "owner": currentUser.uid});
         });
     };
   };

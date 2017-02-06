@@ -20,10 +20,10 @@
         .controller('RecipeCreatorController', RecipeCreatorController);
 
 
-    RecipeCreatorController.$inject = ['$scope', '$filter', '$location', 'currentUser', '$timeout', '$routeParams', 'CONSTANTS', '$mdDialog', 'SensorsService', 'RecipesService', 'NotifyService',  'NgMap', 'refDataInfoService'];
+    RecipeCreatorController.$inject = ['$scope', '$filter', '$location', 'currentUser', '$timeout', '$routeParams', 'CONSTANTS', '$mdDialog', 'SensorsService', 'ActuatorsService', 'RecipesService', 'NotifyService',  'NgMap', 'refDataInfoService'];
 
 
-    function RecipeCreatorController($scope, $filter, $location, currentUser, $timeout, $routeParams, CONSTANTS, $mdDialog, sensorsService, recipesService, notifyService, NgMap, refDataInfoService) {
+    function RecipeCreatorController($scope, $filter, $location, currentUser, $timeout, $routeParams, CONSTANTS, $mdDialog, sensorsService, actuatorsService, recipesService, notifyService, NgMap, refDataInfoService) {
         var vm = this;
         var key = $routeParams.id;
 
@@ -34,20 +34,20 @@
         vm.models =  {
             selected: null,
             templates: [
-                {type: "action", id: 4},
+                {type: "actuator", id: 4},
                 {type: "sensor", id: 3},
                 {type: "connector", id: 2, objects: [[],[]]},
                 {type: "container", id: 1, objects: []}
             ],
             allowedTypes: ['connector','sensor'],
-            actionAllowedTypes: ['action']
+            actionAllowedTypes: ['actuator', 'alert']
         };
 
         if ($routeParams.type === "edit") {
             vm.activity = "Alterar Receita";
 
-            //vm.models.recipe = recipesService.getOne(key);
-            vm.models.recipe = {
+            vm.models.recipe = recipesService.getOne(key);
+            /*vm.models.recipe = {
                     "actionContainer" : [ {
                         "icon" : "assets/icons/led.svg",
                         "key" : "-KTkKh9ItnL1n6Ymfni8",
@@ -85,27 +85,34 @@
                                 "changedAttribute" : "connected",
                                 "changedValue" : true
                             } ],
-                            "alert" : {
-                                "activate" : true,
-                                "lastReading" : true,
-                                "lastUpdate" : true,
-                                "severity" : "red"
-                            },
                             "type" : "sensor"
                         }, {
                             "actions" : [ {
                                 "changedAttribute" : "value",
                                 "changedValue" : false
                             } ],
-                            "alert" : {
-                                "activate" : false,
-                                "lastReading" : true,
-                                "lastUpdate" : true,
-                                "severity" : "green"
-                            },
                             "type" : "sensor"
                         } ],
                         "type" : "action"
+                    }, {
+                        "icon" : "assets/icons/alert/ic_add_alert_48px.svg",
+                        "key" : "-KZm41c1lLpEk7CHDOU3",
+                        "name" : "Alerta de Água",
+                        "alert": "0",
+                        "rules" : [{
+                            "type": "update",
+                            "changedAttribute" : "severity",
+                            "changedValue" : "red",
+                            "lastReading" : true,
+                            "lastUpdate" : true
+                        }, {
+                            "type": "release",
+                            "changedAttribute" : "severity",
+                            "changedValue" : "green",
+                            "lastReading" : true,
+                            "lastUpdate" : true
+                        }],
+                        "type" : "alert"
                     } ],
                     "alert" : {
                         "active" : false,
@@ -170,9 +177,9 @@
                     "key" : "-KZm41c1lLpEk7CHDOU3",
                     "label" : "Controle de Água",
                     "max" : 1,
-                    "maxActions" : 2,
+                    "maxActions" : 3,
                     "subscribers" : [ "0000", "1111" ]
-            };
+            };*/
 
         } else {
             vm.activity = "Nova Receita";
@@ -182,9 +189,10 @@
                 label: "",
                 key: "",
                 max: 1,
-                maxActions: 2,
+                maxActions: 4,
                 container: [],
                 actionContainer: [],
+                alerts: [],
                 subscribers: [
                     currentUser.uid
                 ]
@@ -223,8 +231,10 @@
             $location.path("/" + key);
         };
 
-        var loadInfoData = function() {
-            var infoData = this.data;
+
+        vm.configurations = sensorsService.getAllConfigurations();
+
+        vm.configurations.$loaded().then(function(infoData) {
             vm.pins = infoData.pins;
             vm.units = infoData.units;
             vm.icons = infoData.icons;
@@ -235,30 +245,41 @@
             vm.localTypes = infoData.localTypes;
             vm.signTypes = infoData.signTypes;
             vm.connectors = infoData.connectorsTypes;
+            vm.alertTypes = infoData.alertTypes;
+            vm.alertAttributes = infoData.alertAttributes;
+            vm.alertAttributesValues = infoData.alertAttributesValues;
+
             for (var i=0; i< vm.connectors.length; i++) {
                 vm.connectors[i].objects = [[]];
             }
-        };
-        vm.configurations = refDataInfoService.getRefDataInfo('refdata', loadInfoData);
+        });
 
-        //var infoWindow = new google.maps.InfoWindow();
+
+            //var infoWindow = new google.maps.InfoWindow();
 
         vm.mapZoom=17;
         vm.mapCenter = [-21.980892, -47.881379];
         vm.point = icons.point;
         vm.shape = shape;
         vm.sensors = [];
-        vm.actions = [];
+        vm.actuators = [];
 
         NgMap.getMap().then(function(map) {
             vm.map = map;
             var list = sensorsService.getAll();
             list.$loaded()
                 .then(function(data) {
-                    vm.sensors = data;
+                    //vm.sensors = data;
                     //console.log(JSON.stringify(data));
-                    vm.sensors2 = $filter('PublicSensorFilter')(data, [{"column": "style", "value": "sensor", "extension": "configurations"},{"column": "enabled","value": true}]);
-                    vm.actions = $filter('PublicSensorFilter')(data, [{"column": "style", "value": "action", "extension": "configurations"},{"column": "enabled","value": true}]);
+                    vm.sensors = $filter('SensFilter')(data, [{"column": "enabled","value": true}])
+                    //vm.sensors2 = $filter('PublicSensorFilter')(data, [{"column": "enabled","value": true}])
+                }, function(error) {
+                    console.error("Error:", error);
+                });
+            var actList = actuatorsService.getAll();
+            actList.$loaded()
+                .then(function(data) {
+                    vm.actuators = $filter('ActFilter')(data, [{"column": "enabled","value": true}]);
                 }, function(error) {
                     console.error("Error:", error);
                 });
@@ -308,6 +329,44 @@
         vm.helpResult = '  ';
         vm.customFullscreen = false;
 
+        vm.scenarioTemplate = [{label: '', rules: [{compareOperator:'', evaluatedAttribute: '', expectedResult: '', logicalOperator: ''}]}];
+        vm.rulesTemplate = [{actions: [{changedAttribute:'', changedValue: ''}], type: 'actuator'}];
+        vm.alertTemplate = {
+            "active" : false,
+            "configurations" : {
+                "col" : 1,
+                "draggable" : false,
+                "icon" : "assets/icons/action/ic_class_24px.svg",
+                "localization" : {
+                    "image" : "assets/images/profile_header0.png"
+                },
+                "pin" : {
+                    "color" : "yellow"
+                },
+                "row" : 1,
+                "sensors" : [],
+                "type" : "alert"
+            },
+            "icon": "assets/icons/action/ic_alarm_48px.svg",
+            "key": "0",
+            "name": "Novo Alerta",
+            "owner" : currentUser.name,
+            "label" : "000",
+            "rules": [{"changedAttribute": "severity", "changedValue": "white", "type": "update"}],
+            "lastReading" : "",
+            "lastUpdate" : "",
+            "severity" : "",
+            "startDate" : "",
+            "type": {
+                "display": "Alerta",
+                "value": "alert"
+            }
+        };
+
+        vm.addAlert = function () {
+            vm.models.recipe.alerts.push(vm.alertTemplate);
+        };
+
         vm.showConfig = function(ev, type) {
             $mdDialog.show({
                 controller: function DialogController($scope, $mdDialog) {
@@ -336,8 +395,8 @@
                         if (vm.models.selected.type == "sensor") {
                             vm.models.selected.scenarios[scenario].rules[vm.models.selected.scenarios[scenario].rules.length - 1].logicalOperator = "&&";
                             vm.models.selected.scenarios[scenario].rules.push({"compareOperator": ">","expectedResult": 0, "evaluatedAttribute": "", "logicalOperator": "", "evaluatedObjectKey": vm.models.selected.key});
-                        } else if (vm.models.selected.type == "action"){
-                            vm.models.selected.rules.push({"actions": [{}],"alert": {"activate": true, "severity": "", "lastUpdate": true}, "type": ""});
+                        } else if (vm.models.selected.type == "actuator"){
+                            vm.models.selected.rules.push({"actions": [{}], "type": ""});
                         }
                     };
                     vm.removeRule = function(scenario, index) {
@@ -346,8 +405,8 @@
                             vm.models.selected.scenarios[scenario].rules[vm.models.selected.scenarios[scenario].rules.length - 1].connector = "";
                         }
                     };
-                    vm.getScenario = function(index) {
-                        return vm.models.recipe.container[0].scenarios[index].label;
+                    vm.getScenarios = function() {
+                        return vm.models.recipe.container[0].scenarios;
                     };
                 },
                 parent: angular.element(document.body),

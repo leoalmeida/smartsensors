@@ -12,28 +12,28 @@
         <md-button class="md-fab md-hue-2 floating-component fl-right fl-primary" aria-label="Submit" ng-click="vm.submit()">
             <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.PUBLISH}}"></md-icon>
         </md-button>
-        <!--<md-card flex layout-wrap >
+        <md-card flex layout-wrap >
             <md-card-content layout="column">
                 <ng-map class="md-card-image"  zoom="{{vm.mapZoom}}" center="{{vm.mapCenter}}" default-style="true">
                     <info-window id="external" template="/app/core/layouts/infowindow-template.html"></info-window>
                     <marker
                             class="custom-marker"
-                            ng-repeat="(id, marker) in vm.sensors2 track by $index"
+                            ng-repeat="(id, marker) in vm.sensors track by $index"
                             id="{{id}}"
                             on-click="vm.showDetail(event, id)"
                             position="{{marker.configurations.address.latlng}}"
                             icon="{{marker.point}}"
                             shape="{{vm.shape}}"
                             no-watcher="true"
-                            dnd-draggable="{id: marker.id, key: marker.key, type: 'sensor', name: marker.name, icon: marker.icon, rules: [{}]}"
+                            dnd-draggable="{id: marker.id, key: marker.key, type: {value: 'sensor', display: 'Sensor'}, name: marker.name, icon: marker.icon, scenarios: vm.scenarioTemplate}"
                             dnd-effect-allowed="copy"
                             dnd-copied="marker.id = marker.id + 1">
                     </marker>
                 </ng-map>
 
                 <md-card-actions layout="row" ng-if="vm.sensors">
-                    <div ng-repeat="item in vm.sensors2 as filteredSensors"
-                         dnd-draggable="{id: item.id, key: item.key, type: 'sensor', name: item.name, icon: item.icon, rules: [{}]}"
+                    <div ng-repeat="item in vm.sensors as filteredSensors"
+                         dnd-draggable="{id: item.id, key: item.key,type: {value: 'sensor', display: 'Sensor'}, name: item.name, icon: item.icon, scenarios: vm.scenarioTemplate}"
                          dnd-effect-allowed="copy"
                          dnd-copied="item.id = item.id + 1">
                         <md-button class="md-fab md-raised md-mini">
@@ -46,7 +46,7 @@
                     </div>
                 </md-card-actions>
             </md-card-content>
-        </md-card>-->
+        </md-card>
         <md-card class="dropzone" >
                 <md-card-header>
                     <md-card-avatar>
@@ -64,6 +64,10 @@
                 <md-card-content layout="row">
                     <span layout="column" flex layout-padding >
                         <div ng-include="'container.html'" class="box"></div>
+
+    <!--<md-button class="md-fab md-primary" aria-label="Add Alert" ng-click="vm.addAlert()">
+        <md-icon md-svg-src="assets/icons/alert/ic_add_alert_24px.svg"></md-icon>
+    </md-button>-->
                         <div flex ng-cloak class="gridListDynamicTiles" ng-include="'actionList.html'" ></div>
                     </span>
                     <md-card-actions class="trashcan" layout="column" aria-label="Remove" dnd-list="[]" layout-align="center center" flex="10">
@@ -108,17 +112,29 @@
                 </md-fab-actions>
             </md-fab-speed-dial>-->
 
+
+            <div class="md-scale floating-component-left-3x">
+                <div dnd-draggable="{{vm.alertTemplate}}"
+                     dnd-effect-allowed="copy"
+                     dnd-copied="item.id = item.id + 1">
+                    <md-button aria-label="menu" class="md-fab md-primary">
+                        <md-tooltip md-direction="up" md-visible="tooltipVisible">Alerta</md-tooltip>
+                        <md-icon md-svg-src="assets/icons/action/ic_alarm_add_24px.svg"  aria-label="Incluir alerta"></md-icon>
+                    </md-button>
+                </div>
+            </div>
+
             <md-fab-speed-dial ng-hide="vm.pallete3.hidden" md-direction="right" md-open="vm.pallete3.isOpen"
-                               class="md-scale floating-component-left-2x" ng-class="{ 'md-hover-full': vm.pallete1.hover }">
+                               class="md-scale floating-component-left-2x" ng-class="{ 'md-hover-full': vm.pallete3.hover }">
                 <md-fab-trigger>
                     <md-button aria-label="menu" class="md-fab md-primary">
-                        <md-tooltip md-direction="up" md-visible="tooltipVisible">Ações</md-tooltip>
+                        <md-tooltip md-direction="up" md-visible="tooltipVisible">Atuadores</md-tooltip>
                         <md-icon md-svg-src="assets/icons/action/ic_settings_input_antenna_24px.svg"></md-icon>
                     </md-button>
                 </md-fab-trigger>
-                 <md-fab-actions>
-                    <div ng-repeat="item in vm.actions"
-                         dnd-draggable="{id: item.id, key: item.key, type: 'action', name: item.name, icon: item.icon, rules: [{}]}"
+                <md-fab-actions>
+                    <div ng-repeat="item in vm.actuators"
+                         dnd-draggable="{key: item.key, type: {value: 'actuator', display: 'Atuador'}, name: item.name, icon: item.icon, rules: vm.rulesTemplate}"
                          dnd-effect-allowed="copy"
                          dnd-copied="item.id = item.id + 1">
                         <md-button class="md-fab md-raised md-mini">
@@ -170,13 +186,13 @@
         <div class="llist"
             ng-repeat="item in vm.models.recipe.container"
             dnd-draggable="item"
-            dnd-type="item.type"
-            dnd-disable-if="item.type == 'unknown'"
+            dnd-type="item.type.value"
+            dnd-disable-if="item.type.value == 'unknown'"
             dnd-moved="vm.models.recipe.container.splice($index, 1)"
             dnd-effect-allowed="move"
             dnd-selected="vm.models.selected = item"
             ng-class="{'selected': vm.models.selected === item}"
-            ng-include="item.type + '.html'"
+            ng-include="item.type.value + '.html'"
             layout="row" layout-align="center center" layout-fill flex>
         </div>
         <div class="llist dndPlaceholder">
@@ -210,13 +226,13 @@
         <div class="llist"
              ng-repeat="item in list"
              dnd-draggable="item"
-             dnd-type="item.type"
-             dnd-disable-if="item.type == 'unknown'"
+             dnd-type="item.type.value"
+             dnd-disable-if="item.type.value == 'unknown'"
              dnd-moved="list.splice($index, 1)"
              dnd-effect-allowed="move"
              dnd-selected="vm.models.selected = item"
              ng-class="{'selected': vm.models.selected === item}"
-             ng-include="item.type + '.html'"
+             ng-include="item.type.value + '.html'"
              layout="row" layout-align="center center" flex>
         </div>
         <div class="dndPlaceholder">
@@ -228,7 +244,7 @@
 <script type="text/ng-template" id="sensor.html">
     <md-whiteframe class="md-whiteframe-1dp" layout>
         <div layout="column" layout-gt-sm="row" layout-align="center center" flex>
-            <md-button class="md-fab md-primary" ng-click="vm.showConfig($event, item.type)">
+            <md-button class="md-fab md-primary" ng-click="vm.showConfig($event, item.type.value)">
                 <md-icon md-svg-src="{{item.icon}}"></md-icon>
             </md-button>
             <span>Sensor: <strong>{{item.name}}</strong></span>
@@ -248,7 +264,7 @@
 
 <!-- Template for an Action list-->
 <script type="text/ng-template" id="actionList.html">
-    <div class="md-padding" >
+    <div class="md-padding">
         <h2>Ações</h2>
     </div>
     <div dnd-list="vm.models.recipe.actionContainer"
@@ -256,7 +272,7 @@
         <md-grid-list md-cols="2"
                       md-cols-xs="1"
                       md-cols-sm="2"
-                      md-cols-gt-md=vm.models.recipe.maxActions
+                      md-cols-gt-md={{vm.models.recipe.maxActions}}
                       md-row-height-gt-md="1:1"
                       md-row-height="4:3"
                       md-gutter="8px"
@@ -267,13 +283,13 @@
                 <md-button class="md-primary" layout-margin layout-fill>
                     <div class="llist"
                          dnd-draggable="item"
-                         dnd-type="item.type"
-                         dnd-disable-if="item.type == 'unknown'"
+                         dnd-type="item.type.value"
+                         dnd-disable-if="item.type.value == 'unknown'"
                          dnd-moved="vm.models.recipe.actionContainer.splice($index, 1)"
                          dnd-effect-allowed="move"
                          dnd-selected="vm.models.selected = item"
                          ng-class="{'selected': vm.models.selected === item}"
-                         ng-include="item.type + '.html'" ng-click="vm.showConfig($event, item.type)">
+                         ng-include="item.type.value + '.html'" ng-click="vm.showConfig($event, item.type.value)">
                     </div>
                 </md-button>
             </md-grid-tile>
@@ -284,8 +300,45 @@
     </div>
 </script>
 
-<script type="text/ng-template" id="action.html">
-            <md-grid-tile-header layout-padding class="darkAlphaBackground" >
+<script type="text/ng-template" id="actionList.html">
+    <div class="md-padding" >
+        <h2>Atuadores</h2>
+    </div>
+    <div dnd-list="vm.models.recipe.actionContainer"
+         dnd-disable-if="vm.models.recipe.actionContainer.length >= vm.models.recipe.maxActions">
+        <md-grid-list md-cols="2"
+                      md-cols-xs="1"
+                      md-cols-sm="2"
+                      md-cols-gt-md={{vm.models.recipe.maxActions}}
+                      md-row-height-gt-md="1:1"
+                      md-row-height="4:3"
+                      md-gutter="8px"
+                      md-gutter-gt-sm="4px" >
+            <md-grid-tile class="card" ng-repeat="item in vm.models.recipe.actionContainer"
+                          md-rowspan="1"
+                          md-colspan="1">
+                <md-button class="md-primary" layout-margin layout-fill>
+                    <div class="llist"
+                         dnd-draggable="item"
+                         dnd-type="item.type.value"
+                         dnd-disable-if="item.type.value == 'unknown'"
+                         dnd-moved="vm.models.recipe.actionContainer.splice($index, 1)"
+                         dnd-effect-allowed="move"
+                         dnd-selected="vm.models.selected = item"
+                         ng-class="{'selected': vm.models.selected === item}"
+                         ng-include="item.type.value + '.html'" ng-click="vm.showConfig($event, item.type.value)">
+                    </div>
+                </md-button>
+            </md-grid-tile>
+        </md-grid-list>
+        <div class="dndPlaceholder">
+            <strong>{{vm.models.actionAllowedTypes.join(' ou ')}}</strong>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="actuator.html">
+            <md-grid-tile-header layout-padding class="actuatorAlphaHeaderBackground" >
                 <md-card-header>
                     <md-card-header-text>
                         <span class="md-title"><strong>{{item.name}}</strong></span>
@@ -293,7 +346,7 @@
                 </md-card-header>
             </md-grid-tile-header>
             <!--<img ng-src="{{item.icon}}" class="md-card-image" alt="Image"  />-->
-            <md-icon md-svg-src="{{item.icon}}"></md-icon>
+            <md-icon class="actionTraillerText" md-svg-src="{{item.icon}}"></md-icon>
             <md-grid-tile-footer>
                 <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
                     <md-chip-template>
@@ -305,6 +358,26 @@
             </md-grid-tile-footer>
 </script>
 
+<script type="text/ng-template" id="alert.html">
+    <md-grid-tile-header layout-padding class="alertAlphaHeaderBackground" >
+        <md-card-header>
+            <md-card-header-text>
+                <span class="md-title"><strong>{{item.name}}</strong></span>
+            </md-card-header-text>
+        </md-card-header>
+    </md-grid-tile-header>
+    <!--<img ng-src="{{item.icon}}" class="md-card-image" alt="Image"  />-->
+    <md-icon class="alertTraillerText" md-svg-src="{{item.icon}}"></md-icon>
+    <md-grid-tile-footer>
+        <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
+            <md-chip-template>
+                    <span>
+                        ({{$chip.type}}) {{$chip.changedAttribute}}:<strong>{{$chip.changedValue}}</strong>
+                    </span>
+            </md-chip-template>
+        </md-chips>
+    </md-grid-tile-footer>
+</script>
 
 
 <script class="custom-info-window" id="cached-info-window-template.html" type="text/ng-template">

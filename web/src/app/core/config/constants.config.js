@@ -1,15 +1,33 @@
 (function(angular) {
     'use strict';
 
+    var ICONS = {
+            "temperature": "assets/icons/thermometer.svg",
+        "acoustic": "assets/icons/sensor.svg",
+        "airmoisture": "assets/icons/humidity.svg",
+        "distance": "assets/icons/sensor.svg",
+        "eletric": "assets/icons/sensor.svg",
+        "gas": "assets/icons//sensor.svg",
+        "light": "assets/icons/light.svg",
+        "motion": "assets/icons/motion.svg",
+        "pressure": "assets/icons/sensor.svg",
+        "rainmoisture": "assets/icons/humidity.svg",
+        "soilmoisture": "assets/icons/humidity.svg",
+        "waterflow": "assets/icons/waterflow.svg"
+    };
+
     var MENU = [
         { layout: true, separator: true },
         { name: "Home", options: { icon: "assets/icons/action/ic_dashboard_48px.svg", face : "assets/icons/action/ic_dashboard_48px.svg",  link : '/',  avatarIcon: true, available: true }},
         { name: "Mapa", options: { icon: "assets/icons/maps/ic_map_48px.svg", face : "assets/icons/maps/ic_map_48px.svg",  link : '/map',  avatarIcon: true, available: true }},
         { name: "Receitas", options: { icon: "assets/icons/action/ic_speaker_notes_48px.svg", face : "assets/icons/action/ic_speaker_notes_48px.svg", link : '/recipes', avatarIcon: true, available: true}},
         { name: "Assinaturas", options: { icon: "assets/icons/action/ic_supervisor_account_48px.svg", face : "assets/icons/action/ic_supervisor_account_48px.svg", link : '/subscriptions', avatarIcon: true, available: true }},
+        { name: "Informações", options: { icon: "assets/icons/action/ic_receipt_48px.svg", face : "assets/icons/action/ic_receipt_48px.svg",  link : '/info',  avatarIcon: true, available: true}},
         { layout: true, separator: true },
         { layout: true, header: true , title: "Admin"},
-        { name: "Sensores", options: { icon: "assets/icons/action/ic_settings_input_antenna_48px.svg", face : "assets/icons/ic_settings_input_antenna_48px.svg",  link : '/sensors',  avatarIcon: true, available: true}},
+        { name: "Atuadores", options: { icon: "assets/icons/action/ic_play_for_work_48px.svg", face : "assets/icons/action/ic_play_for_work_48px.svg",  link : '/actuators',  avatarIcon: true, available: true}},
+        { name: "Sensores", options: { icon: "assets/icons/action/ic_settings_input_antenna_48px.svg", face : "assets/icons/action/ic_settings_input_antenna_48px.svg",  link : '/sensors',  avatarIcon: true, available: true}},
+        { name: "Servidores", options: { icon: "assets/icons/hardware/ic_device_hub_48px.svg", face : "assets/icons/hardware/ic_device_hub_48px.svg",  link : '/servers',  avatarIcon: true, available: true}},
         { name: "Alertas", options: { available: false, icon: "assets/icons/action/ic_settings_remote_48px.svg", face : "assets/icons/action/ic_settings_remote_48px.svg", link : '/alerts', avatarIcon: true}},
         { name: "Grupos", options: { available: false, icon: "assets/icons/action/ic_speaker_notes_48px.svg", face : "assets/icons/action/ic_speaker_notes_48px.svg", link : '/groups', avatarIcon: true}},
         { name: "Configurações", options: { available: false, icon: "assets/icons/action/ic_build_48px.svg", face : "assets/icons/action/ic_build_48px.svg", link : '/admin', avatarIcon: true }},
@@ -103,6 +121,40 @@
                 OFF: "assets/icons/device/ic_signal_wifi_off_24px.svg"
             }
         },
+        ACTUATORS: {
+            LIST: {
+                TITLE: "Lista de Atuadores",
+                CONNECTED: {
+                    TITLE: "Atuadores Habilitados"
+                },
+                DISCONNECTED: {
+                    TITLE: "Atuadores Bloqueados"
+                }
+            },
+            ICONS:{
+                NEW: "assets/icons/content/ic_add_48px.svg",
+                ON: "assets/icons/device/ic_signal_wifi_4_bar_24px.svg",
+                OFF: "assets/icons/device/ic_signal_wifi_off_24px.svg"
+            }
+        },
+        SERVERS: {
+            LIST: {
+                TITLE: "Lista de Servidores"
+            },
+            ICONS:{
+                NEW: "assets/icons/content/ic_add_48px.svg",
+                ON: "assets/icons/device/ic_signal_wifi_4_bar_24px.svg",
+                OFF: "assets/icons/device/ic_signal_wifi_off_24px.svg"
+            }
+        },
+        INFO: {
+            LIST: {
+                TITLE: "Lista de Informações"
+            },
+            ICONS:{
+                NEW: "assets/icons/content/ic_add_48px.svg"
+            }
+        },
         GROUPS: {
             LIST: {
                 TITLE: "Groupos",
@@ -166,6 +218,7 @@
     angular
         .module('app.core')
         .constant('CONSTANTS', {
+            ICONS: ICONS,
             MENU: MENU,
             PROTECTED_PATHS: PROTECTED_PATHS,
             MOODLIST: MOODLIST,

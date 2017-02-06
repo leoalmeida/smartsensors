@@ -24,7 +24,7 @@
                 </div>
             </div>
         <div layout-padding>
-            <form name="vm.sensorForm" ng-submit="vm.submit()">
+            <form name="vm.actuatorForm" ng-submit="vm.submit()">
                 <section layout="column" layout-gt-xs="row"  layout-align="center center">
                     <span flex layout-margin>
                     <!--<md-autocomplete
@@ -78,41 +78,41 @@
                                 </md-card-avatar>
                                 <md-card-header-text>
                                     <span class="md-title">Informações Básicas</span>
-                                    <span class="md-subhead">{{vm.sensor.name}} ({{vm.selectedSensorConfig.name}})</span>
+                                    <span class="md-subhead">{{vm.actuator.name}} ({{vm.selectedActuatorConfig.name}})</span>
                                 </md-card-header-text>
                                 <span layout-padding layout-align="center center">
-                                    <span style="background-color: {{(vm.sensor.connected)?'rgba(0, 204, 102,0.5)':'rgba(230, 46, 0,0.5)'}}">
-                                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="vm.sensor.connected" aria-label="on"></md-icon>
-                                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!vm.sensor.connected" aria-label="off"></md-icon>
-                                        {{(vm.sensor.connected)?'Sensor Online':'Sensor Offline'}}
+                                    <span style="background-color: {{(vm.actuator.connected)?'rgba(0, 204, 102,0.5)':'rgba(230, 46, 0,0.5)'}}">
+                                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="vm.actuator.connected" aria-label="on"></md-icon>
+                                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!vm.actuator.connected" aria-label="off"></md-icon>
+                                        {{(vm.actuator.connected)?'Sensor Online':'Sensor Offline'}}
                                     </span>
                                 </span>
                             </md-card-header>
                             <md-card-content>
                                 <md-content layout="column" layout-gt-xs="row" layout-padding>
                                     <!--<md-input-container flex-gt-md>
-                                        <md-switch ng-model="vm.sensor.alert" disabled>Possui alertas ativos? </md-switch>
+                                        <md-switch ng-model="vm.actuator.alert" disabled>Possui alertas ativos? </md-switch>
                                     </md-input-container>-->
                                     <md-input-container flex>
-                                        <md-switch ng-model="vm.sensor.enabled" ng-disabled="(vm.serverStatus.$value)"> Habilitado </md-switch>
+                                        <md-switch ng-model="vm.actuator.enabled" ng-disabled="(vm.serverStatus.$value)"> Habilitado </md-switch>
                                     </md-input-containerflex>
                                 </md-content>
                                 <md-content layout="column" layout-gt-xs="row" layout-padding layout-wrap>
                                     <md-input-container flex>
                                         <label>Tipo</label>
-                                        <md-select required ng-model="vm.selectedSensorConfig" ng-change="vm.selectSensorType()" ng-value="vm.selectedSensorConfig.name" ng-disabled="(vm.serverStatus.$value)">
-                                            <md-option ng-repeat="item in vm.sensorTypes | filter: {available: true} as availableSensors" ng-value="{{item}}" ng-selected="item.type==vm.selectedSensorConfig.type">{{item.name}}</md-option>
+                                        <md-select required ng-model="vm.selectedActuatorConfig" ng-change="vm.selectActuatorType()" ng-value="vm.selectedActuatorConfig.name" ng-disabled="(vm.serverStatus.$value)">
+                                            <md-option ng-repeat="item in vm.actuatorTypes | filter: {available: true} as availableSensors" ng-value="{{item}}" ng-selected="item.type==vm.selectedActuatorConfig.type">{{item.name}}</md-option>
                                         </md-select>
                                         <!--<span>{{vm.startSensorConfig(vm.availableSensors)}}</span>-->
                                         <div class="md-errors-spacer"></div>
                                     </md-input-container>
                                     <md-input-container flex>
                                         <label>Nome</label>
-                                        <input required ng-model="vm.sensor.name">
+                                        <input required ng-model="vm.actuator.name">
                                     </md-input-container>
                                     <md-input-container flex>
                                         <label>Label</label>
-                                        <input required ng-model="vm.sensor.label">
+                                        <input required ng-model="vm.actuator.label">
                                     </md-input-container>
                                     <div layout="row" layout-fill >
                                         <md-input-container  md-no-float flex>
@@ -149,85 +149,85 @@
                             </md-card-avatar>
                             <md-card-header-text>
                                 <span class="md-title">Configurações</span>
-                                <span class="md-subhead">{{vm.sensor.name}}</span>
+                                <span class="md-subhead">{{vm.actuator.name}}</span>
                             </md-card-header-text>
                             <span layout-padding layout-align="center center">
                                 <span style="background-color: {{(vm.sensor.connected)?'rgba(0, 204, 102,0.5)':'rgba(230, 46, 0,0.5)'}}">
-                                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="vm.sensor.connected" aria-label="on"></md-icon>
-                                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!vm.sensor.connected" aria-label="off"></md-icon>
+                                    <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="vm.sensor.connected" aria-label="on"></md-icon>
+                                    <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!vm.sensor.connected" aria-label="off"></md-icon>
                                     {{(vm.sensor.connected)?'Sensor Online':'Sensor Offline'}}
                                 </span>
                             </span>
                         </md-card-header>
                         <md-card-content>
                             <md-content layout-gt-xs="row" layout-padding >
-                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.controller">
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedActuatorConfig.properties.input.controller">
                                     <label>Modelo</label>
-                                    <md-select ng-model="vm.sensor.configurations.controller" ng-disabled="(vm.serverStatus.$value)">
-                                        <md-option ng-repeat="controller in vm.selectedSensorConfig.properties.input.controller" value="{{controller.id}}">{{controller.id}}</md-option>
+                                    <md-select ng-model="vm.actuator.configurations.controller" ng-disabled="(vm.serverStatus.$value)">
+                                        <md-option ng-repeat="controller in vm.selectedActuatorConfig.properties.input.controller" value="{{controller.id}}">{{controller.id}}</md-option>
                                     </md-select>
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.events">
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedActuatorConfig.properties.events">
                                     <label>Eventos</label>
-                                    <md-select ng-model="vm.sensor.configurations.events" multiple ng-disabled="(vm.serverStatus.$value)">
+                                    <md-select ng-model="vm.actuator.configurations.events" multiple ng-disabled="(vm.serverStatus.$value)">
                                         <md-optgroup label="Eventos">
-                                            <md-option ng-repeat="event in vm.selectedSensorConfig.properties.events" value="{{event}}">{{event}}</md-option>
+                                            <md-option ng-repeat="event in vm.selectedActuatorConfig.properties.events" value="{{event}}">{{event}}</md-option>
                                         </md-optgroup>
                                     </md-select>
                                 </md-input-container>
                             </md-content>
                             <md-content layout-gt-xs="row" layout-padding>
-                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.duration">
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedActuatorConfig.properties.input.duration">
                                     <label>Duração</label>
                                     <input  type="number" step="any"
-                                            name="duration" ng-model="vm.sensor.configurations.duration" min="1000"
+                                            name="duration" ng-model="vm.actuator.configurations.duration" min="1000"
                                             max="99999" />
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.ledStyle">
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedActuatorConfig.properties.input.ledStyle">
                                     <label>Estilo de Led</label>
-                                    <md-select ng-model="vm.sensor.configurations.ledStyle">
+                                    <md-select ng-model="vm.actuator.configurations.ledStyle">
                                         <md-option ng-repeat="style in vm.ledStyles" value="{{style.val}}">{{style.name}}</md-option>
                                     </md-select>
                                 </md-input-container>
-                                <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.offset">
+                                <md-input-container class="md-block" ng-if="vm.selectedActuatorConfig.properties.input.offset">
                                     <label>Threshold</label>
                                     <input type="number" step="any"
-                                           name="offset" ng-model="vm.sensor.configurations.offset" min="0"
+                                           name="offset" ng-model="vm.actuator.configurations.offset" min="0"
                                            max="100" />
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.loop">
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedActuatorConfig.properties.input.loop">
                                     <label>Loop</label>
                                     <input  type="number" step="any"
-                                           name="loop" ng-model="vm.sensor.configurations.loop" min="100"
+                                           name="loop" ng-model="vm.actuator.configurations.loop" min="100"
                                            max="9999" />
                                 </md-input-container>
-                                <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.maxval">
+                                <md-input-container class="md-block" ng-if="vm.selectedActuatorConfig.properties.input.maxval">
                                     <label>Fluxo</label>
                                     <input type="number" step="any"
-                                           name="offset" ng-model="vm.sensor.configurations.maxval" min="0"
+                                           name="offset" ng-model="vm.actuator.configurations.maxval" min="0"
                                            max="10000" />
                                 </md-input-container>
-                                <md-input-container class="md-block" ng-if="vm.selectedSensorConfig.properties.input.threshold">
+                                <md-input-container class="md-block" ng-if="vm.selectedActuatorConfig.properties.input.threshold">
                                     <label>Threshold</label>
                                     <input type="number" step="any"
-                                           name="threshold" ng-model="vm.sensor.configurations.threshold" min="0"
+                                           name="threshold" ng-model="vm.actuator.configurations.threshold" min="0"
                                            max="100" />
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.min">
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedActuatorConfig.properties.input.min">
                                     <label>Min</label>
                                     <input  type="number" step="any"
-                                           name="min" ng-model="vm.sensor.configurations.min" min="0"
+                                           name="min" ng-model="vm.actuator.configurations.min" min="0"
                                            max="100" />
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.maxval">
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedActuatorConfig.properties.input.maxval">
                                     <label>Max</label>
                                     <input  type="number" step="any"
-                                           name="max" ng-model="vm.sensor.configurations.maxval" min="0"
+                                           name="max" ng-model="vm.actuator.configurations.maxval" min="0"
                                            max="100" />
                                 </md-input-container>
-                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.unit">
+                                <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedActuatorConfig.properties.input.unit">
                                     <label>Unidade</label>
-                                    <md-select ng-model="vm.sensor.configurations.unit" >
+                                    <md-select ng-model="vm.actuator.configurations.unit" >
                                         <md-option ng-repeat="unit in vm.units" value="{{unit}}">{{unit}}</md-option>
                                     </md-select>
                                 </md-input-container>
@@ -237,7 +237,7 @@
                                     <md-subheader class="md-primary">Entrada</md-subheader>
                                     <md-input-container class="md-block" >
                                         <label>Pin</label>
-                                        <md-select required ng-model="vm.sensor.configurations.pin" ng-disabled="(vm.serverStatus.$value)">
+                                        <md-select required ng-model="vm.actuator.configurations.pin" ng-disabled="(vm.serverStatus.$value)">
                                             <md-option ng-repeat="pin in vm.pins" value="{{pin.val}}">{{pin.name}}</md-option>
                                         </md-select>
                                     </md-input-container>
@@ -254,7 +254,7 @@
                             </md-card-avatar>
                             <md-card-header-text>
                                 <span class="md-title">Histórico de Leituras</span>
-                                <span class="md-subhead">{{vm.sensor.name}}</span>
+                                <span class="md-subhead">{{vm.actuator.name}}</span>
                             </md-card-header-text>
                             <span layout-padding layout-align="center center">
                                 <span style="background-color: {{(vm.sensor.connected)?'rgba(0, 204, 102,0.5)':'rgba(230, 46, 0,0.5)'}}">
@@ -266,9 +266,9 @@
                         </md-card-header>
                         <md-card-content>
                             <div class="md-list-item-text">
-                                <h3>{{vm.sensor.readings.value}}{{vm.sensor.readings.unit}}</h3>
-                                <h4>média: {{vm.sensor.readings.average}}</h4>
-                                <p>letituras: {{vm.sensor.readings.quantity}}</p>
+                                <h3>{{vm.actuator.readings.value}}{{vm.actuator.readings.unit}}</h3>
+                                <h4>média: {{vm.actuator.readings.average}}</h4>
+                                <p>letituras: {{vm.actuator.readings.quantity}}</p>
                             </div>
                         </md-card-content>
                     </md-card>
