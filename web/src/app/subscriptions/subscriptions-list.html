@@ -7,24 +7,25 @@
                 Ajuda?
             </md-button>
             <md-button class="md-fab md-mini" aria-label="Favorite" ng-click="vm.newItem()">
-                <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.NEW}}"></md-icon>
+                <md-icon md-svg-icon="{{vm.ICONS.NEW}}"></md-icon>
             </md-button>
         </div>
     </md-toolbar>
     <md-content>
         <md-subheader class="md-no-sticky md-accent md-padding">{{vm.SCREENCONFIG.LIST.SUBSCRIBED.TITLE}}</md-subheader>
         <md-list ng-animate="'animate'" class="md-dense">
-            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.subscribed">
-                <img alt="{{ item.name }}" ng-src="{{item.avatar}}" class="md-avatar" />
+            <!--ng-click="vm.navigateTo(item.$id, $event)"-->
+            <md-list-item class="md-3-line"  ng-repeat="item in vm.listItems.subscribed">
+                <img alt="{{ item.label }}" ng-src="{{item.catalogImage}}" class="md-avatar" />
                 <div class="md-list-item-text" >
-                    <h3>{{ item.name }}</h3>
+                    <h3>{{ item.label }}</h3>
                     <h4>{{ item.description }}</h4>
                 </div>
                 <span flex></span>
-                <h4> {{ item.members.length }} </h4>
-                <md-icon md-svg-icon="{{vm.SCREENCONFIG.LIST.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
+                <h4> {{ item.subscribeDate }} </h4>
+                <md-icon md-svg-icon="{{vm.ICONS.CLOCK}}" aria-label="Assinantes"></md-icon>
                 <span flex></span>
-                <md-switch class="md-secondary" ng-model="item.status" ng-change="vm.toggleState(item)"></md-switch>
+                <md-switch class="md-secondary" ng-model="value" ng-change="vm.toggleState(item)" ng-init="value=true"></md-switch>
             </md-list-item>
             <md-divider></md-divider>
         </md-list>
@@ -42,7 +43,7 @@
                 <h4> {{ item.subscribers.length }} </h4>
                 <md-icon md-svg-icon="{{vm.SCREENCONFIG.LIST.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
                 <span flex></span>
-                <md-switch class="md-secondary" ng-model="item.subscribed" ng-change="vm.subscribeToRecipe(item)"></md-switch>
+                <md-switch class="md-secondary" ng-model="subscribed" ng-change="vm.subscribeToRecipe(item)"></md-switch>
             </md-list-item>
             <md-divider></md-divider>
         </md-list>
@@ -57,7 +58,8 @@
         <md-grid-list md-cols-gt-md="12" md-cols="3" md-cols-md="8"
                 md-row-height-gt-md="1:1" md-row-height="4:3"
                 md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px">
-            <md-grid-tile ng-click="vm.navigateTo(item.$id, $event)"
+            <!--ng-click="vm.navigateTo(item.$id, $event)"-->
+            <md-grid-tile
                           ng-repeat="item in vm.listItems.recipes | SubscriptionFilter:{values: vm.listItems.subscribed, type:'recipe', reversal: true} as filteredRecipes"
                           md-colspan-gt-sm="{{vm.RANDOMSPAN}}"
                           md-rowspan-gt-sm="{{vm.RANDOMSPAN}}" class="card" >
@@ -73,11 +75,11 @@
                     </md-grid-tile-header>
                     <md-card-actions layout="row" layout-align="end center">
                         <span>
-                            <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
-                            <span class="md-subhead"><strong>{{ item.subscribers.length }}</strong></span>
+                            <md-icon md-svg-icon="{{vm.ICONS.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
+                            <span class="md-subhead"><strong>{{ (item.subscribers.length)?item.subscribers.length:0 }}</strong></span>
                         </span>
                         <span flex></span>
-                        <md-switch class="md-secondary" ng-model="item.subscribed" ng-change="vm.subscribeToRecipe(item)"></md-switch>
+                        <md-switch class="md-secondary" ng-model="subscribed" ng-change="vm.subscribeToRecipe(item)"></md-switch>
                     </md-card-actions>
                 </md-card>
             </md-grid-tile>

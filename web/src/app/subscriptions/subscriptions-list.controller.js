@@ -33,29 +33,46 @@
         //vm.listItems.groups = groupsService.getPublic();
 
         vm.toggleState = function (item){
-            vm.listItems.subscribed.$save(vm.listItems.subscribed.$indexFor(item.$id));
+            let subscribedID = vm.listItems.subscribed.$indexFor(item.$id);
 
-            if (item.status)
-                vm.listItems.recipes[item.$id].subscribers.push(currentUser.uid);
-            else
-                vm.listItems.recipes[item.$id].subscribers.splice(vm.listItems.recipes[item.$id].subscribers.indexOf(currentUser.uid), 1);
+            vm.listItems.subscribed.$remove(subscribedID);
 
-            vm.listItems.recipes.$save(item.$id);
+            let receipeKEY = vm.listItems.subscribed[subscribedID].id;
+            let receipeArrID = vm.listItems.recipes.$indexFor(receipeKEY);
+
+            vm.listItems.recipes[receipeArrID].subscribers.splice(vm.listItems.recipes[receipeArrID].subscribers.indexOf(currentUser.uid), 1);
+
+            vm.listItems.recipes.$save(receipeArrID).then(function(ref) {
+                notifyService.notify('Assinatura removida com sucesso', ref.key);
+            });
         };
+
 
         vm.subscribeToRecipe = function (item){
             var newItem = {
                 catalogImage: item.image,
                 id: item.$id,
-                startDate: item.startDate,
+                label: item.label,
+                description: item.description,
+                startDate: "",
                 status: true,
                 subscribeDate: new Date().toLocaleString(),
                 type: "recipe"
             };
 
-            subscriptionsService.addOne(currentUser, newItem);
-            vm.toggleState(item);
-            notifyService.notify('Nova assinatura realizada', newItem.name);
+            vm.listItems.subscribed.$add(newItem).then(function(ref) {
+                //subscriptionsService.addOne(currentUser, newItem);
+                let subscribedArrID = vm.listItems.subscribed.$indexFor(ref.key);
+                let receipeArrID = vm.listItems.recipes.$indexFor(vm.listItems.subscribed[subscribedArrID].id);
+
+                if (!vm.listItems.recipes[receipeArrID].subscribers) vm.listItems.recipes[receipeArrID].subscribers = [currentUser.uid];
+                else vm.listItems.recipes[receipeArrID].subscribers.push(currentUser.uid);
+
+                vm.listItems.recipes.$save(receipeArrID).then(function(ref) {
+                    notifyService.notify('Nova assinatura realizada com sucesso', ref.key);
+                });
+
+            });
         };
 
         vm.subscribeToGroup = function (item){

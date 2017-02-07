@@ -18,7 +18,7 @@
             actuators: 'actuators',
             subscriptions: 'subscriptions',
             groups: firebaseObject('groups'),
-            recipes: firebaseObject('recipes'),
+            recipes: 'recipes',
             alerts: 'alerts',
             sensors: 'sensors',
             servers: 'servers',

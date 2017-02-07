@@ -9,8 +9,7 @@
 
     function RecipesService(firebaseDataService, $firebaseArray) {
 
-        var recipesRef = firebaseDataService.recipes;
-        var database = recipesRef.$id;
+        var database = firebaseDataService.recipes;
         var recipesList = firebaseDataService.getFirebaseArray(database);
         var configRef = firebaseDataService.configurations;
 
