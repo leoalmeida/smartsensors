@@ -686,3 +686,15 @@ md-content .dropzone .selected md-card {
 .alertTraillerText {
     color: rgb(255, 160, 3);
 }
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.lowercase {
+    text-transform: lowercase;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}

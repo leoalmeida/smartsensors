@@ -185,6 +185,8 @@
             vm.activity = "Nova Receita";
             vm.models.recipe = {
                 icon: "assets/icons/action/ic_class_24px.svg",
+                image: "assets/images/profile_header0.png",
+                description: "",
                 enabled: true,
                 label: "",
                 key: "",
@@ -192,10 +194,7 @@
                 maxActions: 4,
                 container: [],
                 actionContainer: [],
-                alerts: [],
-                subscribers: [
-                    currentUser.uid
-                ]
+                alerts: []
             }
         };
 

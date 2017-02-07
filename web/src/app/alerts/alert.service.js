@@ -9,9 +9,8 @@
 
     function AlertService(firebaseDataService, $firebaseArray) {
 
-        var alertsRef = firebaseDataService.alerts;
-        var database = alertsRef.$id;
-        var alertsList = firebaseDataService.getFirebaseArray(alertsRef.$id);
+        var database = firebaseDataService.alerts;
+        var alertsList = firebaseDataService.getFirebaseArray(database);
         var configRef = firebaseDataService.configurations;
 
 
@@ -33,18 +32,19 @@
         }
 
         function getPublic() {
-            return firebaseDataService.getFirebaseArray(database + '/public' );
+            return firebaseDataService.getRefFirebaseArray(database);
         }
 
         function getOwn(currentUser) {
-            return firebaseDataService.getFirebaseArray(database + '/public/' + currentUser.uid);
+            return firebaseDataService.getRefFirebaseArray(database, 'owner', currentUser.uid);
         }
 
         function getOne(currentUser, key) {
             if (currentUser){
                 return firebaseDataService.getFirebaseObject(database + '/private/' + currentUser.uid + '/' + key);
             }else {
-                return firebaseDataService.getFirebaseObject(database + '/public/*/' + key);
+                //return firebaseDataService.getFirebaseObject(database + '/public/' + key);
+                return firebaseDataService.getRefFirebaseObject(database, key);
             }
         }
 

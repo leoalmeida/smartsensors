@@ -49,11 +49,12 @@
         }
 
         function getOne(type, currentUser, location, key) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/' + key);
+            //return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/' + key);
+            return firebaseDataService.getRefFirebaseObject(database, key);
         }
 
-        function getStatus(type, currentUser, location) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/connected');
+        function getStatus(type, location) {
+            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + location + '/connected');
         }
 
         function addOne(currentUser, type, location, newObject) {

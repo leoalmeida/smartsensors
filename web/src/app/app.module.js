@@ -17,6 +17,7 @@
         'app.notifications',
         'app.friends',
         'app.groups',
+        'app.subscriptions',
         'app.recipes',
         'app.alerts',
         'app.sensors',

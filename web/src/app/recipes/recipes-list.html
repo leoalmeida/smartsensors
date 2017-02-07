@@ -12,7 +12,7 @@
         <md-list ng-animate="'animate'" class="md-dense" >
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFIG.LIST.SUBSCRIBED.TITLE}}</md-subheader>
-            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems | RecipesFilter: {column: 'enabled', value: true} as filteredRecipes">
+            <md-list-item class="md-3-line" ng-click="vm.navigateTo(vm.listItems[vm.currentNavItem].$id, $event)" ng-repeat="item in vm.listItems | RecipesFilter: {column: 'enabled', value: true} as filteredRecipes">
                 <img alt="{{ item.icon }}" ng-src="{{item.icon}}" class="md-avatar" />
                 <div class="md-list-item-text" >
                     <h3>{{ item.label }}</h3>

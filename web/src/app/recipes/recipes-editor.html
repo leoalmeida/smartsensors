@@ -63,6 +63,10 @@
                 </md-card-header>
                 <md-card-content layout="row">
                     <span layout="column" flex layout-padding >
+                        <md-input-container md-no-float>
+                                <label>Descrição</label>
+                                <input ng-model="vm.models.recipe.description">
+                        </md-input-container>
                         <div ng-include="'container.html'" class="box"></div>
 
     <!--<md-button class="md-fab md-primary" aria-label="Add Alert" ng-click="vm.addAlert()">

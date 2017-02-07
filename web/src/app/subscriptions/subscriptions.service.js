@@ -9,9 +9,8 @@
 
     function SubscriptionsService(firebaseDataService) {
 
-        var subscriptionsRef = firebaseDataService.subscriptions;
-        var database = subscriptionsRef.$id;
-        var subscriptionsList = firebaseDataService.getFirebaseArray(subscriptionsRef.$id);
+        var database = firebaseDataService.subscriptions;
+        var subscriptionsList = firebaseDataService.getFirebaseArray(database);
         var configRef = firebaseDataService.configurations;
 
 
@@ -34,12 +33,12 @@
             return firebaseDataService.getFirebaseArray(database +  '/' + currentUser.uid);
         }
 
-        function addOne(newObject) {
-            return firebaseDataService.getFirebaseObject(database).$add(newObject);
+        function addOne(currentUser, newObject) {
+            return firebaseDataService.getFirebaseArray(database + '/' + currentUser.uid).$add(newObject);
         }
 
-        function removeOne(key) {
-            return firebaseDataService.getFirebaseObject(database).remove(key);
+        function removeOne(currentUser, key) {
+            return firebaseDataService.getFirebaseArray(database + '/' + currentUser.uid).remove(key);
         }
 
     }

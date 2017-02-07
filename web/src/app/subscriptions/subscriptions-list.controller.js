@@ -8,45 +8,54 @@
         .controller('SubscriptionsController', SubscriptionsController);
 
 
-    SubscriptionsController.$inject = ['currentUser', 'CONSTANTS','AlertService', 'GroupsService', 'SubscriptionsService', '$mdDialog', 'ToastService', 'NotifyService', '$filter'];
+    SubscriptionsController.$inject = ['currentUser', 'CONSTANTS','RecipesService', 'GroupsService', 'SubscriptionsService', '$mdDialog', 'ToastService', 'NotifyService', '$filter'];
 
-    function SubscriptionsController(currentUser, CONSTANTS, alertService, groupsService, subscriptionsService, $mdDialog, toastService, notifyService, $filter) {
+    function SubscriptionsController(currentUser, CONSTANTS, recipesService, groupsService, subscriptionsService, $mdDialog, toastService, notifyService, $filter) {
 
         var vm = this;
 
         vm.helpResult = '  ';
         vm.customFullscreen = false;
 
-        vm.anyalerts = vm.anygroups = true;
+        vm.anyrecipes = true;
+        vm.anygroups = true;
 
         vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SUBSCRIPTIONS;
+        vm.RANDOMCOLOR = CONSTANTS.SCREENCONFIG.RANDOMCOLOR;
+        vm.RANDOMSPAN = CONSTANTS.SCREENCONFIG.RANDOMSPAN;
 
         vm.listItems = {};
         vm.listItems.subscribed = subscriptionsService.getOwn(currentUser);
-        vm.listItems.alerts = [];
+        vm.listItems.recipes = [];
 
-        vm.listItems.alerts = alertService.getPublic();
+        vm.listItems.recipes = recipesService.getPublic();
 
         //vm.listItems.groups = groupsService.getPublic();
 
         vm.toggleState = function (item){
-            var ret = vm.listItems.subscribed.$save(vm.listItems.subscribed.$indexFor(item.$id));
+            vm.listItems.subscribed.$save(vm.listItems.subscribed.$indexFor(item.$id));
+
+            if (item.status)
+                vm.listItems.recipes[item.$id].subscribers.push(currentUser.uid);
+            else
+                vm.listItems.recipes[item.$id].subscribers.splice(vm.listItems.recipes[item.$id].subscribers.indexOf(currentUser.uid), 1);
+
+            vm.listItems.recipes.$save(item.$id);
         };
 
-        vm.subscribeToAlert = function (item){
+        vm.subscribeToRecipe = function (item){
             var newItem = {
-                avatar: item.configurations.localization.image,
-                description: item.configurations.type,
+                catalogImage: item.image,
                 id: item.$id,
-                name: item.configurations.name,
-                owner: item.configurations.owner,
                 startDate: item.startDate,
                 status: true,
                 subscribeDate: new Date().toLocaleString(),
-                type: "alert"
+                type: "recipe"
             };
 
-            vm.listItems.subscribed.$add(newItem);
+            subscriptionsService.addOne(currentUser, newItem);
+            vm.toggleState(item);
+            notifyService.notify('Nova assinatura realizada', newItem.name);
         };
 
         vm.subscribeToGroup = function (item){
@@ -62,7 +71,8 @@
                 type: "messenger"
             };
 
-            vm.listItems.subscribed.$add(newItem);
+            subscriptionsService.addOne(currentUser, newItem);
+            //vm.listItems.subscribed.$add(newItem);
         };
 
         vm.newItem = function(){
