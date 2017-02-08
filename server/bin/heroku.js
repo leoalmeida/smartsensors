@@ -91,4 +91,4 @@ setInterval(function () {
             }
         }
     }
-}, 10000);
+}, 1800000);
