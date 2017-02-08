@@ -57,8 +57,8 @@
             return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + key);
         }
 
-        function addOne(currentUser, type, location, newObject) {
-            return firebaseDataService.getFirebaseArray(database + '/' + type + '/' + currentUser.uid + '/' + location ).$add(newObject);
+        function addOne(newObject) {
+            return firebaseDataService.getFirebaseArray(database + '/public').$add(newObject);
         }
 
         function removeOne(currentUser, type, key) {

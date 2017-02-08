@@ -1,6 +1,6 @@
+
 (function(angular) {
   'use strict';
-
 
   angular
       .module('app.info')
@@ -27,6 +27,7 @@
       vm.navigateTo = function(serverID, key){
           $location.path( "/info/public/" + serverID + "/edit/" + key);
       };
+
   };
 
 })(angular);

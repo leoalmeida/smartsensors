@@ -37,12 +37,12 @@
         //var ret = vm.listItems.$save(item);
     };
 
-    vm.newActuator = function(serverID){
-        $location.path( "/actuators/public/" + serverID + "/new");
+    vm.newActuator = function(serverKey){
+        $location.path( "/actuators/public/" + serverKey + "/new");
     };
 
-    vm.navigateTo = function(serverID, key, $event){
-        $location.path( "/actuators/public/" + serverID + "/edit/" + key );
+    vm.navigateTo = function(serverKey, key, $event){
+        $location.path( "/actuators/public/" + serverKey + "/edit/" + key );
     };
 
     vm.newServer = function(ev) {
@@ -65,8 +65,12 @@
                 left: 1500
             });
 
-        $mdDialog.show(confirm).then(function(result) {
-            vm.newSensor(result);
+        $mdDialog.show(confirm).then(function(result){
+            serversService.addOne({"enabled": true, "connected": false, "id": result, "owner": currentUser.uid})
+                .then(function(ref) {
+                    vm.newActuator(ref.key);
+                });
+
         });
     };
   };

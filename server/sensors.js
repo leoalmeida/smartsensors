@@ -10,6 +10,7 @@ let userKey = "JwyqVEHujYe3RtBCN50gbjXK1EB3";
 let locationID = "Casa"
 let db = firebase.database();
 
+
 module.exports = (httpServer) => {
 
     let sensors = [], alerts = [], sensor, sensorPower;
@@ -26,6 +27,11 @@ module.exports = (httpServer) => {
     const five = require("johnny-five");
     const board = new five.Board();
     let messages = [];
+
+    //Flow
+    var layout = { fileopt : "overwrite", filename : "Water Flow" };
+    var pulses = 0;
+    var lastFlowRateTimer = 0;
 
     //Arduino board connection
     board.on("ready", () => {
@@ -87,6 +93,9 @@ module.exports = (httpServer) => {
                     else if (sensors[i].type == "thermometer") {
                         var temperature = startThermometer(sensors[i]);
                     }
+                    else if (sensors[i].type == "waterflow") {
+                        var waterflow = startWaterflow(sensors[i]);
+                    }
                 };
             }
         });
@@ -105,6 +114,7 @@ module.exports = (httpServer) => {
           console.log('Moisture OFF RECEIVED');
       });
     });
+
     console.log('Waiting for connection');
 
     let startMotion = function (sensor) {
@@ -387,6 +397,80 @@ module.exports = (httpServer) => {
         return temperature;
     };
 
+    let startWaterflow = function (sensor) {
+
+        lastFlowPinState = 0;
+
+        var waterflow = new five.Sensor({
+            pin: sensor.configurations.pin,
+            freq: sensor.configurations.loop
+        });
+
+        waterflow.active = true;
+        waterflow.key = sensor.key;
+
+        waterflow.on("change", function() {
+
+            console.log("Value: " + this.value);
+
+            var litres = pulses;
+            litres /= 7.5;
+            litres /= 60;
+            var data = {x:getDateString(), y:litres};
+
+            console.log("Data: " + data.value);
+
+            messages.push("The reading value has changed.");
+            console.log("The reading value has changed.");
+
+            alerts[waterflow.key].lastUpdate.data = {
+                loops: pulses,
+                unit: waterflow.configurations.unit,
+                state: this.value,
+                value: data.y
+            };
+
+            if (!this.value) {
+                waterflow.alert = false;
+                alert.severity = "white";
+                alert.releaseDate = "11/06/2016 15:15"
+                removeAlert("public", waterflow.key);
+            } else if (litres.value > waterflow.configurations.max) {
+                waterflow.alert = true;
+                waterflow.severity = "red";
+                updateAlert("public", waterflow.key, alerts[waterflow.key]);
+            } else if (litres.value < waterflow.configurations.max) {
+                waterflow.alert = true;
+                alert.severity = "blue";
+                updateAlert("public", waterflow.key, alerts[waterflow.key]);
+            }
+
+            updateReadings(alerts[waterflow.key].lastUpdate, key);
+        });
+
+        sensor.on("data", function() {
+            if (this.value === 0) {
+                lastFlowRateTimer ++;
+                return;
+            }
+            if (this.value === 1) {
+                pulses ++;
+            }
+            lastFlowPinState = this.value;
+            flowrate = sensor.configurations.flowrate;
+            flowrate /= lastFlowRateTimer;
+            lastFlowRateTimer = 0;
+        });
+    };
+
+    // little helper function to get a nicely formatted date string
+    function getDateString () {
+        var time = new Date();
+        // 10800000 is (GMT-3 Brasilia)
+        // for your timezone just multiply +/-GMT by 3600000
+        var datestr = new Date(time - 10800000).toISOString().replace(/T/, ' ').replace(/Z/, '');
+        return datestr;
+    }
 };
 
 let updateAlert = function (accessType, key ,alert) {

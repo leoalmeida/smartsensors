@@ -22,6 +22,7 @@
     "cookie-parser": "~1.0.1",
     "express": "^4.14.0",
     "firebase": "^3.4.1",
+    "firebase-admin": "^4.1.0",
     "johnny-five": "^0.10.1",
     "node-notifier": "^4.6.1",
     "nw-notify": "^1.0.3",

@@ -36,12 +36,12 @@
         //var ret = vm.listItems.$save(item);
     };
 
-    vm.newSensor = function(serverID){
-        $location.path( "/sensors/public/" + serverID + "/new");
+    vm.newSensor = function(serverKey){
+        $location.path( "/sensors/public/" + serverKey + "/new");
     };
 
-    vm.navigateTo = function(serverID, key, $event){
-        $location.path( "/sensors/public/" + serverID + "/edit/" + key );
+    vm.navigateTo = function(serverKey, key, $event){
+        $location.path( "/sensors/public/" + serverKey + "/edit/" + key );
     };
 
     vm.newServer = function(ev) {
@@ -65,7 +65,10 @@
             });
 
         $mdDialog.show(confirm).then(function(result) {
-            vm.newSensor(result);
+            serversService.addOne({"enabled": true, "connected": false, "id": result, "owner": currentUser.uid})
+                .then(function(ref) {
+                    vm.newSensor(ref.key);
+                });
         });
     };
   };

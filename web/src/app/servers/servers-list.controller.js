@@ -60,7 +60,7 @@
             });
 
         $mdDialog.show(confirm).then(function(result) {
-            vm.listItems.$add({"connected": false, "id": result, "owner": currentUser.uid});
+            vm.listItems.$add({"enabled": true, "connected": false, "id": result, "owner": currentUser.uid});
         });
     };
   };
