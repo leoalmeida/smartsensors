@@ -1,4 +1,4 @@
-<md-content flex-gt-sm="100" flex layout="column" layout-fill>
+<md-content flex-gt-sm="100" flex >
     <md-toolbar layout="row" class="md-hue-2">
         <div class="md-toolbar-tools">
             <span>{{vm.SCREENCONFIG.LIST.TITLE}}</span>
@@ -8,7 +8,6 @@
         <md-tab ng-repeat="(key, value) in vm.listItems"
                 ng-if="value != ''"
                 label="{{key}}" >
-            <md-tab-content>
                 <md-list class="md-dense" flex>
                     <md-subheader class="md-no-sticky"><strong>{{key}}</strong></md-subheader>
                     <md-list-item class="md-3-line" ng-repeat="item in value">
@@ -20,7 +19,6 @@
                         </div>
                     </md-list-item>
                 </md-list>
-            </md-tab-content>
         </md-tab>
     </md-tabs>
 </md-content >
