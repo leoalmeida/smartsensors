@@ -53,8 +53,8 @@
             return firebaseDataService.getRefFirebaseObject(database, key);
         }
 
-        function getStatus(type, location) {
-            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + location + '/connected');
+        function getStatus(type, key) {
+            return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + key);
         }
 
         function addOne(currentUser, type, location, newObject) {

@@ -65,7 +65,11 @@
                 var push = false;
                 for (var ind = 0; ind < list.length; ind += 1) {
                     //console.log("A: " + arr[idx][list[ind].column] + " B: " + list[ind].value + "\n");
-                    push = (arr[idx][list[ind].column] == list[ind].value);
+                    if (list[ind].extension) {
+                        push = (arr[idx][list[ind].column][list[ind].extension] == list[ind].value);
+                    }else{
+                        push = (arr[idx][list[ind].column] == list[ind].value);
+                    }
                     if (!push) break;
                 }
                 if (push) {

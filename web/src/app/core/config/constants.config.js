@@ -193,11 +193,11 @@
         RECIPES: {
             LIST: {
                 TITLE: "Receitas",
-                SUBSCRIBED: {
-                    TITLE: "Receitas Assinadas"
+                OWNED: {
+                    TITLE: "Suas receitas"
                 },
-                RECIPES: {
-                    TITLE: "Outras Receitas"
+                COPIED: {
+                    TITLE: "Outras receitas"
                 },
                 ACTIVE:{
                     TITLE: "Receita Ativa",

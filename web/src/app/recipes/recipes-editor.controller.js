@@ -270,7 +270,7 @@
                 .then(function(data) {
                     //vm.sensors = data;
                     //console.log(JSON.stringify(data));
-                    vm.sensors = $filter('SensFilter')(data, [{"column": "enabled","value": true}])
+                    vm.sensors = $filter('SensFilter')(data, [{"column": "enabled","value": true}]);
                     //vm.sensors2 = $filter('PublicSensorFilter')(data, [{"column": "enabled","value": true}])
                 }, function(error) {
                     console.error("Error:", error);

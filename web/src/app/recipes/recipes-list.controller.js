@@ -15,6 +15,7 @@
         vm.helpResult = '  ';
 
         vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.RECIPES;
+        vm.ICONS = CONSTANTS.ICONS;
 
         vm.listItems = recipesService.getPublic();
         //vm.listItems = recipesService.getOwn(currentUser);
@@ -29,6 +30,7 @@
         };
 
         vm.subscribersQty = function (item){
+            if (!item) return 0;
             return Object.keys(item).length;
         }
 

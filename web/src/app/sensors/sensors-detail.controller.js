@@ -16,7 +16,6 @@
       vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SENSORS;
 
       vm.currentNavItem = 'main';
-      vm.serverID =  $routeParams.location;
       vm.accessType =  $routeParams.accessType;
       vm.activityType = $routeParams.type;
 
@@ -49,11 +48,12 @@
           vm.sensorTypes = snapshot.sensorTypes;
       });
 
-      vm.serverStatus = serversService.getStatus(vm.accessType, currentUser, vm.serverID);
-      //vm.serverStatus = sensorsService.getServerStatus(vm.accessType, currentUser, vm.serverID);
+      let serverKey = $routeParams.location;
+      vm.server = serversService.getStatus(vm.accessType, serverKey);
+      //vm.serverStatus = sensorsService.getServerStatus(vm.accessType, currentUser, vm.server.$id);
 
       /*var obj = sensorsService
-          .getServerStatus(vm.accessType, currentUser, vm.serverID)
+          .getServerStatus(vm.accessType, currentUser, vm.server.$id)
 
       vm.serverStatus = obj;
     */
@@ -170,13 +170,13 @@
               var message =  'Sensor ' + vm.sensor.name + ' ('+ vm.sensor.type +') foi atualizado.';
               notifyService.notify('Sensor atualizado', message);
           } else{
-              vm.sensor.connectedServer = vm.serverID;
+              vm.sensor.connectedServer = {id: vm.server.$id, display: vm.server.id};
               vm.sensor.image = "assets/images/profile_header0.png";
               vm.sensor.key = "";
               vm.sensor.owner = currentUser.uid;
               vm.sensor.point = {"anchor" : [ 0, 32 ],"origin" : [ 0, 0 ],"size" : [ 32, 32 ], "url" : vm.sensor.icon};
               vm.accessType = vm.isPrivateAccess ? "private": "public";
-              item = sensorsService.addOne(currentUser, vm.accessType , vm.serverID, vm.sensor);
+              item = sensorsService.addOne(vm.accessType , vm.sensor);
               var message =  'Sensor ' + vm.sensor.name + ' ('+ vm.sensor.type +') encontrado.';
               notifyService.notify('Novo sensor encontrado', message);
           }

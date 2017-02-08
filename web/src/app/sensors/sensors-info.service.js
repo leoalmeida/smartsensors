@@ -57,7 +57,7 @@
             return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/connected');
         }
 
-        function addOne(currentUser, type, location, newObject) {
+        function addOne(type, newObject) {
 //            firebaseDataService.getFirebaseArray('servers/' + currentUser.uid + '/' + location + '/sensors/').$save();
             return firebaseDataService.getFirebaseArray(database + '/' + type ).$add(newObject);
         }

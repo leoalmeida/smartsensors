@@ -9,7 +9,7 @@
             md-gutter="8px"
             md-gutter-gt-sm="4px" >
             <!--<md-grid-tile ng-repeat="item in vm.items  track by $index"-->
-            <md-grid-tile ng-repeat="item in vm.alertItems | AlertsFilter:{values: vm.subscribedItems, type:'alert', reversal: false} track by $index"
+            <md-grid-tile ng-repeat="item in vm.alertItems | AlertsFilter:{values: vm.subscribedItems, type:'recipe', reversal: false} track by $index"
                       md-rowspan="{{item.configurations.row}}"
                       md-colspan="{{item.configurations.col}}"
                       md-colspan-sm="1"
@@ -22,21 +22,20 @@
                             <img class="md-user-avatar" style="color:#FA8072;" ng-src="{{item.configurations.icon}}"/>
                         </md-card-avatar>
                         <md-card-header-text>
-                            <span class="md-title"><strong>{{item.configurations.name}}</strong> ({{item.configurations.label}})</span>
+                            <span class="md-title"><strong>{{item.configurations.label}}</strong></span>
                             <h4>
                                 <span flex-end>{{item.startDate | date:'dd/MM/yyyy @ h:mma'}}</span>
                             </h4>
                         </md-card-header-text>
                     </md-card-header>
                 </md-grid-tile-header>
-                <img ng-src="{{item.configurations.localization.image}}" class="md-card-image" alt="Image" />
+                <img ng-src="{{item.configurations.image}}" class="md-card-image" alt="Image" />
                 <md-grid-content ng-class="item.severity">
                     <md-card-actions layout="row" layout-align="start center" >
                         <p><md-icon ng-if="item.lastUpdate.value==1" style="color:#FA8072; max-height: 18px"
                                  aria-label="announcement" md-svg-icon="{{vm.SCREENCONFIG.ICONS.WARNING}}">
                         </md-icon></p>
                         <label ng-if="item.lastUpdate.unit"><strong>{{item.lastUpdate.value}}{{item.lastUpdate.unit}}</strong>  </label>
-
 
                         <md-card-icon-actions>
                             <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Favorite">

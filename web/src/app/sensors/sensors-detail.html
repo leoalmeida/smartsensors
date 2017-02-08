@@ -28,7 +28,7 @@
                 <section layout="column" layout-gt-xs="row"  layout-align="center center">
                     <span flex layout-margin>
                     <!--<md-autocomplete
-                            md-selected-item="vm.serverID"
+                            md-selected-item="vm.serverKey"
                             md-search-text-change="vm.searchTextChange(vm.searchText)"
                             md-search-text="vm.searchText"
                             md-selected-item-change="vm.selectedItemChange(item)"
@@ -52,16 +52,16 @@
                         <span class="item-title">
                             <md-icon md-svg-icon="assets/icons/device/ic_usb_24px.svg"></md-icon>
                             <span> Servidor: </span>
-                            <strong>{{vm.serverID}}</strong>
+                            <strong>{{vm.server.id}}</strong>
                         </span>
 
                     </span>
 
                     <span layout-padding layout-align="center center">
-                        <div ng-model="vm.serverStatus.$value" style="background-color: {{(vm.serverStatus.$value)?'rgba(0, 204, 102,0.5)':'rgba(230, 46, 0,0.5)'}}">
-                            <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="(vm.serverStatus.$value)" aria-label="on"></md-icon>
-                            <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!(vm.serverStatus.$value)" aria-label="off"></md-icon>
-                            {{(vm.serverStatus.$value)?'Servidor Online':'Servidor Offline'}}
+                        <div ng-model="vm.server.connected" style="background-color: {{(vm.server.connected)?'rgba(0, 204, 102,0.5)':'rgba(230, 46, 0,0.5)'}}">
+                            <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="(vm.server.connected)" aria-label="on"></md-icon>
+                            <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!(vm.server.connected)" aria-label="off"></md-icon>
+                            {{(vm.server.connected)?'Servidor Online':'Servidor Offline'}}
                         </div>
                     </span>
                     <span flex ng-hide="true">
@@ -94,13 +94,13 @@
                                         <md-switch ng-model="vm.sensor.alert" disabled>Possui alertas ativos? </md-switch>
                                     </md-input-container>-->
                                     <md-input-container flex>
-                                        <md-switch ng-model="vm.sensor.enabled" ng-disabled="(vm.serverStatus.$value)"> Habilitado </md-switch>
+                                        <md-switch ng-model="vm.sensor.enabled" ng-disabled="(vm.server.connected)"> Habilitado </md-switch>
                                     </md-input-containerflex>
                                 </md-content>
                                 <md-content layout="column" layout-gt-xs="row" layout-padding layout-wrap>
                                     <md-input-container flex>
                                         <label>Tipo</label>
-                                        <md-select required ng-model="vm.selectedSensorConfig" ng-change="vm.selectSensorType()" ng-value="vm.selectedSensorConfig.name" ng-disabled="(vm.serverStatus.$value)">
+                                        <md-select required ng-model="vm.selectedSensorConfig" ng-change="vm.selectSensorType()" ng-value="vm.selectedSensorConfig.name" ng-disabled="(vm.server.connected)">
                                             <md-option ng-repeat="item in vm.sensorTypes | filter: {available: true} as availableSensors" ng-value="{{item}}" ng-selected="item.type==vm.selectedSensorConfig.type">{{item.name}}</md-option>
                                         </md-select>
                                         <!--<span>{{vm.startSensorConfig(vm.availableSensors)}}</span>-->
@@ -163,13 +163,13 @@
                             <md-content layout-gt-xs="row" layout-padding >
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.input.controller">
                                     <label>Modelo</label>
-                                    <md-select ng-model="vm.sensor.configurations.controller" ng-disabled="(vm.serverStatus.$value)">
+                                    <md-select ng-model="vm.sensor.configurations.controller" ng-disabled="(vm.server.connected)">
                                         <md-option ng-repeat="controller in vm.selectedSensorConfig.properties.input.controller" value="{{controller.id}}">{{controller.id}}</md-option>
                                     </md-select>
                                 </md-input-container>
                                 <md-input-container class="md-block" flex-gt-sm ng-if="vm.selectedSensorConfig.properties.events">
                                     <label>Eventos</label>
-                                    <md-select ng-model="vm.sensor.configurations.events" multiple ng-disabled="(vm.serverStatus.$value)">
+                                    <md-select ng-model="vm.sensor.configurations.events" multiple ng-disabled="(vm.server.connected)">
                                         <md-optgroup label="Eventos">
                                             <md-option ng-repeat="event in vm.selectedSensorConfig.properties.events" value="{{event}}">{{event}}</md-option>
                                         </md-optgroup>
@@ -237,7 +237,7 @@
                                     <md-subheader class="md-primary">Entrada</md-subheader>
                                     <md-input-container class="md-block" >
                                         <label>Pin</label>
-                                        <md-select required ng-model="vm.sensor.configurations.pin" ng-disabled="(vm.serverStatus.$value)">
+                                        <md-select required ng-model="vm.sensor.configurations.pin" ng-disabled="(vm.server.connected)">
                                             <md-option ng-repeat="pin in vm.pins" value="{{pin.val}}">{{pin.name}}</md-option>
                                         </md-select>
                                     </md-input-container>

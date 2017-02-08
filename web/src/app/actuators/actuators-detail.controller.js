@@ -15,7 +15,6 @@
       vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SENSORS;
 
       vm.currentNavItem = 'main';
-      vm.serverID =  $routeParams.location;
       vm.accessType =  $routeParams.accessType;
       vm.activityType = $routeParams.type;
 
@@ -48,7 +47,10 @@
           vm.actuatorTypes = snapshot.actuatorTypes;
       });
 
-      vm.serverStatus = serversService.getStatus(vm.accessType, currentUser, vm.serverID);
+      let serverKey = $routeParams.location;
+      vm.server = serversService.getStatus(vm.accessType, serverKey);
+
+      //vm.serverStatus = serversService.getStatus(vm.accessType, currentUser, vm.serverID);
 
       vm.asyncSelectActuatorType = function(type) {
           var deferred = $q.defer();
@@ -163,7 +165,7 @@
               var message =  'Actuator ' + vm.actuator.name + ' ('+ vm.actuator.type +') foi atualizado.';
               notifyService.notify('Actuator atualizado', message);
           } else {
-              vm.actuator.connectedServer = vm.serverID;
+              vm.actuator.connectedServer = {id: vm.server.$id, display: vm.server.id};
               vm.actuator.image = "assets/images/profile_header0.png";
               vm.actuator.key = "";
               vm.actuator.owner = currentUser.uid;
