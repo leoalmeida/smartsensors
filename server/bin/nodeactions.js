@@ -108,6 +108,14 @@ db.ref('sensors/public/')
 });
 */
 
+funclist.generateLog = function (message) {
+    let log = {
+        msg: message,
+        date: Date.now()
+    }
+    db.ref('logs').push(log);
+};
+
 funclist.createAlert = function (recipeKey, itemKey, alertinfo) {
     let alert = {
         active: true,

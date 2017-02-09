@@ -12,7 +12,7 @@ httpServer.listen(port, function(){
 const actionsObj = require('./nodeactions');
 
 setInterval(function () {
-    console.log("Executando ação:");
+    funclist.generateLog("Iniciando processamento de ações");
 
     if (!actionsObj.validateAllData()) return;
 
@@ -91,4 +91,6 @@ setInterval(function () {
             }
         }
     }
+
+    funclist.generateLog("Fim do processamento de ações");
 }, 1800000);
