@@ -4,7 +4,7 @@
             <span>{{vm.SCREENCONFIG.LIST.TITLE}}</span>
         </div>
     </md-toolbar>
-    <md-tabs class="md-accent" md-selected="selectedIndex" md-border-bottom  md-dynamic-height>
+    <md-tabs class="md-accent" md-selected="selectedIndex" md-border-bottom md-swipe-content md-dynamic-height>
         <md-tab ng-repeat="(key, value) in vm.listItems"
                 ng-if="value != ''"
                 label="{{key}}" >
@@ -21,4 +21,6 @@
                 </md-list>
         </md-tab>
     </md-tabs>
-</md-content >
+</md-content>
+<as-back-top scroll-speed=600 button-theme="light"><md-icon md-svg-src="{{ vm.ICONS.BACKTOP }}" aria-label="Voltar ao topo"></md-icon></as-back-top>
+<i class="material-icons"></i>
