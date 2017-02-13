@@ -7,7 +7,10 @@
       .module('app.core')
       .constant('API', {
           contacts: host + 'apis/user/',
-          pir: host + '/trigger/pir/with/key/'
+          sensors: host + '/trigger/sensors/',
+          actuators: host + '/trigger/actuators/',
+          servers: host + '/trigger/servers/',
+          info: host + '/trigger/info/'
       });
 
 })(angular);

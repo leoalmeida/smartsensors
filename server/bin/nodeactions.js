@@ -73,7 +73,7 @@ db.ref('sensors/public/')
 db.ref('sensors/public/')
     .on("child_changed", function (snapshot) {
         let item = snapshot.val() ;
-        console.log("ValRecipe: " + JSON.stringify(item) + "\n");
+        //console.log("ValRecipe: " + JSON.stringify(item) + "\n");
         if (!item.enabled) delete sensors[item.key];
         else sensors[item.key] = item;
     });
@@ -220,7 +220,7 @@ funclist.runactions = function () {
     return runactions;
 };
 
-funclist.recipes = function () {
+funclixst.recipes = function () {
     return recipes;
 };
 
