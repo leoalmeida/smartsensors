@@ -1,14 +1,14 @@
 <div flex ng-cloak class="gridListDynamicTiles">
     <md-grid-list
-            md-cols="3"
-            md-cols-sm="4"
-            md-cols-md="8"
-            md-cols-gt-md="12"
+            md-cols="2"
+            md-cols-sm="3"
+            md-cols-gt-sm="4"
+            md-cols-gt-lg="6"
             md-row-height-gt-md="1:1"
             md-row-height="4:3"
-            md-gutter="4px"
-            md-gutter-md="8px"
-            md-gutter-gt-md="16px" >
+            md-gutter="2px"
+            md-gutter-md="4px"
+            md-gutter-gt-md="8px" >
 
             <!--<md-grid-tile ng-repeat="item in vm.items  track by $index"-->
             <md-grid-tile ng-repeat="item in vm.alertItems | AlertsFilter:{values: vm.subscribedItems, type:'recipe', reversal: false} track by $index"
@@ -18,15 +18,15 @@
                       md-colspan-xs="1"
                       class="card" ng-click="vm.show">
             <md-card layout-fill ng-class="item.severity">
-                <md-grid-tile-header layout-padding class="darkAlphaBackground" >
+                <md-grid-tile-header  class="darkAlphaBackground" >
                     <md-card-header>
-                        <md-card-avatar>
+                        <md-card-avatar hide show-gt-xs>
                             <img class="md-user-avatar" style="color:#FA8072;" ng-src="{{item.configurations.icon}}"/>
                         </md-card-avatar>
                         <md-card-header-text>
                             <span class="md-title"><strong>{{item.configurations.label}}</strong></span>
                             <h4>
-                                <span flex-end>{{item.startDate | date:'dd/MM/yyyy @ h:mma'}}</span>
+                                <span flex-end>{{item.startDate | date:'dd/MM/yyyy H:mm'}}</span>
                             </h4>
                         </md-card-header-text>
                     </md-card-header>

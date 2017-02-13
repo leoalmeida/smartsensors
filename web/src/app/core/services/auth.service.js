@@ -5,9 +5,9 @@
         .module('app.core')
         .factory('AuthService', AuthService);
 
-    AuthService.$inject = ['$rootScope', 'firebase', '$firebaseAuth', '$firebaseArray', '$firebaseObject'];
+    AuthService.$inject = ['$location', '$rootScope', 'firebase', '$firebaseAuth', '$firebaseArray', '$firebaseObject'];
 
-    function AuthService($rootScope, firebase, $firebaseAuth, $firebaseArray, $firebaseObject) {
+    function AuthService($location,$rootScope, firebase, $firebaseAuth, $firebaseArray, $firebaseObject) {
 
         var root = new firebase.database().ref('users');
         var authObj = $firebaseAuth();
@@ -46,6 +46,7 @@
                     };
                     updated = obj.$save();
                 }
+                $location.path('/home');
             });
             return updated;
         }
@@ -67,6 +68,7 @@
                     } else {
                         console.error(error);
                     }
+
                 });
         }
 

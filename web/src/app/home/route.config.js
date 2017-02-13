@@ -7,22 +7,28 @@
       .run(["$rootScope", "$location", function($rootScope, $location) {
           $rootScope.$on("$routeChangeError", function(event, next, previous, error) {
               if (error === "AUTH_REQUIRED") {
-                  $location.path("/home");
+                  $location.path("/");
               }
           });
       }]);
 
-    configFunction.$inject = ['$routeProvider'];
+    configFunction.$inject = ['$routeProvider','$locationProvider'];
 
-    function configFunction($routeProvider) {
+    function configFunction($routeProvider, $locationProvider) {
         $routeProvider
             .when('/', {
+                resolve: {
+                    "currentUser": ["AuthService", function(authService) {
+                        return authService.firebaseAuthObject.$waitForSignIn();
+                    }]
+                },
+            }).when('/home', {
                 templateUrl: 'app/home/home.html',
                 controller: 'HomeController',
                 controllerAs: 'vm',
                 resolve: {
                     "currentUser": ["AuthService", function(authService) {
-                        return authService.firebaseAuthObject.$waitForSignIn();
+                        return authService.firebaseAuthObject.$requireSignIn()
                     }]
                 }
             }).when('/profile', {
@@ -32,6 +38,9 @@
             }).when('/404', {
                 templateUrl: 'app/home/404.layouts.html'
         });
+
+        // configure html5 to get links working on jsfiddle
+        $locationProvider.html5Mode(true);
     }
 
 

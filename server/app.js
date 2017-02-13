@@ -11,20 +11,21 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+//configure public folders
+app.use('/', express.static(path.resolve('wwwroot', '../web/src')));
 
 // configure Middlewares
 app.use(require('./middlewares/i18n-middleware'));
-// app.use(require('./middlewares/auth-middleware'));
+app.use(require('./middlewares/auth-middleware'));
 
 // Route config
+app.use(require('./routes/retrieve-routes'));
 app.use(require('./routes/trigger-routes'));
+app.use(require('./routes/remove-routes'));
 // app.use(require('./routes/transaction-routes'));
 // app.use(require('./routes/user-routes'));
 
 // Config Error Handdler
 app.use(require('./middlewares/error-middleware'));
-
-//configure public folders
-app.use('/', express.static(path.resolve('wwwroot', '../web/src')));
 
 module.exports = app;

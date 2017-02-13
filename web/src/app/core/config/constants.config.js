@@ -25,7 +25,7 @@
 
     var MENU = [
         { layout: true, separator: true },
-        { name: "Home", options: { icon: "assets/icons/action/ic_dashboard_48px.svg", face : "assets/icons/action/ic_dashboard_48px.svg",  link : '/',  avatarIcon: true, available: true }},
+        { name: "Home", options: { icon: "assets/icons/action/ic_dashboard_48px.svg", face : "assets/icons/action/ic_dashboard_48px.svg",  link : '/home',  avatarIcon: true, available: true }},
         { name: "Mapa", options: { icon: "assets/icons/maps/ic_map_48px.svg", face : "assets/icons/maps/ic_map_48px.svg",  link : '/map',  avatarIcon: true, available: true }},
         { name: "Receitas", options: { icon: "assets/icons/action/ic_speaker_notes_48px.svg", face : "assets/icons/action/ic_speaker_notes_48px.svg", link : '/recipes', avatarIcon: true, available: true}},
         { name: "Assinaturas", options: { icon: "assets/icons/action/ic_supervisor_account_48px.svg", face : "assets/icons/action/ic_supervisor_account_48px.svg", link : '/subscriptions', avatarIcon: true, available: true }},

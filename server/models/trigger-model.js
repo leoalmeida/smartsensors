@@ -50,26 +50,6 @@ const model = {};
 
 let err = "";
 
-model.getAll = () => {
-    return db.ref(_params.equipment + "/public/" );
-};
-
-model.getWithKey = (_params) => {
-        return db.ref(_params.equipment + "/public/" + _params.key );
-};
-
-model.getWithValue = (_params) => {
-    return db.ref(_params.equipment + "/public/").orderByChild(_params.key).equalTo(_params.value);
-};
-
-model.getInfoWithKey = (_params) => {
-    return db.ref("info/public/" + _params.equipment ).orderByChild('sensor').equalTo(_params.key);
-};
-
-model.getInfoWithoutKey = (_params) => {
-    return db.ref("info/public/" + _params.equipment );
-};
-
 model.createInfoWithKey = (_params, trigger) => {
         return db.ref("info/public/" + _params.equipment).push(trigger);
 };
@@ -83,16 +63,10 @@ model.createWithoutKey = (_params, trigger) => {
 };
 
 model.update = (_params, trigger) => {
-        console.log(Object.keys(trigger).length);
-        console.log(trigger["connected"] === undefined);
-        if (Object.keys(trigger).length>1 || Object.keys(trigger).length<1) return  (err = {msg: "Fail", value: 1});
-        if (trigger["connected"] === undefined) return (err = {msg: "Fail", value: 1});
+        if (Object.keys(trigger).length>1 || Object.keys(trigger).length<1) throw ({ data: err, code: 400, messageKeys: ["invalid-conntrigger"]});
+        if (trigger["connected"] === undefined) throw ({ data: err, code: 400, messageKeys: ["invalid-conntrigger"]});
 
         return db.ref(_params.equipment + "/public/" + _params.key ).update(trigger);
-};
-
-model.remove = (_params) => {
-        return db.ref(_params.equipment + "/public/" + _params.key ).set(null);
 };
 
 module.exports = model;

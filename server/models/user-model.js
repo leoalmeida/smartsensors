@@ -1,6 +1,6 @@
 'use strict'
 
-const mongoose = require('mongoose');
+/*const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
   name: {
     type: String,
@@ -40,27 +40,25 @@ model.update = (_id, user) => {
 model.remove = (_id) => {
   return User.update({ _id }, {active: false});
 }
+*/
+
+const db = require('../db');
+
+const model = {};
 
 model.authenticate = (user) => {
 
   return new Promise((resolve, reject) => {
-    let _query = {
-      name: user.name,
-      password: user.password,
-      active: true
-    };
-
-    User.findOne(_query)
-      .then(data => {
-        if (data && data != null){
-          return resolve(data);
-        }
-
-        return reject();
-      })
-      .catch(err => {
-        return reject(err);
-      });
+    db.ref("users/" + user.uid)
+        .once("value", data => {
+            let value = data.val();
+            if (value.token.value && value.token.value != null && value.token.value === user.token && Date.now() <= value.token.expireDate){
+                return resolve(value);
+            }
+            return reject('invalid-token');
+        },err => {
+            return reject(err);
+        });
   });
 }
 
