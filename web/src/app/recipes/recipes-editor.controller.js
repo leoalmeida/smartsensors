@@ -320,9 +320,9 @@
         });
 
         // Model to JSON for demo purpose
-        $scope.$watch('vm.models', function(model) {
-            vm.modelAsJson = angular.toJson(model, true);
-        }, true);
+        //$scope.$watch('vm.models', function(model) {
+        //    vm.modelAsJson = angular.toJson(model, true);
+        //}, true);
 
 
         vm.helpResult = '  ';

@@ -1,6 +1,5 @@
 'use strict';
 
-//const db = require('./db');
 const express = require('express');
 const bodyParser = require('body-parser');
 // const cors = require('cors');
@@ -18,8 +17,9 @@ app.use(require('./middlewares/i18n-middleware'));
 // app.use(require('./middlewares/auth-middleware'));
 
 // Route config
+app.use(require('./routes/trigger-routes'));
 // app.use(require('./routes/transaction-routes'));
-//app.use(require('./routes/user-routes'));
+// app.use(require('./routes/user-routes'));
 
 // Config Error Handdler
 app.use(require('./middlewares/error-middleware'));

@@ -3,30 +3,21 @@
 const funclist = require('express').Router();
 
 
-// ******** Initialize Firebase
-const admin = require("firebase-admin");
+const db = require('../db');
 
-const serviceAccount = require("./serviceAccountKey.json");
+let sensors={}, recipes={}, actuators={}, info={};
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://guifragmentos.firebaseio.com"
-});
-/*
-let config = {
-    apiKey: "AIzaSyCCO7zMiZZTav3eDQlD6JnVoEcEVXkodns",
-    authDomain: "guifragmentos.firebaseapp.com",
-    databaseURL: "https://guifragmentos.firebaseio.com",
-    storageBucket: "guifragmentos.appspot.com",
-    messagingSenderId: "998257253122"
-};
-firebase.initializeApp(config);
-*/
+let runactions = false;
 
-let sensors={}, recipes={}, actuators={};
-
-
-const db = admin.database();
+db.ref('configurations/runactions')
+    .on("value", function (snapshot) {
+        let item = snapshot.val() ;
+        if (!item) {
+            runactions = false;
+            return;
+        }
+        runactions = true;
+    });
 
 db.ref('recipes/public/')
     .on("child_added", function (snapshot) {
@@ -94,6 +85,25 @@ db.ref('sensors/public/')
         sensors.splice(sensors.indexOf(item.key), 1);
     });
 
+db.ref('info/public/')
+    .on("child_added", function (snapshot) {
+        let item = snapshot.val() ;
+        if (!item) return;
+        //console.log("ValSensor: " + snapshot.key + " - " + JSON.stringify(item) + "\n");
+        info[snapshot.key] = item;
+    });
+db.ref('info/public/')
+    .on("child_changed", function (snapshot) {
+        let item = snapshot.val() ;
+        console.log("ValRecipe: " + JSON.stringify(item) + "\n");
+        if (!item) delete info[item.key];
+        else info[snapshot.key] = item;
+    });
+db.ref('info/public/')
+    .on("child_removed", function (snapshot) {
+        delete info[snapshot.key];
+    });
+
 /*refAllSensors = db.ref('sensors/').on("child_added", function (snapshot) {
     let item = [];
     item.push(snapshot.val());
@@ -145,13 +155,12 @@ funclist.createAlert = function (recipeKey, itemKey, alertinfo) {
     var alertsListRef = db.ref('alerts/public/').push();
     alertsListRef.set(alert).then(function(data) {
             console.log("Novo alerta:  " + alertsListRef.key);
-        })
-        .catch(function(error) {
-            console.log('Synchronization failed');
-        });
+            console.log("Val:  " + 'recipes/public/' + recipeKey + "/actionContainer/" + itemKey + '/key/' + alertsListRef.key);
+            db.ref().child('recipes/public/' + recipeKey + "/actionContainer/" + itemKey + '/key').set(alertsListRef.key);
 
-    console.log("Val:  " + 'recipes/public/' + recipeKey + "/actionContainer/" + itemKey + '/key/' + alertsListRef.key);
-    db.ref().child('recipes/public/' + recipeKey + "/actionContainer/" + itemKey + '/key').set(alertsListRef.key);
+    }).catch(function(error) {
+            console.log('Synchronization failed');
+    });
 
     return alertsListRef.key;
 };
@@ -207,6 +216,12 @@ funclist.getActuatorUpdates = function (value) {
     return actuators[value].lastUpdates;
 };
 
-funclist.recipes = recipes;
+funclist.runactions = function () {
+    return runactions;
+};
+
+funclist.recipes = function () {
+    return recipes;
+};
 
 module.exports = funclist;

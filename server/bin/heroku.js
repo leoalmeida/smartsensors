@@ -1,7 +1,7 @@
 'use strict'
 
 const http = require('http');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 443;
 const app = require('../app');
 const httpServer = http.createServer(app);
 
@@ -12,7 +12,9 @@ httpServer.listen(port, function(){
 const actionsObj = require('./nodeactions');
 
 setInterval(function () {
-    funclist.generateLog("Iniciando processamento de ações");
+    console.log(actionsObj.runactions());
+    if (!actionsObj.runactions()) return;
+    actionsObj.generateLog("Iniciando processamento de ações");
 
     if (!actionsObj.validateAllData()) return;
 
@@ -92,5 +94,6 @@ setInterval(function () {
         }
     }
 
-    funclist.generateLog("Fim do processamento de ações");
+    actionsObj.generateLog("Fim do processamento de ações");
+//}, 1000);
 }, 1800000);
