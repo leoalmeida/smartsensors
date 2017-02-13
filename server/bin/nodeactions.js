@@ -220,7 +220,7 @@ funclist.runactions = function () {
     return runactions;
 };
 
-funclixst.recipes = function () {
+funclist.recipes = function () {
     return recipes;
 };
 
