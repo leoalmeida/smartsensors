@@ -13,12 +13,6 @@
 
     vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SENSORS;
     vm.listItems = sensorsService.getOwn(currentUser);
-    vm.currentNavItem = -1;
-
-    vm.listServers = serversService.getOwn(currentUser);
-    vm.listServers.$loaded().then(function (snapshot) {
-          vm.currentNavItem = 0;
-    });
 
     vm.readingPeriod = 1000;
 
@@ -36,39 +30,41 @@
         //var ret = vm.listItems.$save(item);
     };
 
-    vm.newSensor = function(serverKey){
-        $location.path( "/sensors/public/" + serverKey + "/new");
-    };
-
     vm.navigateTo = function(serverKey, key, $event){
         $location.path( "/sensors/public/" + serverKey + "/edit/" + key );
     };
 
-    vm.newServer = function(ev) {
+    vm.chooseServer = function($event) {
 
-        var confirm = $mdDialog.prompt()
-            .clickOutsideToClose(true)
-            .title('Novo Servidor')
-            .textContent('Digite o nome do novo servidor.')
-            .placeholder('Nome do servidor...')
-            .targetEvent(ev)
-            .ariaLabel('Nome do servidor')
-            .ok('Criar Sensor')
-            .cancel('Voltar')
-            .openFrom({
-                top: -50,
-                width: 30,
-                height: 80
-            })
-            .closeTo({
-                left: 1500
-            });
+        vm.listValues = serversService.getOwn(currentUser);
 
-        $mdDialog.show(confirm).then(function(result) {
-            serversService.addOne({"enabled": true, "connected": false, "id": result, "owner": currentUser.uid})
-                .then(function(ref) {
-                    vm.newSensor(ref.key);
-                });
+        vm.listValues.$loaded().then(function(snapshot){
+          $mdDialog.show({
+              controller: DialogController,
+              parent: angular.element(document.body),
+              targetEvent: $event,
+              templateUrl: 'app/core/layouts/select-server.dialog.templ.html',
+              clickOutsideToClose: true,
+              locals: {
+                items: snapshot
+              },
+              preserveScope: true,
+              closeTo: {left: 1500}
+          }).then(function(result){
+                $location.path( "/sensors/public/" + result + "/new");
+          });
+          function DialogController($scope, $mdDialog, items) {
+              $scope.items = items;
+              $scope.hide = function() {
+                  $mdDialog.hide();
+              };
+              $scope.close = function(result) {
+                  $mdDialog.hide(result);
+              }
+              $scope.cancel = function() {
+                  $mdDialog.cancel();
+              };
+            };
         });
     };
   };

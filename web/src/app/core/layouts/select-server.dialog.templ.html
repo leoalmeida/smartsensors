@@ -1,0 +1,13 @@
+<md-dialog aria-label="options dialog">
+    <md-dialog-content layout-padding>
+      <h2 class="md-title">Selecione Sink/Servidor</h2>
+      <md-select required ng-model="result">
+        <md-option ng-repeat="item in items" ng-value="item.$id" ng-disabled="(!item.enabled)">{{item.id}}</md-option>
+      </md-select>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button ng-click="close(result)">Escolher</md-button>
+      <span flex></span>
+      <md-button ng-click="cancel()">Cancel</md-button>
+    </md-dialog-actions>
+</md-dialog>

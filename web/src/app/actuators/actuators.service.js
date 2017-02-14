@@ -26,6 +26,7 @@
             getAll: getAll,
             getPublic: getPublic,
             getOwn: getOwn,
+            getFromServer: getFromServer,
             getOne: getOne,
             addOne: addOne,
             removeOne: removeOne,
@@ -45,6 +46,10 @@
 
         function getOwn(currentUser) {
             return firebaseDataService.getRefFirebaseArray(database, 'owner', currentUser.uid);
+        }
+
+        function getFromServer(serverKey){
+            return firebaseDataService.getRefFirebaseArray(database, 'connectedServer/id', serverKey);
         }
 
         function getOne(key) {

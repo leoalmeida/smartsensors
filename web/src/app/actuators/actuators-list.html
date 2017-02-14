@@ -3,19 +3,12 @@
         <div class="md-toolbar-tools">
             <span>{{vm.SCREENCONFIG.LIST.TITLE}}</span>
             <span flex></span>
-            <md-button class="md-primary md-raised edgePadding" aria-label="Novo Servidor" ng-click="vm.newServer($even)">
-                Novo Servidor
-            </md-button>
         </div>
     </md-toolbar>
     <md-content style="padding-bottom: 60px">
-        <md-nav-bar md-selected-nav-item="vm.currentNavItem" nav-bar-aria-label="navigation links">
-            <md-nav-item md-nav-click="goto('{{$index}}')" name="{{$index}}" style="background-color: {{item.connected?'rgba(0, 230, 184, 0.2)':'rgba(255, 77, 77, 0.2)'}}" ng-repeat="item in vm.listServers track by $index">{{item.id}}</md-nav-item>
-        </md-nav-bar>
-        <div ng-if="vm.currentNavItem>-1">
             <md-list ng-animate="'animate'" class="md-dense">
                 <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFIG.LIST.CONNECTED.TITLE}}</md-subheader>
-                <md-list-item style="background-color: {{actuator.connected?'rgba(0, 230, 184, 0.2)':'rgba(255, 77, 77, 0.2)'}}" ng-click="vm.navigateTo(actuator.connectedServer.id, actuator.$id, $event)"  ng-repeat="actuator in vm.listItems | ActFilter: [{column: 'connectedServer', extension: 'id',  value: vm.listServers[vm.currentNavItem].$id},{column: 'enabled', value: true}] as filteredActuators">
+                <md-list-item style="background-color: {{actuator.connected?'rgba(0, 230, 184, 0.2)':'rgba(255, 77, 77, 0.2)'}}" ng-click="vm.navigateTo(actuator.connectedServer.id, actuator.$id, $event)"  ng-repeat="actuator in vm.listItems | ActFilter: [{column: 'enabled', value: true}] as filteredActuators">
                     <md-icon md-svg-icon="{{actuator.icon}}"></md-icon>
                     <h4> {{ actuator.name }} </h4>
                     <span flex></span>
@@ -30,7 +23,7 @@
                     <md-switch class="md-secondary" ng-model="actuator.connected" ng-change="vm.toggleState(actuator.connectedServer.id, actuator.$id)"></md-switch>
                 </md-list-item>
                 <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFIG.LIST.DISCONNECTED.TITLE}}</md-subheader>
-                <md-list-item ng-click="vm.navigateTo(actuator.connectedServer.id, actuator.$id, $event)"  ng-repeat="actuator in vm.listItems | ActFilter: [{column: 'connectedServer', extension: 'id',  value: vm.listServers[vm.currentNavItem].$id},{column: 'enabled', value: false}] as filteredActuators">
+                <md-list-item ng-click="vm.navigateTo(actuator.connectedServer.id, actuator.$id, $event)"  ng-repeat="actuator in vm.listItems | ActFilter: [{column: 'enabled', value: false}] as filteredActuators">
                     <md-icon class="md-primary md-hue-3" md-svg-icon="{{actuator.icon}}"></md-icon>
                     <span class="md-primary md-hue-3"> {{ actuator.name }} </span>
                     <span flex></span>
@@ -38,10 +31,9 @@
                 </md-list-item>
                 <md-divider></md-divider>
             </md-list>
-            <md-button class="md-fab md-mini floating-component" aria-label="Novo Atuador" ng-click="vm.newActuator(vm.listServers[vm.currentNavItem].$id)">
+            <md-button class="md-fab md-mini floating-component" aria-label="Novo Atuador" ng-click="vm.chooseServer($event)">
                 <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.NEW}}"></md-icon>
             </md-button>
-        </div>
     </md-content>
 </div>
 

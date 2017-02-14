@@ -12,26 +12,6 @@
         <md-button class="md-fab md-hue-2 floating-component fl-right fl-primary" aria-label="Submit" ng-click="vm.submit()">
             <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.PUBLISH}}"></md-icon>
         </md-button>
-        <md-card flex layout-wrap  ng-cloak="">
-            <md-card-content layout="column">
-                <ng-map class="md-card-image"  zoom="{{vm.mapZoom}}" center="{{vm.mapCenter}}" default-style="true">
-                    <info-window id="external" template="/app/core/layouts/infowindow-template.html"></info-window>
-                    <marker
-                            class="custom-marker"
-                            ng-repeat="(id, marker) in vm.sensors track by $index"
-                            id="{{id}}"
-                            on-click="vm.showDetail(event, id)"
-                            position="{{marker.configurations.address.latlng}}"
-                            icon="{{marker.point}}"
-                            shape="{{vm.shape}}"
-                            no-watcher="true"
-                            dnd-draggable="{id: marker.id, key: marker.key, type: {value: 'sensor', display: 'Sensor'}, name: marker.name, icon: marker.icon, scenarios: vm.scenarioTemplate}"
-                            dnd-effect-allowed="copy"
-                            dnd-copied="marker.id = marker.id + 1">
-                    </marker>
-                </ng-map>
-            </md-card-content>
-        </md-card>
         <md-card class="dropzone"  ng-cloak="">
                 <md-card-header>
                     <md-card-avatar>
@@ -107,15 +87,36 @@
                                 </div>
                             </md-content>
                         </md-content>
-    <!--<md-button class="md-fab md-primary" aria-label="Add Alert" ng-click="vm.addAlert()">
-        <md-icon md-svg-src="assets/icons/alert/ic_add_alert_24px.svg"></md-icon>
-    </md-button>-->
                         <div flex class="gridListDynamicTiles" ng-include="'actionList.html'" ></div>
+                        <!--<md-button class="md-fab md-primary" aria-label="Add Alert" ng-click="vm.addAlert()">
+                            <md-icon md-svg-src="assets/icons/alert/ic_add_alert_24px.svg"></md-icon>
+                        </md-button>-->
                     </span>
                     <md-card-actions class="trashcan" layout="column" aria-label="Remove" dnd-list="[]" dnd-effect-allowed="'move'" layout-align="center center" flex="10">
                             <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.REMOVE}}" aria-label="Remove"></md-icon>
                     </md-card-actions>
                 </md-card-content>
+        </md-card>
+
+        <md-card flex layout-wrap  ng-cloak="">
+            <md-card-content layout="column">
+                <ng-map class="md-card-image"  zoom="{{vm.mapZoom}}" center="{{vm.mapCenter}}" default-style="true">
+                    <info-window id="external" template="/app/core/layouts/infowindow-template.html"></info-window>
+                    <marker
+                            class="custom-marker"
+                            ng-repeat="(id, marker) in vm.sensors track by $index"
+                            id="{{id}}"
+                            on-click="vm.showDetail(event, id)"
+                            position="{{marker.configurations.address.latlng}}"
+                            icon="{{marker.point}}"
+                            shape="{{vm.shape}}"
+                            no-watcher="true"
+                            dnd-draggable="{id: marker.id, key: marker.key, type: {value: 'sensor', display: 'Sensor'}, name: marker.name, icon: marker.icon, scenarios: vm.scenarioTemplate}"
+                            dnd-effect-allowed="copy"
+                            dnd-copied="marker.id = marker.id + 1">
+                    </marker>
+                </ng-map>
+            </md-card-content>
         </md-card>
 
         <!--
@@ -129,9 +130,8 @@
             <pre class="code">{{vm.modelAsJson}}</pre>
           </md-card-content>
         </md-card>
-        -->
         <span layout-fill  ng-if="vm.sensors"  ng-cloak="">
-           <!-- <md-fab-speed-dial ng-hide="vm.pallete1.hidden" md-direction="right" md-open="vm.pallete1.isOpen"
+           <md-fab-speed-dial ng-hide="vm.pallete1.hidden" md-direction="right" md-open="vm.pallete1.isOpen"
                                class="md-scale floating-component-left-2x" ng-class="{ 'md-hover-full': vm.pallete1.hover }">
                 <md-fab-trigger>
                     <md-button aria-label="menu" class="md-fab md-primary">
@@ -167,9 +167,9 @@
                     </md-button>
                 </div>
             </div>
-            -->
 
-            <!--<md-fab-speed-dial ng-hide="vm.pallete3.hidden" md-direction="right" md-open="vm.pallete3.isOpen"
+
+            <md-fab-speed-dial ng-hide="vm.pallete3.hidden" md-direction="right" md-open="vm.pallete3.isOpen"
                                class="md-scale floating-component-left-2x" ng-class="{ 'md-hover-full': vm.pallete3.hover }">
                 <md-fab-trigger>
                     <md-button aria-label="menu" class="md-fab md-primary">
@@ -192,8 +192,6 @@
                     </div>
                 </md-fab-actions>
             </md-fab-speed-dial>
-            -->
-            <!--
             <md-fab-speed-dial ng-hide="vm.pallete2.hidden" md-direction="right" md-open="vm.pallete2.isOpen"
                                class="md-scale floating-component-left" ng-class="{ 'md-hover-full': vm.pallete2.hover }">
 
@@ -218,8 +216,7 @@
                     </div>
                 </md-fab-actions>
             </md-fab-speed-dial>
-            -->
-        </span>
+        </span>-->
     </div>
 </md-content>
 
@@ -310,6 +307,7 @@
 </script>
 
 <!-- Template for an Action list-->
+<!--
 <script type="text/ng-template" id="actionList.html">
     <div class="md-padding">
         <h2>Ações</h2>
@@ -346,10 +344,10 @@
         </div>
     </div>
 </script>
-
+-->
 <script type="text/ng-template" id="actionList.html">
     <div class="md-padding" >
-        <h2>Atuadores</h2>
+        <h2>Ações</h2>
     </div>
     <div dnd-list="vm.models.recipe.actionContainer"
          dnd-disable-if="vm.models.recipe.actionContainer.length >= vm.models.recipe.maxActions">

@@ -29,7 +29,7 @@
         { name: "Mapa", options: { icon: "assets/icons/maps/ic_map_48px.svg", face : "assets/icons/maps/ic_map_48px.svg",  link : '/map',  avatarIcon: true, available: true }},
         { name: "Receitas", options: { icon: "assets/icons/action/ic_speaker_notes_48px.svg", face : "assets/icons/action/ic_speaker_notes_48px.svg", link : '/recipes', avatarIcon: true, available: true}},
         { name: "Assinaturas", options: { icon: "assets/icons/action/ic_supervisor_account_48px.svg", face : "assets/icons/action/ic_supervisor_account_48px.svg", link : '/subscriptions', avatarIcon: true, available: true }},
-        { name: "Informações", options: { icon: "assets/icons/action/ic_receipt_48px.svg", face : "assets/icons/action/ic_receipt_48px.svg",  link : '/info',  avatarIcon: true, available: true}},
+        { name: "Relatórios", options: { icon: "assets/icons/action/ic_receipt_48px.svg", face : "assets/icons/action/ic_receipt_48px.svg",  link : '/info',  avatarIcon: true, available: true}},
         { layout: true, separator: true },
         { layout: true, header: true , title: "Admin"},
         { name: "Atuadores", options: { icon: "assets/icons/action/ic_play_for_work_48px.svg", face : "assets/icons/action/ic_play_for_work_48px.svg",  link : '/actuators',  avatarIcon: true, available: true}},
@@ -84,7 +84,7 @@
         },
         ALERTS: {
             LIST: {
-                TITLE: "Lista de Alertas",
+                TITLE: "Alertas",
 
                 CONNECTED: {
                     TITLE: "Alertas Conectados"
@@ -108,7 +108,7 @@
         },
         SENSORS: {
             LIST: {
-                TITLE: "Lista de Sensores",
+                TITLE: "Sensores",
                 CONNECTED: {
                     TITLE: "Sensores Habilitados"
                 },
@@ -130,7 +130,7 @@
         },
         ACTUATORS: {
             LIST: {
-                TITLE: "Lista de Atuadores",
+                TITLE: "Atuadores",
                 CONNECTED: {
                     TITLE: "Atuadores Habilitados"
                 },
@@ -146,7 +146,13 @@
         },
         SERVERS: {
             LIST: {
-                TITLE: "Lista de Servidores"
+                TITLE: "Servidores",
+                SENSORS: {
+                  TITLE: "Sensores"
+                },
+                ACTUATORS: {
+                  TITLE: "Atuadores"
+                }
             },
             ICONS:{
                 NEW: "assets/icons/content/ic_add_48px.svg",
@@ -156,7 +162,7 @@
         },
         INFO: {
             LIST: {
-                TITLE: "Lista de Informações"
+                TITLE: "Relatório"
             },
             ICONS:{
                 NEW: "assets/icons/content/ic_add_48px.svg"

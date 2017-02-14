@@ -6,31 +6,74 @@
     </md-toolbar>
     <md-content style="padding-bottom: 60px">
         <md-nav-bar md-selected-nav-item="vm.currentNavItem" nav-bar-aria-label="navigation links">
-            <md-nav-item md-nav-click="goto('{{$index}}')" name="{{$index}}" style="background-color: {{vm.listItems[$index].connected?'rgba(0, 230, 184, 0.2)':'rgba(255, 77, 77, 0.2)'}}" ng-repeat="item in vm.listItems track by $index">{{item.id}}</md-nav-item>
+            <md-nav-item md-nav-click="goto('{{$index}}'); vm.getEquipmentsFromServer($index)" name="{{$index}}" style="background-color: {{vm.listItems[$index].connected?'rgba(0, 230, 184, 0.2)':'rgba(255, 77, 77, 0.2)'}}" ng-repeat="item in vm.listItems track by $index">{{item.id}}</md-nav-item>
         </md-nav-bar>
         <div ng-if="vm.currentNavItem>-1">
             <section layout="column" layout-gt-md="row" flex>
                 <md-card>
+                  <span layout="row">
                     <md-card-header>
                         <md-card-avatar>
                             <md-icon class="md-avatar-icon" md-svg-icon="assets/icons/action/ic_info_outline_24px.svg"></md-icon>
                         </md-card-avatar>
                         <md-card-header-text>
                             <span class="md-title">{{vm.listItems[vm.currentNavItem].id}}</span>
+                            <span class="md-subtitle">{{vm.listItems[vm.currentNavItem].$id}}</span>
                         </md-card-header-text>
-                        <span layout-padding layout-align="center center">
-                            <span style="background-color: {{(vm.listItems[vm.currentNavItem].connected)?'rgba(0, 204, 102,0.5)':'rgba(230, 46, 0,0.5)'}}">
-                                        <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="vm.listItems[vm.currentNavItem].connected" aria-label="on"></md-icon>
-                                        <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!vm.listItems[vm.currentNavItem].connected" aria-label="off"></md-icon>
-                                {{(vm.listItems[vm.currentNavItem].connected)?'Servidor Online':'Servidor Offline'}}
+                    </md-card-header>
+                    <span flex></span>
+                    <span layout="row" layout-margin layout-align="center center">
+                        <md-switch class="md-secondary" ng-disabled="!vm.listItems[vm.currentNavItem].connected" ng-model="vm.listItems[vm.currentNavItem].connected" ng-change="vm.toggleState(vm.listItems[vm.currentNavItem].id, vm.listItems[vm.currentNavItem].$id)"></md-switch>
+                        <span style="background-color: {{(vm.listItems[vm.currentNavItem].connected)?'rgba(0, 204, 102,0.5)':'rgba(230, 46, 0,0.5)'}}">
+                            <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="vm.listItems[vm.currentNavItem].connected" aria-label="on"></md-icon>
+                            <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!vm.listItems[vm.currentNavItem].connected" aria-label="off"></md-icon>
+                            <span class="md-padding">{{(vm.listItems[vm.currentNavItem].connected)?'Servidor Online':'Servidor Offline'}}</span>
+                        </span>
+                    </span>
+                  </span>
+                    <md-card-content>
+                        <md-content layout="column" layout-gt-xs="row" layout-padding flex>
+                          <div ng-animate="'animate'" class="md-dense" flex="50" ng-cloak>
+                              <md-subheader class="md-no-sticky">{{vm.SCREENCONFIG.LIST.SENSORS.TITLE}}</md-subheader>
+                              <md-list-item style="background-color: {{sensor.connected?'rgba(0, 230, 184, 0.2)':'rgba(255, 77, 77, 0.2)'}}" ng-click="vm.navigateTo('sensors', sensor.connectedServer.id, sensor.$id, $event)"  ng-repeat="sensor in vm.sensorListItems">
+                                  <md-icon md-svg-icon="{{sensor.icon}}"></md-icon>
+                                  <h4> {{ sensor.name }} </h4>
+                                  <span flex></span>
+                                  <md-icon ng-if="sensor.readings.value=='!'"
+                                           style="color:#FA8072;"
+                                           aria-label="announcement"
+                                           md-svg-icon="{{vm.SCREENCONFIG.ICONS.WARNING}}"></md-icon>
+                                  <h4> {{ sensor.configurations.pin }} </h4>
+                                  <span flex="5"></span>
+                                  <h4 ng-if="sensor.readings.value!='!'"> {{ sensor.readings.value }} {{ sensor.readings.unit }} </h4>
+                              </md-list-item>
+                              <md-divider></md-divider>
+                          </div>
+                          <div ng-animate="'animate'" class="md-dense" flex="50" ng-cloak>
+                              <md-subheader class="md-no-sticky">{{vm.SCREENCONFIG.LIST.ACTUATORS.TITLE}}</md-subheader>
+                              <md-list-item style="background-color: {{actuator.connected?'rgba(0, 230, 184, 0.2)':'rgba(255, 77, 77, 0.2)'}}" ng-click="vm.navigateTo('actuators', actuator.connectedServer.id, actuator.$id, $event)"  ng-repeat="actuator in vm.actuatorListItems">
+                                  <md-icon md-svg-icon="{{actuator.icon}}"></md-icon>
+                                  <h4> {{ actuator.name }} </h4>
+                                  <span flex></span>
+                                  <md-icon ng-if="actuator.readings.value=='!'"
+                                           style="color:#FA8072;"
+                                           aria-label="announcement"
+                                           md-svg-icon="{{vm.SCREENCONFIG.ICONS.WARNING}}"></md-icon>
+                                  <h4> {{ actuator.configurations.pin }} </h4>
+                                  <span flex="5"></span>
+                                  <h4 ng-if="actuator.readings.value!='!'"> {{ actuator.readings.value }} {{ actuator.readings.unit }} </h4>
+                              </md-list-item>
+                              <md-divider></md-divider>
+                          </div>
+                        </md-content>
+                        <div layout="row" layout-padding layout-align="center center">
+                            <md-switch class="md-secondary" ng-model="vm.listItems[vm.currentNavItem].enabled" ng-change="vm.toggleEnabled(vm.listItems[vm.currentNavItem].id, vm.listItems[vm.currentNavItem].$id)"></md-switch>
+                            <span style="background-color: {{(vm.listItems[vm.currentNavItem].enabled)?'rgba(51, 102, 153,0.5)':'rgba(150, 150, 150,0.5)'}}">
+                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.ON}}" ng-if="vm.listItems[vm.currentNavItem].enabled" aria-label="on"></md-icon>
+                                <md-icon class="md-avatar-icon" md-svg-icon="{{vm.SCREENCONFIG.ICONS.OFF}}" ng-if="!vm.listItems[vm.currentNavItem].enabled" aria-label="off"></md-icon>
+                                <span class="md-padding">{{(vm.listItems[vm.currentNavItem].enabled)?'Servidor Habilitado':'Servidor Bloqueado'}}</span>
                             </span>
                         </span>
-                    </md-card-header>
-                    <md-card-content>
-                        <md-content layout="column" layout-gt-xs="row" layout-padding>
-                            <div></div>
-                            <div></div>
-                        </md-content>
                     </md-card-content>
                 </md-card>
             </section>
@@ -39,29 +82,4 @@
             </md-button>
         </div>
     </md-content>
-</div>
-
-<div hide flex-gt-sm="50"  flex>
-  <md-toolbar layout="row" class="md-hue-3">
-    <div class="md-toolbar-tools">
-      <span>Detalhes</span>
-    </div>
-  </md-toolbar>
-  <md-content>
-    <md-card md-theme="{{ showDarkTheme ? 'dark-grey' : 'default' }}" md-theme-watch>
-        <md-card-title>
-          <md-card-title-text>
-            <span class="md-headline">Card with image</span>
-            <span class="md-subhead">Large</span>
-          </md-card-title-text>
-          <md-card-title-media>
-            <div class="md-media-lg card-media"></div>
-          </md-card-title-media>
-        </md-card-title>
-        <md-card-actions layout="row" layout-align="end center">
-          <md-button>Action 1</md-button>
-          <md-button>Action 2</md-button>
-        </md-card-actions>
-      </md-card>
-  </md-content>
 </div>

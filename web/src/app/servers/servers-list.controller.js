@@ -6,9 +6,9 @@
       .module('app.servers')
       .controller('ServerListController', ServerListController);
 
-  ServerListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'ServersService', '$mdDialog'];
+  ServerListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'ServersService', 'ActuatorsService','SensorsService', '$mdDialog'];
 
-  function ServerListController(currentUser, $location, CONSTANTS, serversService, $mdDialog) {
+  function ServerListController(currentUser, $location, CONSTANTS, serversService, actuatorsService, sensorsService, $mdDialog) {
     var vm = this;
 
     vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SERVERS;
@@ -17,9 +17,18 @@
     vm.currentNavItem = -1;
     vm.listItems.$loaded().then(function (snapshot) {
               vm.currentNavItem = 0;
+              vm.getEquipmentsFromServer(vm.currentNavItem);
     });
 
     vm.readingPeriod = 1000;
+
+    vm.getEquipmentsFromServer = function (serverID){
+        vm.sensorListItems = sensorsService.getFromServer(vm.listItems[serverID].$id);
+        vm.actuatorListItems = actuatorsService.getFromServer(vm.listItems[serverID].$id);
+        vm.actuatorListItems.$loaded().then(function (snapshot) {
+          vm.teste = 0;
+        });
+    };
 
     vm.toggleState = function (location, key){
         // if (vm.servers[$key]) serversSocket.emit('moisture:on');
@@ -34,9 +43,17 @@
 
         //var ret = vm.listItems.$save(item);
     };
+    vm.toggleEnabled = function (location, key){
+        serversService
+            .getOne("public", currentUser, location, key)
+            .$loaded().then(function (snapshot) {
+                snapshot.enabled = (snapshot.enabled?false:true);
+                snapshot.$save();
+            });
+    };
 
-    vm.navigateTo = function(serverID, key, $event){
-        $location.path( "/servers/public/" + serverID + "/edit/" + key);
+    vm.navigateTo = function(equipmentType, equipmentID, key, $event){
+        $location.path( "/" + equipmentType + "/public/" + equipmentID + "/edit/" + key);
     };
 
     vm.newServer = function(ev) {
