@@ -22,7 +22,7 @@
     "cookie-parser": "^1.0.1",
     "etherport-client": "^0.1.2",
     "express": "^4.14.1",
-    "firebase": "^3.6.10",
+    "firebase": "^3.4.1",
     "firebase-admin": "^4.1.1",
     "firmata": "^0.15.0",
     "johnny-five": "^0.10.6",
