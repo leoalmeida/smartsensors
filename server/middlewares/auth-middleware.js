@@ -6,11 +6,11 @@ const User = require('../models/user-model');
 
 module.exports = (req, res, next) => {
 
-  if(!req.headers.authorization) {
+  if(!req.headers.Authorization) {
     return res.status(403).send();
   }
 
-  let _b64UserName = req.headers.authorization.split(AUTHORIZATION_MODEL).pop().trim();
+  let _b64UserName = req.headers.Authorization.split(AUTHORIZATION_MODEL).pop().trim();
   let _arrayUserName = Buffer.from(_b64UserName, 'base64').toString('utf-8').split(USER_PASS_SPLIT);
   console.log(_arrayUserName[0]);
 

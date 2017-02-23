@@ -1,7 +1,7 @@
 (function(angular) {
     'use strict';
 
-    var host = 'http://smartsensors.herokuapp.com:443/';
+    var host = 'http://smartsensors.herokuapp.com/';
     //var host = 'http://localhost:8080/';
 
     angular

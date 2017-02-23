@@ -17,7 +17,7 @@
                 if (sessionStorage.getItem('accessToken')) {
                     console.log("token["+window.localStorage.getItem('accessToken')+"], config.headers: ", config.headers);
 
-                    config.headers.authorization = 'Basic ' + $base64.encode(sessionStorage.getItem('currentUserId')+":"+sessionStorage.getItem('accessToken'));
+                    config.headers.Authorization = 'Basic ' + $base64.encode(sessionStorage.getItem('currentUserId')+":"+sessionStorage.getItem('accessToken'));
                 }
                 return config || $q.when(config);
             }
