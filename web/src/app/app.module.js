@@ -2,6 +2,7 @@
   'use strict';
 
     var dependencyModules = [
+        'ngResource',
         'ngMaterial',
         'ngAnimate',
         'ngMessages',
@@ -9,7 +10,9 @@
         'dndLists',
         'angular-web-notification',
         'firebase',
-        'ngMap'];
+        //'btford.socket-io',
+        'ngMap',
+        'base64'];
     var myAppComponents = [
         'app.core',
         'app.auth',
@@ -45,5 +48,8 @@
             $mdThemingProvider.theme('input', 'default')
                 .primaryPalette('grey');
         });
+        /*.factory('socket', function (socketFactory) {
+          return socketFactory();
+        });*/
 
 })(angular);

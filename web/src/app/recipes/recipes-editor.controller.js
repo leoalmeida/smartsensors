@@ -285,6 +285,13 @@
 
         });
 
+        vm.dragclick = function(ev){
+          ev.target.style.overflow = 'hidden';
+          setTimeout(function() {
+              ev.target.style.overflow = '';
+          }, 10);
+        }
+
         vm.toggleBounce = function() {
             if (this.getAnimation() != null) {
                 this.setAnimation(null);

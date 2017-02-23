@@ -14,9 +14,9 @@
 
     // UserService.$inject = ['$http', 'API'];
     // function UserService($http, API) {
-    ServersService.$inject = ['firebaseDataService'];
+    ServersService.$inject = ['firebaseDataService', '$http', 'API'];
 
-    function ServersService(firebaseDataService) {
+    function ServersService(firebaseDataService, $http, API) {
 
         var database = firebaseDataService.servers;
         var serversList = firebaseDataService.getRefFirebaseArray(database, 'owner');
@@ -30,7 +30,8 @@
             addOne: addOne,
             removeOne: removeOne,
             getAllConfigurations: getAllConfigurations,
-            getStatus: getStatus
+            getStatus: getStatus,
+            startBoard: startBoard
         };
 
         return service;
@@ -67,6 +68,10 @@
 
         function getAllConfigurations() {
             return configRef;
+        }
+
+        function startBoard(data, cbSuccess, cbError) {
+            return $http.post(API.servers.withkey + data.server + '/startboard', data).then(cbSuccess, cbError);
         }
 
     }

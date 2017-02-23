@@ -7,5 +7,7 @@ router.get('/trigger', ctrl.getContract);
 //router.put('/trigger/:equipment', ctrl.createNewEquipment);
 router.put('/trigger/info/:equipment', ctrl.includeNewInfo);
 router.post('/trigger/:equipment/withkey/:key', ctrl.updateWithKey);
+router.post('/trigger/servers/withkey/:key/startboard', ctrl.startBoard);
+
 
 module.exports = router;

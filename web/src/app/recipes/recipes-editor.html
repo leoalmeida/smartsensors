@@ -307,44 +307,6 @@
 </script>
 
 <!-- Template for an Action list-->
-<!--
-<script type="text/ng-template" id="actionList.html">
-    <div class="md-padding">
-        <h2>Ações</h2>
-    </div>
-    <div dnd-list="vm.models.recipe.actionContainer"
-          dnd-disable-if="vm.models.recipe.actionContainer.length >= vm.models.recipe.maxActions">
-        <md-grid-list md-cols="2"
-                      md-cols-xs="1"
-                      md-cols-sm="2"
-                      md-cols-gt-md={{vm.models.recipe.maxActions}}
-                      md-row-height-gt-md="1:1"
-                      md-row-height="4:3"
-                      md-gutter="8px"
-                      md-gutter-gt-sm="4px" >
-            <md-grid-tile class="card" ng-repeat="item in vm.models.recipe.actionContainer"
-                          md-rowspan="1"
-                          md-colspan="1">
-                <md-button class="md-primary" layout-margin layout-fill>
-                    <div class="llist"
-                         dnd-draggable="item"
-                         dnd-type="item.type.value"
-                         dnd-disable-if="item.type.value == 'unknown'"
-                         dnd-moved="vm.models.recipe.actionContainer.splice($index, 1)"
-                         dnd-effect-allowed="move"
-                         dnd-selected="vm.models.selected = item"
-                         ng-class="{'selected': vm.models.selected === item}"
-                         ng-include="item.type.value + '.html'" ng-click="vm.showConfig($event, item.type.value)">
-                    </div>
-                </md-button>
-            </md-grid-tile>
-        </md-grid-list>
-        <div class="dndPlaceholder">
-            <strong>{{vm.models.actionAllowedTypes.join(' ou ')}}</strong>
-        </div>
-    </div>
-</script>
--->
 <script type="text/ng-template" id="actionList.html">
     <div class="md-padding" >
         <h2>Ações</h2>

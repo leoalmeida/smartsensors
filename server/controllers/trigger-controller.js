@@ -5,7 +5,8 @@ const ctrl = {};
 const contract = [
         {"Operação": "put", "Comando": "smartsensors.herokuapp.com/trigger/info/:equipment", "Descrição": "Inclui informação de coleta do sensor"},
         //{"Operação": "put", "Comando": "smartsensors.herokuapp.com/trigger/:equipment", "Descrição": "Inclui novo equipamento"}
-        {"Operação": "post", "Comando": "smartsensors.herokuapp.com/trigger/withkey/:equipment", "Descrição": "Altera o estado de um equipamento (body ex: {'connected':true})"},
+        {"Operação": "post", "Comando": "smartsensors.herokuapp.com/trigger/servers/withkey/:key", "Descrição": "Altera o estado de um equipamento (body ex: {'connected':true})"},
+        {"Operação": "post", "Comando": "smartsensors.herokuapp.com/trigger/servers/withkey/:key/startboard", "Descrição": "Inicia uma placa de automação!"},
     ];
 
 ctrl.getContract = (req, res, next) => {
@@ -54,5 +55,15 @@ ctrl.updateWithKey = (req, res, next) => {
       return next({ data: err, code: 400, messageKeys: ['validation-error'] });
     });
 };
+
+ctrl.startBoard  = (req, res) => {
+    Trigger.startBoard(req.params, req.body)
+        .then(data => {
+            return res.status(202).send(data);
+        })
+        .catch(err => {
+            return next(err);
+        });
+}
 
 module.exports = ctrl;

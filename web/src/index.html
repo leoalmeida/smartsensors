@@ -31,12 +31,18 @@
 
     <!-- Angular Material requires Angular.js Libraries -->
     <script src="lib/angular.min.js"></script>
+    <script src="lib/angular-base64.min.js"></script>
+    <script src="lib/angular-resource.min.js"></script>
     <script src="lib/angular-route.min.js"></script>
     <script src="lib/angular-animate.min.js"></script>
     <script src="lib/angular-aria.min.js"></script>
     <script src="lib/angular-messages.min.js"></script>
 
+    <!--<script src="lib/socket.io.min.js"></script>
     <script src="lib/socket.min.js"></script>
+    <script>
+        var socket = io();
+    </script>-->
 
     <!-- Angular Material Library -->
     <script src="lib/angular-material.min.js"></script>
@@ -76,6 +82,7 @@
     <!--core module-->
     <script src="app/core/core.module.js"></script>
     <script src="app/core/config/constants.config.js"></script>
+    <script src="app/core/config/apis.config.js"></script>
     <script src="app/core/services/auth.service.js"></script>
     <script src="app/core/services/firebaseData.service.js"></script>
     <script src="app/core/services/refdata.service.js"></script>
