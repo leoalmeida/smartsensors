@@ -3,12 +3,12 @@
         <md-icon class="material-icons md-light md-48" md-svg-src="assets/icons/social/ic_google_48px.svg" ></md-icon>
     </md-button>
 
-    <md-button class="md-fab md-primary md-hue-1" ng-disabled="true" aria-label="Facebook login">
+    <md-button class="md-fab md-primary md-hue-1" ng-click="vm.facebooklogin()" data-onsuccess="vm.onSignIn" aria-label="Facebook login">
         <md-icon class="material-icons md-light md-48" md-svg-src="assets/icons/social/ic_facebook_48px.svg" ></md-icon>
     </md-button>
 
-    <md-button class="md-fab md-primary md-hue-1" ng-disabled="true" aria-label="twitter login">
-        <md-icon class="material-icons" md-svg-src="assets/icons/social/ic_twitter_48px.svg" ></md-icon>
+    <md-button class="md-fab md-primary md-hue-1" ng-click="vm.twitterlogin()" data-onsuccess="vm.onSignIn" aria-label="Twitter login">
+        <md-icon class="material-icons md-light md-48" md-svg-src="assets/icons/social/ic_twitter_48px.svg" ></md-icon>
     </md-button>
 
     <md-button class="md-fab md-primary md-hue-1" aria-label="local login" ng-click="vm.local==!vm.local">

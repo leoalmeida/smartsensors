@@ -46,6 +46,8 @@
         var service = {
             firebaseAuthObject: authObj,
             googlelogin: toggleGoogleSignIn,
+            twitterlogin: toggleTwitterSignIn,
+            facebooklogin: toggleFacebookSignIn,
             clearCredentials: clearCredentials,
             updateUser: updateUser,
             sendWelcomeEmail: sendWelcomeEmail,
@@ -105,6 +107,70 @@
                 }
 
             });
+        }
+
+        function toggleTwitterSignIn() {
+            authObj.$signInWithRedirect("twitter").then(function(authData){}).catch(function(error) {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // [START_EXCLUDE]
+                if (errorCode === 'auth/account-exists-with-different-credential') {
+                    alert('You have already signed up with a different auth provider for that email.');
+                    // If you are using multiple auth providers on your app you should handle linking
+                    // the user's accounts here.
+                } else {
+                    console.error(error);
+                }
+
+            });
+        }
+
+        function toggleFacebookSignIn() {
+
+                authObj.$signInWithRedirect("facebook").then(function(authData){}).catch(function(error) {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    // The email of the user's account used.
+                    var email = error.email;
+                    // The firebase.auth.AuthCredential type that was used.
+                    var credential = error.credential;
+                    // [START_EXCLUDE]
+                    if (errorCode === 'auth/account-exists-with-different-credential') {
+                        alert('You have already signed up with a different auth provider for that email.');
+                        // If you are using multiple auth providers on your app you should handle linking
+                        // the user's accounts here.
+                    } else {
+                        console.error(error);
+                    }
+
+                });
+            /*return new Promise(function(resolve, reject) {
+                authObj.$signInWithPopup("facebook").then(function (result) {
+                    console.log("Signed in as:", result.user.uid);
+                    resolve(result)
+                }, function (error) {
+                    console.log("Authentication failed:", error);
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    // The email of the user's account used.
+                    var email = error.email;
+                    // The firebase.auth.AuthCredential type that was used.
+                    var credential = error.credential;
+                    // [START_EXCLUDE]
+                    if (errorCode === 'auth/account-exists-with-different-credential') {
+                        console.log("Multiple accounts: ", JSON.stringify(error));
+                        //alert('You have already signed up with a different auth provider for that email.');
+                        console.log("Signed in as:", result.email);
+                    } else {
+                        console.error(error);
+                    }
+                    reject(error);
+                });
+            });*/
         }
 
         function sendWelcomeEmail(emailAddress) {

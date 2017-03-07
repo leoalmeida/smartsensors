@@ -10,7 +10,7 @@
                         <span class="md-subhead">Configuração: </span>
                         <span class="md-title">
                             <strong>
-                                {{ vm.models.selected.type.display }}
+                                {{ vm.selected.type }}
                             </strong>
                         </span>
                     </h3>
@@ -24,11 +24,13 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
-                <div layout="column" layout-wrap ng-repeat="scenario in vm.getScenarios()" flex >
-                    <div layout="column" layout-wrap ng-if="vm.models.selected.type" flex >
-                        <label>Cenário: <strong>{{scenario.label}}</strong></label>
+                    <div layout="column" layout-wrap ng-if="vm.selected.type" flex >
+                        <md-input-container flex>
+                            <label>Label</label>
+                            <input ng-model="vm.selected.label" type="text">
+                        </md-input-container>
 
-                        <div layout="row" layout-wrap ng-repeat="action in vm.models.selected.rules[$index].actions" flex>
+                        <div layout="row" layout-wrap ng-repeat="action in vm.selected.actions" flex>
                             <md-input-container flex>
                                 <label>Atributo alterado</label>
                                 <input ng-model="action.changedAttribute" type="text">
@@ -50,7 +52,6 @@
                             </section>
                         </div>
                     </div>
-                </div>
             </div>
         </md-dialog-content>
 

@@ -2,24 +2,24 @@
     'use strict';
 
     angular
-      .module('app.servers')
-      .factory('ServersService', ServersService);
-      // .factory('ServersSocket', ServersSocket);
+      .module('app.sinks')
+      .factory('SinksService', SinksService);
+      // .factory('SinksSocket', SinksSocket);
 
 
-    ServersSocket.$inject = ['socketFactory'];
-    function ServersSocket (socketFactory) {
+    SinksSocket.$inject = ['socketFactory'];
+    function SinksSocket (socketFactory) {
             return socketFactory();
     };
 
     // UserService.$inject = ['$http', 'API'];
     // function UserService($http, API) {
-    ServersService.$inject = ['firebaseDataService', '$http', 'API'];
+    SinksService.$inject = ['$location', '$http', 'API', 'firebaseDataService'];
 
-    function ServersService(firebaseDataService, $http, API) {
+    function SinksService($location, $http, API, firebaseDataService) {
 
-        var database = firebaseDataService.servers;
-        var serversList = firebaseDataService.getRefFirebaseArray(database, 'owner');
+        var database = firebaseDataService.sinks;
+        var sinksList = firebaseDataService.getRefFirebaseArray(database, 'owner');
         var configRef = firebaseDataService.configurations;
 
         var service = {
@@ -37,7 +37,7 @@
         return service;
 
         function getAll() {
-            return serversList;
+            return sinksList;
         }
 
         function getPublic() {
@@ -71,7 +71,7 @@
         }
 
         function startBoard(data, cbSuccess, cbError) {
-            return $http.post(API.servers.withkey + data.server + '/startboard', data).then(cbSuccess, cbError);
+            return $http.post(API.sinks.withkey + data.sink + '/startboard', data).then(cbSuccess, cbError);
         }
 
     }

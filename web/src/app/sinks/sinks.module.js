@@ -1,5 +1,5 @@
 (function(angular) {
     'use strict';
 
-    angular.module('app.servers', []);
+    angular.module('app.sinks', []);
 })(angular);

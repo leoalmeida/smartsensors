@@ -56,16 +56,16 @@ const model = {};
 
 let board, sensor;
 
-let sensors={"connected":0}, actuators={"connected":0}, servers={"connected":0};
+let sensors={"connected":0}, actuators={"connected":0}, sinks={"connected":0};
 
 let connectedsens, connectedacts;
 
-let userKey, selectedServer, refServers, refSensors, refActuators, serversList;
+let userKey, selectedSink, refSinks, refSensors, refActuators, sinksList;
 
-db.ref('servers/public/')
+db.ref('sinks/public/')
     .once("value", function (snapshot) {
 
-        serversList = JSON.stringify(snapshot.val());
+        sinksList = JSON.stringify(snapshot.val());
 
     });
 
@@ -98,36 +98,36 @@ model.startBoard = (_params, _trigger) => {
             _trigger["ip"] === undefined ||
             _trigger["port"] === undefined ||
             _trigger["email"] === undefined ||
-            _trigger["server"] === undefined) reject({ data: err, code: 400, messageKeys: ["invalid-conntrigger"]});
+            _trigger["sink"] === undefined) reject({ data: err, code: 400, messageKeys: ["invalid-conntrigger"]});
 
         console.log("Params: " + JSON.stringify(_trigger));
 
 
-        refServers =
-            db.ref('servers/public/').child(_trigger.server);
+        refSinks =
+            db.ref('sinks/public/').child(_trigger.sink);
 
-        refServers
+        refSinks
             .once("value", function (snapshot) {
 
-                selectedServer = snapshot.key;
-                let server = snapshot.val();
+                selectedSink = snapshot.key;
+                let sink = snapshot.val();
 
-                if (!server.enabled) {
-                    console.log("Servidor: " + server.id + " desabilitado\n");
+                if (!sink.enabled) {
+                    console.log("Sink: " + sink.id + " desabilitado\n");
                     return;
                 }
 
-                console.log("Servidor: " + selectedServer + " - " + server.id + " - " + server.type + "\n");
+                console.log("Sink: " + selectedSink + " - " + sink.id + " - " + sink.type + "\n");
 
-                if (server.type === 'esp8266') {
+                if (sink.type === 'esp8266') {
 
                     refActuators = db.ref('actuators/public')
-                        .orderByChild('connectedServer/id')
-                        .equalTo(selectedServer);
+                        .orderByChild('connectedSink/id')
+                        .equalTo(selectedSink);
 
                     refSensors = db.ref('sensors/public')
-                        .orderByChild('connectedServer/id')
-                        .equalTo(selectedServer);
+                        .orderByChild('connectedSink/id')
+                        .equalTo(selectedSink);
 
 
                     console.log("IP: " + _trigger.ip + " - Porta: " + _trigger.port + "\n");
@@ -153,7 +153,7 @@ model.startBoard = (_params, _trigger) => {
                             this.io.version.minor
                         );
 
-                        updateEquipmentStatus('servers', selectedServer, true);
+                        updateEquipmentStatus('sinks', selectedSink, true);
 
                         refActuators
                             .on("child_added", function (snapshot) {
@@ -347,7 +347,7 @@ model.startBoard = (_params, _trigger) => {
                                 }
                             }
 
-                            updateEquipmentStatus('servers', selectedServer, false);
+                            updateEquipmentStatus('sinks', selectedSink, false);
 
                         });
 
@@ -384,7 +384,7 @@ model.startBoard = (_params, _trigger) => {
                                 }
                             }
 
-                            updateEquipmentStatus('servers', _trigger.server, false);
+                            updateEquipmentStatus('sinks', _trigger.sink, false);
 
                         });
                     }
@@ -409,7 +409,7 @@ model.startBoard = (_params, _trigger) => {
                 }
             });
 
-        refServers
+        refSinks
             .on("child_changed", function (snapshot) {
                         let updatedItem = snapshot.val();
                         console.log(updatedItem);
@@ -924,9 +924,9 @@ let updateInfo = function (reading, type, key) {
 };
 let updateEquipmentStatus = function (equipment, equipmentKey, status) {
     console.log(equipment + " - " + equipmentKey + " status: " + status + '\n');
-    let refServer = db.ref(equipment + '/public/');
+    let refSink = db.ref(equipment + '/public/');
     let updateitem = equipmentKey + "/connected";
-    refServer.update({[updateitem]: status});
+    refSink.update({[updateitem]: status});
 };
 
 // helper function to keep track of pulses

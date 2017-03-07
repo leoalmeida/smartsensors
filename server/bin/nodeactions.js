@@ -2,7 +2,6 @@
 
 const funclist = require('express').Router();
 
-
 const db = require('../db');
 
 let sensors={}, recipes={}, actuators={}, info={};
@@ -26,6 +25,7 @@ db.ref('recipes/public/')
         if (!item.enabled) return;
         recipes[snapshot.key] = item;
     });
+
 db.ref('recipes/public/')
     .on("child_changed", function (snapshot) {
         let item = snapshot.val() ;
@@ -172,6 +172,7 @@ funclist.updateAlert = function (alertKey, alertinfo) {
             console.log('Alerta sincronizado.');
         });
 };
+
 funclist.removeAlert = function (recipeKey, itemKey, key) {
     db.ref('alerts/public/').child(key)
         .remove()

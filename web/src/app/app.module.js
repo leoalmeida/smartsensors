@@ -25,7 +25,7 @@
         'app.alerts',
         'app.sensors',
         'app.actuators',
-        'app.servers',
+        'app.sinks',
         'app.info'
     ];
 

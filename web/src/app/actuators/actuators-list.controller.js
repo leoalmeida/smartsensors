@@ -6,9 +6,9 @@
       .module('app.actuators')
       .controller('ActuatorListController', ActuatorListController);
 
-  ActuatorListController.$inject = [ 'currentUser', '$location', 'CONSTANTS', 'ActuatorsService', 'ServersService', '$mdDialog'];
+  ActuatorListController.$inject = [ 'currentUser', '$location', 'CONSTANTS', 'ActuatorsService', 'SinksService', '$mdDialog'];
 
-  function ActuatorListController(currentUser, $location, CONSTANTS, actuatorsService, serversService, $mdDialog) {
+  function ActuatorListController(currentUser, $location, CONSTANTS, actuatorsService, sinksService, $mdDialog) {
     var vm = this;
 
     vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.ACTUATORS;
@@ -30,20 +30,20 @@
         //var ret = vm.listItems.$save(item);
     };
 
-    vm.navigateTo = function(serverKey, key, $event){
-        $location.path( "/actuators/public/" + serverKey + "/edit/" + key );
+    vm.navigateTo = function(sinkKey, key, $event){
+        $location.path( "/actuators/public/" + sinkKey + "/edit/" + key );
     };
 
-    vm.chooseServer = function($event) {
+    vm.chooseSink = function($event) {
 
-        vm.listValues = serversService.getOwn(currentUser);
+        vm.listValues = sinksService.getOwn(currentUser);
 
         vm.listValues.$loaded().then(function(snapshot){
           $mdDialog.show({
               controller: DialogController,
               parent: angular.element(document.body),
               targetEvent: $event,
-              templateUrl: 'app/core/layouts/select-server.dialog.templ.html',
+              templateUrl: 'app/core/layouts/select-sink.dialog.templ.html',
               clickOutsideToClose: true,
               locals: {
                 items: snapshot
@@ -71,7 +71,7 @@
         /*var confirm = $mdDialog.prompt()
             .clickOutsideToClose(true)
             .title('Novo Atuador')
-            .textContent('Escolha um servidor')
+            .textContent('Escolha um sink')
             .targetEvent(ev)
             .ok('Criar Atuador')
             .cancel('Cancelar')

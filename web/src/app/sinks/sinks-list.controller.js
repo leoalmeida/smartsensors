@@ -2,43 +2,43 @@
   'use strict';
 
   angular
-      .module('app.servers')
-      .controller('ServerListController', ServerListController);
+      .module('app.sinks')
+      .controller('SinkListController', SinkListController);
 
-  ServerListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'ServersService', 'ActuatorsService','SensorsService', '$mdDialog', '$interval'];
+  SinkListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'SinksService', 'ActuatorsService','SensorsService', '$mdDialog', '$interval'];
 
-  function ServerListController(currentUser, $location, CONSTANTS, serversService, actuatorsService, sensorsService, $mdDialog, $interval) {
+  function SinkListController(currentUser, $location, CONSTANTS, sinksService, actuatorsService, sensorsService, $mdDialog, $interval) {
     var vm = this;
     var alert;
 
     vm.working = function() { return (!!alert) };
 
-    vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SERVERS;
+    vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SINKS;
     vm.ICONS = CONSTANTS.ICONS;
-    vm.listItems = serversService.getOwn(currentUser);
+    vm.listItems = sinksService.getOwn(currentUser);
 
     vm.currentNavItem = -1;
     vm.listItems.$loaded().then(function (snapshot) {
               vm.currentNavItem = 0;
-              vm.getEquipmentsFromServer(vm.currentNavItem);
+              vm.getEquipmentsFromSink(vm.currentNavItem);
     });
 
     vm.readingPeriod = 1000;
-    vm.serverMessage = "Processando solicitação";
+    vm.sinkMessage = "Processando solicitação";
 
-    vm.getEquipmentsFromServer = function (serverID){
-        vm.sensorListItems = sensorsService.getFromServer(vm.listItems[serverID].$id);
-        vm.actuatorListItems = actuatorsService.getFromServer(vm.listItems[serverID].$id);
+    vm.getEquipmentsFromSink = function (sinkID){
+        vm.sensorListItems = sensorsService.getFromSink(vm.listItems[sinkID].$id);
+        vm.actuatorListItems = actuatorsService.getFromSink(vm.listItems[sinkID].$id);
         vm.actuatorListItems.$loaded().then(function (snapshot) {
           vm.teste = 0;
         });
     };
 
     vm.toggleState = function (location, key){
-        // if (vm.servers[$key]) serversSocket.emit('moisture:on');
-        // else serversSocket.emit('moisture:off');
+        // if (vm.sinks[$key]) sinksSocket.emit('moisture:on');
+        // else sinksSocket.emit('moisture:off');
 
-        serversService
+        sinksService
             .getOne("public", currentUser, location, key)
             .$loaded().then(function (snapshot) {
             snapshot.connected = (snapshot.connected?false:true);
@@ -48,7 +48,7 @@
         //var ret = vm.listItems.$save(item);
     };
     vm.toggleEnabled = function (location, key){
-        serversService
+        sinksService
             .getOne("public", currentUser, location, key)
             .$loaded().then(function (snapshot) {
                 snapshot.enabled = (snapshot.enabled?false:true);
@@ -60,16 +60,16 @@
         $location.path( "/" + equipmentType + "/public/" + equipmentID + "/edit/" + key);
     };
 
-    vm.newServer = function(ev) {
+    vm.newSink = function(ev) {
 
         var confirm = $mdDialog.prompt()
             .clickOutsideToClose(true)
-            .title('Novo Servidor')
-            .textContent('Digite o nome do novo servidor.')
-            .placeholder('Nome do servidor...')
+            .title('Novo Sink')
+            .textContent('Digite o nome do novo sink.')
+            .placeholder('Nome do sink...')
             .targetEvent(ev)
-            .ariaLabel('Nome do servidor')
-            .ok('Criar Server')
+            .ariaLabel('Nome do sink')
+            .ok('Criar Sink')
             .cancel('Voltar')
             .openFrom({
                 top: -50,
@@ -91,7 +91,7 @@
             ip: vm.hostip,
             port: vm.hostport,
             email: currentUser.email,
-            server: vm.listItems[currentNavItem].$id,
+            sink: vm.listItems[currentNavItem].$id,
             serialport: ""
         }));
         */
@@ -118,24 +118,24 @@
             $scope.cancel = function() {vm.status = 'You cancelled the dialog.'};
         };
         */
-        alert = serversService.startBoard({
+        alert = sinksService.startBoard({
             ip: vm.hostip,
             port: vm.hostport,
             email: currentUser.email,
-            server: vm.listItems[currentNavItem].$id,
+            sink: vm.listItems[currentNavItem].$id,
             serialport: ""
         }, cbStartBoardSuccess, cbStartBoardError);
     };
 
     let cbStartBoardSuccess = function () {
         console.log("Placa iniciada com sucesso");
-        vm.serverMessage = "Placa iniciada com sucesso";
+        vm.sinkMessage = "Placa iniciada com sucesso";
         alert = undefined;
     };
 
     let cbStartBoardError = function (data) {
         console.log("Erro ao iniciar placa");
-        vm.serverMessage = "Erro ao iniciar placa";
+        vm.sinkMessage = "Erro ao iniciar placa";
         alert = undefined;
     };
 /*
@@ -143,11 +143,11 @@
         console.log("true");
         //vm.recordObservation('Motion Data', 'Reco');
     });
-    socket.on('serversData', function(data){
+    socket.on('sinksData', function(data){
 
-        var servers = JSON.parse(data);
-        for (server of Object.keys(servers)) {
-            vm.serverList.push(servers[server]);
+        var sinks = JSON.parse(data);
+        for (sink of Object.keys(sinks)) {
+            vm.sinkList.push(sinks[sink]);
         }
 
     });

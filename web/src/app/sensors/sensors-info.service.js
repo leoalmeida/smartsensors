@@ -26,13 +26,13 @@
             getAll: getAll,
             getPublic: getPublic,
             getOwn: getOwn,
-            getFromServer: getFromServer,
+            getFromSink: getFromSink,
             getOne: getOne,
             addOne: addOne,
             removeOne: removeOne,
             getAllConfigurations: getAllConfigurations,
-            getOwnServers: getOwnServers,
-            getServerStatus: getServerStatus
+            getOwnSinks: getOwnSinks,
+            getSinkStatus: getSinkStatus
         };
 
         return service;
@@ -50,20 +50,20 @@
             return firebaseDataService.getRefFirebaseArray(database, 'owner', currentUser.uid);
         }
 
-        function getFromServer(serverKey){
-            return firebaseDataService.getRefFirebaseArray(database, 'connectedServer/id', serverKey);
+        function getFromSink(sinkKey){
+            return firebaseDataService.getRefFirebaseArray(database, 'connectedSink/id', sinkKey);
         }
 
         function getOne(key) {
             return firebaseDataService.getRefFirebaseObject(database, key);
         }
 
-        function getServerStatus(type, currentUser, location) {
+        function getSinkStatus(type, currentUser, location) {
             return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid + '/' + location + '/connected');
         }
 
         function addOne(type, newObject) {
-//            firebaseDataService.getFirebaseArray('servers/' + currentUser.uid + '/' + location + '/sensors/').$save();
+//            firebaseDataService.getFirebaseArray('sinks/' + currentUser.uid + '/' + location + '/sensors/').$save();
             return firebaseDataService.getFirebaseArray(database + '/' + type ).$add(newObject);
         }
 
@@ -71,7 +71,7 @@
             return firebaseDataService.getFirebaseObject(database + '/' + type ).remove(key);
         }
 
-        function removeOneServer(currentUser, type, key) {
+        function removeOneSink(currentUser, type, key) {
             return firebaseDataService.getFirebaseObject(database + '/' + type + '/' + currentUser.uid).remove(key);
         }
 
@@ -79,7 +79,7 @@
             return configRef;
         }
 
-        function getOwnServers(currentUser) {
+        function getOwnSinks(currentUser) {
             return firebaseDataService.getFirebaseArray(database + '/' + type + '/' + currentUser.uid);
         }
 

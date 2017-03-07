@@ -1,0 +1,316 @@
+<md-content layout="column" ng-cloak class="md-padding chipzone" style="padding-bottom: 100px">
+    <md-content class="page-container">
+        <div class="container" ng-show="vm.progress">
+            <md-progress-linear md-mode="query" ng-disabled="!vm.progress"></md-progress-linear>
+            <div class="bottom-block">
+                <span>Enviando ...</span>
+            </div>
+        </div>
+        <md-button class="md-fab md-warn md-hue-2 floating-component fl-right fl-secondary" aria-label="Cancel" ng-click="vm.submit()">
+            <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.GOBACK}}"></md-icon>
+        </md-button>
+        <md-button class="md-fab md-hue-2 floating-component fl-right fl-primary" aria-label="Submit" ng-click="vm.submit()">
+            <md-icon md-svg-icon="{{vm.SCREENCONFIG.ICONS.PUBLISH}}"></md-icon>
+        </md-button>
+        <md-card class="dropzone"  ng-cloak="">
+                <md-card-header>
+                    <md-card-avatar>
+                        <img class="md-user-avatar" ng-src="{{vm.recipe.icon}}"/>
+                    </md-card-avatar>
+                    <md-card-header-text>
+                        <span class="md-headline">
+                            <md-input-container md-no-float>
+                                <label>Receita</label>
+                                <input ng-model="vm.recipe.label">
+                            </md-input-container>
+                        </span>
+                    </md-card-header-text>
+                </md-card-header>
+                <md-card-content layout="row">
+                    <span layout="column" flex layout-padding class="autocomplete" >
+                        <md-input-container md-no-float>
+                                <label>Descrição</label>
+                                <input ng-model="vm.recipe.description">
+                        </md-input-container>
+
+                        <div class="box" flex>
+                            <div class="md-padding" >
+                                <h2>Regras</h2>
+                            </div>
+                            <md-chips ng-model="vm.recipe.ruleContainer" md-autocomplete-snap
+                                      md-transform-chip="vm.transformChip($chip)"
+                                      md-require-match="false"
+                                      md-on-select="vm.showConfig($event, $chip)"
+                                      md-on-add="vm.addItem($chip)"
+                                      md-on-remove="vm.removeItem($chip, $index)">
+                                <md-autocomplete
+                                        md-selected-item="vm.selectedRule"
+                                        md-search-text="vm.searchRuleText"
+                                        md-items="item in vm.querySearch(vm.searchRuleText, vm.rules)"
+                                        md-item-text="item.name"
+                                        md-menu-class="autocomplete-custom-template"
+                                        placeholder="Adicione suas regras aqui"
+                                        ng-hide="vm.recipe.ruleContainer.length >= vm.recipe.max">
+                                    <md-item-template>
+                                        <span class="item-title">
+                                            <md-icon md-svg-icon="{{item.icon}}"></md-icon>
+                                            <span class="capitalize"> {{item.type}} </span>
+                                        </span>
+                                        <span class="item-metadata">
+                                            <span><strong>{{item.label}}</strong></span>
+                                            <span md-highlight-text="vm.searchRuleText">{{item.name}}</span>
+                                            <span><strong>{{item.watchers}}</strong></span>
+                                        </span>
+                                        <md-not-found>
+                                            Inserir regra de valor?.
+                                        </md-not-found>
+                                    </md-item-template>
+                                </md-autocomplete>
+                                <md-chip-template>
+                                    <span>
+                                        <md-icon md-svg-src="{{$chip.icon}}" aria-label="Rule Icon"></md-icon>
+                                        <strong ng-if="$chip.type!=='operador' && $chip.type!=='agregador'">{{$chip.label}}</strong>
+                                        <em ng-if="$chip.type!=='operador' && $chip.type!=='agregador'">({{$chip.type}})</em>
+                                        <md-tooltip md-direction="up" md-visible="tooltipVisible"
+                                                    md-autohide="false"
+                                                    ng-if="$chip.type!=='operador' && $chip.type!=='agregador'">
+                                            {{$chip.name}}
+                                        </md-tooltip>
+                                    </span>
+                                </md-chip-template>
+                            </md-chips>
+                        </div>
+
+                        <div  class="box" flex>
+                            <div class="md-padding" >
+                                <h2>Ações</h2>
+                            </div>
+                            <md-chips ng-model="vm.recipe.actionContainer" md-autocomplete-snap
+                                      md-transform-chip="vm.transformChip($chip)"
+                                      md-require-match="true"
+                                      md-on-select="vm.showConfig($event, $chip)"
+                                      md-max-chips="{{vm.recipe.maxActions}}">
+                                <md-autocomplete
+                                        md-selected-item="vm.selectedAction"
+                                        md-search-text="vm.searchActionText"
+                                        md-items="item in vm.querySearch(vm.searchActionText, vm.actions)"
+                                        md-item-text="item.name"
+                                        md-menu-class="autocomplete-custom-template"
+                                        placeholder="Adicione suas ações aqui"
+                                        ng-hide="vm.recipe.actionContainer.length >= vm.recipe.maxActions">
+                                    <md-item-template>
+                                        <span class="item-title">
+                                          <md-icon md-svg-icon="{{item.icon}}"></md-icon>
+                                          <span class="capitalize"> {{item.type}} </span>
+                                        </span>
+                                        <span class="item-metadata">
+                                          <span><strong>{{item.label}}</strong></span>
+                                          <span md-highlight-text="vm.searchActionText">{{item.name}}</span>
+                                          <span><strong>{{item.watchers}}</strong></span>
+                                        </span>
+                                        <md-not-found>
+                                            Nenhuma ação encontrada com "{{vm.searchActionText}}".
+                                        </md-not-found>
+                                    </md-item-template>
+                                </md-autocomplete>
+                                <md-chip-template>
+                                        <span>
+                                            <md-icon md-svg-src="{{$chip.icon}}" aria-label="Action Icon"></md-icon>
+                                            <strong>{{$chip.name}}</strong>
+                                            <em>({{$chip.type}})</em>
+                                            <md-tooltip md-direction="up" md-visible="tooltipVisible"
+                                                        md-autohide="false">
+                                                {{$chip.name}}
+                                            </md-tooltip>
+                                        </span>
+                                </md-chip-template>
+                            </md-chips>
+                                                    <!--<md-grid-list md-cols="2"
+                                          md-cols-xs="1"
+                                          md-cols-sm="2"
+                                          md-cols-gt-md={{vm.recipe.maxActions}}
+                                          md-row-height-gt-md="1:1"
+                                          md-row-height="4:3"
+                                          md-gutter="8px"
+                                          md-gutter-gt-sm="4px" class="gridListDynamicTiles">
+                                <md-grid-tile class="card" ng-repeat="item in vm.recipe.actionContainer"
+                                              md-rowspan="1"
+                                              md-colspan="1">
+                                    <md-button class="md-primary" layout-margin layout-fill>
+                                        <div class="llist"
+                                             ng-class="{'selected': vm.selected === item}"
+                                             ng-include="item.type.value + '.html'" ng-click="vm.showConfig($event, item.type.value)">
+                                        </div>
+                                    </md-button>
+                                </md-grid-tile>
+                            </md-grid-list>-->
+                        </div>
+                    </span>
+                </md-card-content>
+        </md-card>
+
+        <md-card flex layout-wrap  ng-cloak="" ng-hide="true">
+            <md-card-content layout="column">
+                <ng-map class="md-card-image"  zoom="{{vm.mapZoom}}" center="{{vm.mapCenter}}" default-style="true">
+                    <info-window id="external" template="/app/core/layouts/infowindow-template.html"></info-window>
+                    <marker
+                            class="custom-marker"
+                            ng-repeat="(id, marker) in vm.sensors track by $index"
+                            id="{{id}}"
+                            on-click="vm.showDetail(event, id)"
+                            position="{{marker.configurations.address.latlng}}"
+                            icon="{{marker.point}}"
+                            shape="{{vm.shape}}"
+                            no-watcher="true"
+                            dnd-draggable="{id: marker.id, key: marker.key, type: {value: 'sensor', display: 'Sensor'}, name: marker.name, icon: marker.icon, scenarios: vm.scenarioTemplate}"
+                            dnd-effect-allowed="copy"
+                            dnd-copied="marker.id = marker.id + 1">
+                    </marker>
+                </ng-map>
+            </md-card-content>
+        </md-card>
+    </div>
+</md-content>
+
+<!--<script type="text/ng-template" id="connector.html">
+    <md-whiteframe class="md-whiteframe-1dp"  class="container-element box" flex>
+        <div layout-align="start center" layout="row" flex>
+            <md-card-header>
+                <md-card-avatar>
+                    <md-icon md-svg-src="{{item.icon}}"></md-icon>
+                </md-card-avatar>
+                <md-card-header-text>
+                    <span class="md-title">Conector</span>
+                    <span class="md-subhead"><strong>Tipo: </strong>{{item.label}}</span>
+                </md-card-header-text>
+            </md-card-header>
+            <md-content>
+                <div layout="column" ng-repeat="list in item.objects" ng-include="'list.html'"></div>
+            </md-content>
+        </div>
+    </md-whiteframe>
+</script>
+
+<script type="text/ng-template" id="list.html">
+    <div class="llist"
+         ng-repeat="item in list"
+         ng-include="item.type.value + '.html'"
+         layout="row" layout-align="center center" flex>
+    </div>
+</script>
+-->
+<script type="text/ng-template" id="sensor.html">
+    <md-whiteframe class="md-whiteframe-1dp" flex>
+        <div layout="column" layout-gt-sm="row" layout-align="center center" flex>
+            <md-button class="md-fab md-primary" ng-click="vm.showConfig($event, item.type.value)">
+                <md-icon md-svg-src="{{item.icon}}"></md-icon>
+            </md-button>
+            <span>Sensor: <strong>{{item.name}}</strong></span>
+            <span flex></span>
+            <div>
+                <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
+                    <md-chip-template>
+                    <span>
+                        <strong>{{$chip.evaluatedAttribute}} {{$chip.compareOperator}} {{$chip.expectedResult}}</strong>
+                    </span>
+                    </md-chip-template>
+                </md-chips>
+            </div>
+        </div>
+    </md-whiteframe>
+</script>
+
+<!-- Templates for an Action list-->
+
+<script type="text/ng-template" id="actuator.html">
+            <md-grid-tile-header layout-padding class="actuatorAlphaHeaderBackground" >
+                <md-card-header>
+                    <md-card-header-text>
+                        <span class="md-title"><strong>{{item.name}}</strong></span>
+                    </md-card-header-text>
+                </md-card-header>
+            </md-grid-tile-header>
+            <md-icon class="actionTraillerText" md-svg-src="{{item.icon}}"></md-icon>
+            <md-grid-tile-footer>
+                <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
+                    <md-chip-template>
+                        <span>
+                            {{$chip.actions[0].changedAttribute}}: <strong>{{$chip.actions[0].changedValue}}</strong>
+                        </span>
+                    </md-chip-template>
+                </md-chips>
+            </md-grid-tile-footer>
+</script>
+
+<script type="text/ng-template" id="alerta.html">
+    <md-grid-tile-header layout-padding class="alertAlphaHeaderBackground" >
+        <md-card-header>
+            <md-card-header-text>
+                <span class="md-title"><strong>{{item.name}}</strong></span>
+            </md-card-header-text>
+        </md-card-header>
+    </md-grid-tile-header>
+    <!--<img ng-src="{{item.icon}}" class="md-card-image" alt="Image"  />-->
+    <md-icon class="alertTraillerText" md-svg-src="{{item.icon}}"></md-icon>
+    <md-grid-tile-footer>
+        <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
+            <md-chip-template>
+                    <span>
+                        ({{$chip.type}}) {{$chip.changedAttribute}}:<strong>{{$chip.changedValue}}</strong>
+                    </span>
+            </md-chip-template>
+        </md-chips>
+    </md-grid-tile-footer>
+</script>
+
+<script type="text/ng-template" id="twitter.html">
+    <md-grid-tile-header layout-padding class="alertAlphaHeaderBackground" >
+        <md-card-header>
+            <md-card-header-text>
+                <span class="md-title"><strong>{{item.name}}</strong></span>
+            </md-card-header-text>
+        </md-card-header>
+    </md-grid-tile-header>
+    <md-icon class="alertTraillerText" md-svg-src="{{item.icon}}"></md-icon>
+    <md-grid-tile-footer>
+        <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
+            <md-chip-template>
+                <span>
+                    ({{$chip.type}}) {{$chip.changedAttribute}}:<strong>{{$chip.changedValue}}</strong>
+                </span>
+            </md-chip-template>
+        </md-chips>
+    </md-grid-tile-footer>
+</script>
+
+<script type="text/ng-template" id="facebook.html">
+    <md-grid-tile-header layout-padding class="alertAlphaHeaderBackground" >
+        <md-card-header>
+            <md-card-header-text>
+                <span class="md-title"><strong>{{item.name}}</strong></span>
+            </md-card-header-text>
+        </md-card-header>
+    </md-grid-tile-header>
+    <md-icon class="alertTraillerText" md-svg-src="{{item.icon}}"></md-icon>
+    <md-grid-tile-footer>
+        <md-chips class="custom-chips" ng-model="item.rules" readonly="true">
+            <md-chip-template>
+                <span>
+                    ({{$chip.type}}) {{$chip.changedAttribute}}:<strong>{{$chip.changedValue}}</strong>
+                </span>
+            </md-chip-template>
+        </md-chips>
+    </md-grid-tile-footer>
+</script>
+
+
+<script class="custom-info-window" id="cached-info-window-template.html" type="text/ng-template">
+    <div  ng-non-bindable="">
+        <h3> {{vm.selected.label}} </h3>
+        <br/> ID: {{id}} {{vm.selected.key}}
+        <br/> Nome: {{vm.selected.name}}
+        <br/> Tipo: {{vm.selected.type}}
+        <br/> Latitude: {{vm.selected.configurations.address.latlng[0]}}
+        <br/> Longitude: {{vm.selected.configurations.address.latlng[1]}}
+    </div>
+</script>

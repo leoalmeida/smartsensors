@@ -5,10 +5,10 @@
       .module('app.actuators')
       .controller('ActuatorDetailsController', ActuatorDetailsController);
 
-  ActuatorDetailsController.$inject = ['$log', '$q', '$location', 'currentUser', 'CONSTANTS', '$routeParams', 'ActuatorsService', 'ServersService', 'NgMap', 'NotifyService'];
+  ActuatorDetailsController.$inject = ['$log', '$q', '$location', 'currentUser', 'CONSTANTS', '$routeParams', 'ActuatorsService', 'SinksService', 'NgMap', 'NotifyService'];
 
 
-  function ActuatorDetailsController($log, $q, $location, currentUser, CONSTANTS,  $routeParams, actuatorsService, serversService, NgMap, notifyService) {
+  function ActuatorDetailsController($log, $q, $location, currentUser, CONSTANTS,  $routeParams, actuatorsService, sinksService, NgMap, notifyService) {
       var vm = this;
       var key = $routeParams.id;
 
@@ -47,10 +47,10 @@
           vm.actuatorTypes = snapshot.actuatorTypes;
       });
 
-      let serverKey = $routeParams.location;
-      vm.server = serversService.getStatus(vm.accessType, serverKey);
+      let sinkKey = $routeParams.location;
+      vm.sink = sinksService.getStatus(vm.accessType, sinkKey);
 
-      //vm.serverStatus = serversService.getStatus(vm.accessType, currentUser, vm.serverID);
+      //vm.sinkStatus = sinksService.getStatus(vm.accessType, currentUser, vm.sinkID);
 
       vm.asyncSelectActuatorType = function(type) {
           var deferred = $q.defer();
@@ -165,13 +165,13 @@
               var message =  'Actuator ' + vm.actuator.name + ' ('+ vm.actuator.type +') foi atualizado.';
               notifyService.notify('Actuator atualizado', message);
           } else {
-              vm.actuator.connectedServer = {id: vm.server.$id, display: vm.server.id};
+              vm.actuator.connectedSink = {id: vm.sink.$id, display: vm.sink.id};
               vm.actuator.image = "assets/images/profile_header0.png";
               vm.actuator.key = "";
               vm.actuator.owner = currentUser.uid;
               vm.actuator.point = {"anchor" : [ 0, 32 ],"origin" : [ 0, 0 ],"size" : [ 32, 32 ], "url" : vm.actuator.icon};
               vm.accessType = vm.isPrivateAccess ? "private": "public";
-              item = actuatorsService.addOne(currentUser, vm.accessType , vm.serverID, vm.actuator);
+              item = actuatorsService.addOne(currentUser, vm.accessType , vm.sinkID, vm.actuator);
               var message =  'Actuator ' + vm.actuator.name + ' ('+ vm.actuator.type +') encontrado.';
               notifyService.notify('Novo actuator encontrado', message);
           }

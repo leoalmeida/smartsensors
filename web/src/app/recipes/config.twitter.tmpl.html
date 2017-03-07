@@ -29,21 +29,34 @@
                         <label>Label</label>
                         <input ng-model="vm.selected.label" type="text">
                     </md-input-container>
-                    <md-input-container flex>
-                        <label>Atributo</label>
-                        <input ng-model="vm.selected.evaluatedAttribute" type="text">
-                    </md-input-container>
-                    <!--<md-input-container class="md-icon-float" flex="32">
-                        <label>Regra</label>
-                        <md-select ng-model="vm.selected.attribute">
-                            <md-option ng-repeat="sign in vm.signTypes" ng-value="sign.value" ng-disabled="$index === -1">
-                                {{sign.display}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>-->
+                    <span layout="row">
+                        <md-input-container class="md-icon-float" flex>
+                            <label>Opções</label>
+                            <md-select ng-model="vm.selected.searchOption" id="searchOption">
+                                <md-option ng-repeat="type in vm.searchOptionTypes" ng-value="type" >
+                                    {{type.display}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container class="md-icon-float" flex ng-if="vm.selected.searchOption">
+                            <label>Opções</label>
+                            <md-select ng-model="vm.selected.searchAttribute" id="searchOption">
+                                <md-option ng-repeat="option in vm.selected.searchOption.availableAttributes" ng-value="option" >
+                                    {{option}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </span>
+                    <span layout="row" ng-if="vm.selected.searchOption" layout-wrap>
+                            <md-input-container flex ng-repeat="parameter in vm.selected.searchOption.parameters">
+                                <label>{{parameter}}</label>
+                                <input ng-model="vm.selected[parameter]" type="text">
+                            </md-input-container>
+                    </span>
                 </div>
             </div>
         </md-dialog-content>
+
 
         <md-dialog-actions layout="row">
             <span flex></span>

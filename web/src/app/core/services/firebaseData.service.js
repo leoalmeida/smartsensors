@@ -21,7 +21,7 @@
             recipes: 'recipes',
             alerts: 'alerts',
             sensors: 'sensors',
-            servers: 'servers',
+            sinks: 'sinks',
             info: 'info',
             readings: firebaseObject('readings'),
             configurations: firebaseObject('configurations'),

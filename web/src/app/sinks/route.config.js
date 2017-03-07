@@ -2,16 +2,16 @@
   'use strict';
 
     angular
-      .module('app.servers')
+      .module('app.sinks')
         .config(config);
 
     config.$inject = ['$routeProvider'];
 
     function config($routeProvider) {
         $routeProvider
-            .when('/servers', {
-                templateUrl: 'app/servers/servers-list.html',
-                controller: 'ServerListController',
+            .when('/sinks', {
+                templateUrl: 'app/sinks/sinks-list.html',
+                controller: 'SinkListController',
                 controllerAs: 'vm',
                 resolve: {
                     "currentUser": ["AuthService", function(authService) {
@@ -19,9 +19,9 @@
                     }]
                 }
             })
-            .when('/servers/:accessType/:location/:type', {
-                templateUrl: 'app/servers/servers-detail.html',
-                controller: 'ServerDetailsController',
+            .when('/sinks/:accessType/:location/:type', {
+                templateUrl: 'app/sinks/sinks-detail.html',
+                controller: 'SinkDetailsController',
                 controllerAs: 'vm',
                 resolve: {
                     "currentUser": ["AuthService", function(authService) {
@@ -29,9 +29,9 @@
                     }]
                 }
             })
-            .when('/servers/:accessType/:location/:type/:id', {
-                templateUrl: 'app/servers/servers-detail.html',
-                controller: 'ServerDetailsController',
+            .when('/sinks/:accessType/:location/:type/:id', {
+                templateUrl: 'app/sinks/sinks-detail.html',
+                controller: 'SinkDetailsController',
                 controllerAs: 'vm',
                 resolve: {
                     "currentUser": ["AuthService", function(authService) {
@@ -39,9 +39,9 @@
                     }]
                 }
             })
-            .when('/servers/admin', {
-                templateUrl: 'app/servers/servers-admin.html',
-                controller: 'ServerAdminController',
+            .when('/sinks/admin', {
+                templateUrl: 'app/sinks/sinks-admin.html',
+                controller: 'SinkAdminController',
                 controllerAs: 'vm',
                 resolve: {
                     "currentUser": ["AuthService", function(authService) {

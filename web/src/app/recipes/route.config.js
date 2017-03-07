@@ -20,7 +20,7 @@
                 }
             })
             .when('/recipes/:accessType/:type', {
-                templateUrl: 'app/recipes/recipes-editor.html',
+                templateUrl: 'app/recipes/recipes-grooming.html',
                 controller: 'RecipeCreatorController',
                 controllerAs: 'vm',
                 resolve: {
@@ -29,7 +29,7 @@
                     }]
                 }
             }).when('/recipes/:accessType/:type/:id', {
-                templateUrl: 'app/recipes/recipes-editor.html',
+                templateUrl: 'app/recipes/recipes-grooming.html',
                 controller: 'RecipeCreatorController',
                 controllerAs: 'vm',
                 resolve: {

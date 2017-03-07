@@ -26,7 +26,7 @@
             getAll: getAll,
             getPublic: getPublic,
             getOwn: getOwn,
-            getFromServer: getFromServer,
+            getFromSink: getFromSink,
             getOne: getOne,
             addOne: addOne,
             removeOne: removeOne,
@@ -48,8 +48,8 @@
             return firebaseDataService.getRefFirebaseArray(database, 'owner', currentUser.uid);
         }
 
-        function getFromServer(serverKey){
-            return firebaseDataService.getRefFirebaseArray(database, 'connectedServer/id', serverKey);
+        function getFromSink(sinkKey){
+            return firebaseDataService.getRefFirebaseArray(database, 'connectedSink/id', sinkKey);
         }
 
         function getOne(key) {
@@ -61,7 +61,7 @@
         }
 
         function addOne(currentUser, type, location, newObject) {
-//            firebaseDataService.getFirebaseArray('servers/' + currentUser.uid + '/' + location + '/sensors/').$save();
+//            firebaseDataService.getFirebaseArray('sinks/' + currentUser.uid + '/' + location + '/sensors/').$save();
             return firebaseDataService.getFirebaseArray(database + '/' + type ).$add(newObject);
         }
 

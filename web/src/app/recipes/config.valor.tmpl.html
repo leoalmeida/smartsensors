@@ -24,23 +24,11 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
-                <div layout="column" layout-wrap ng-if="vm.selected.type" flex >
+                <div layout="row" ng-if="vm.selected.type" >
                     <md-input-container flex>
-                        <label>Label</label>
+                        <label>Valor</label>
                         <input ng-model="vm.selected.label" type="text">
                     </md-input-container>
-                    <md-input-container flex>
-                        <label>Atributo</label>
-                        <input ng-model="vm.selected.evaluatedAttribute" type="text">
-                    </md-input-container>
-                    <!--<md-input-container class="md-icon-float" flex="32">
-                        <label>Regra</label>
-                        <md-select ng-model="vm.selected.attribute">
-                            <md-option ng-repeat="sign in vm.signTypes" ng-value="sign.value" ng-disabled="$index === -1">
-                                {{sign.display}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>-->
                 </div>
             </div>
         </md-dialog-content>

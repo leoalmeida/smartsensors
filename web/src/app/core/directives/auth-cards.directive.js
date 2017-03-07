@@ -55,6 +55,7 @@
 
         authService.firebaseAuthObject
             .$onAuthStateChanged(function(user) {
+
                 if (user) {
                     vm.user = user;
                     vm.status = true;
@@ -62,11 +63,15 @@
                     authService.updateUser(user);
 
                     // addUser( user );
+                } else {
+                    console.log("Signed out");
                 }
             });
 
 
         vm.googlelogin = googlelogin;
+        vm.twitterlogin = twitterlogin;
+        vm.facebooklogin = facebooklogin;
         vm.onSignIn = onSignIn;
         vm.toggleNotifications = toggleNotifications;
         vm.changeMood = changeMood;
@@ -77,6 +82,29 @@
                 .finally(function() {
                     $location.path('/home');
                 });
+        }
+
+        function twitterlogin() {
+            authService.twitterlogin()
+                .finally(function() {
+                    $location.path('/home');
+                });
+        }
+
+        function facebooklogin() {
+            authService.facebooklogin()
+                .finally(function() {
+                    $location.path('/home');
+                });
+                /*.then(function(result) {
+                    console.log('Result: ' + JSON.stringify(result));
+                    $location.path('/home');
+                },function(error) {
+                    if (error.code === 'auth/account-exists-with-different-credential') {
+
+                        authService.updateUser()
+                    }
+                });*/
         }
 
         function onSignIn(googleUser) {

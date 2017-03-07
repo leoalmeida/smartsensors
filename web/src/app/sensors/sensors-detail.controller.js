@@ -6,10 +6,10 @@
       .controller('SensorDetailsController', SensorDetailsController);
 
 
-    SensorDetailsController.$inject = ['$log', '$q', '$location', 'currentUser', 'CONSTANTS', '$routeParams', 'SensorsService', 'ServersService', 'NgMap', 'NotifyService'];
+    SensorDetailsController.$inject = ['$log', '$q', '$location', 'currentUser', 'CONSTANTS', '$routeParams', 'SensorsService', 'SinksService', 'NgMap', 'NotifyService'];
 
 
-  function SensorDetailsController($log, $q, $location, currentUser, CONSTANTS,  $routeParams, sensorsService, serversService, NgMap, notifyService) {
+  function SensorDetailsController($log, $q, $location, currentUser, CONSTANTS,  $routeParams, sensorsService, sinksService, NgMap, notifyService) {
       var vm = this;
       var key = $routeParams.id;
 
@@ -48,14 +48,14 @@
           vm.sensorTypes = snapshot.sensorTypes;
       });
 
-      let serverKey = $routeParams.location;
-      vm.server = serversService.getStatus(vm.accessType, serverKey);
-      //vm.serverStatus = sensorsService.getServerStatus(vm.accessType, currentUser, vm.server.$id);
+      let sinkKey = $routeParams.location;
+      vm.sink = sinksService.getStatus(vm.accessType, sinkKey);
+      //vm.sinkStatus = sensorsService.getSinkStatus(vm.accessType, currentUser, vm.sink.$id);
 
       /*var obj = sensorsService
-          .getServerStatus(vm.accessType, currentUser, vm.server.$id)
+          .getSinkStatus(vm.accessType, currentUser, vm.sink.$id)
 
-      vm.serverStatus = obj;
+      vm.sinkStatus = obj;
     */
       vm.asyncSelectSensorType = function(type) {
           var deferred = $q.defer();
@@ -170,7 +170,7 @@
               var message =  'Sensor ' + vm.sensor.name + ' ('+ vm.sensor.type +') foi atualizado.';
               notifyService.notify('Sensor atualizado', message);
           } else{
-              vm.sensor.connectedServer = {id: vm.server.$id, display: vm.server.id};
+              vm.sensor.connectedSink = {id: vm.sink.$id, display: vm.sink.id};
               vm.sensor.image = "assets/images/profile_header0.png";
               vm.sensor.key = "";
               vm.sensor.owner = currentUser.uid;

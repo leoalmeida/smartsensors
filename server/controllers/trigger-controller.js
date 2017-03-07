@@ -5,8 +5,8 @@ const ctrl = {};
 const contract = [
         {"Operação": "put", "Comando": "smartsensors.herokuapp.com/trigger/info/:equipment", "Descrição": "Inclui informação de coleta do sensor"},
         //{"Operação": "put", "Comando": "smartsensors.herokuapp.com/trigger/:equipment", "Descrição": "Inclui novo equipamento"}
-        {"Operação": "post", "Comando": "smartsensors.herokuapp.com/trigger/servers/withkey/:key", "Descrição": "Altera o estado de um equipamento (body ex: {'connected':true})"},
-        {"Operação": "post", "Comando": "smartsensors.herokuapp.com/trigger/servers/withkey/:key/startboard", "Descrição": "Inicia uma placa de automação!"},
+        {"Operação": "post", "Comando": "smartsensors.herokuapp.com/trigger/sinks/withkey/:key", "Descrição": "Altera o estado de um equipamento (body ex: {'connected':true})"},
+        {"Operação": "post", "Comando": "smartsensors.herokuapp.com/trigger/sinks/withkey/:key/startboard", "Descrição": "Inicia uma placa de automação!"},
     ];
 
 ctrl.getContract = (req, res, next) => {

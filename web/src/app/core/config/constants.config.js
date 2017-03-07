@@ -35,7 +35,7 @@
         { layout: true, header: true , title: "Admin"},
         { name: "Atuadores", options: { icon: "assets/icons/action/ic_play_for_work_48px.svg", face : "assets/icons/action/ic_play_for_work_48px.svg",  link : '/actuators',  avatarIcon: true, available: true}},
         { name: "Sensores", options: { icon: "assets/icons/action/ic_settings_input_antenna_48px.svg", face : "assets/icons/action/ic_settings_input_antenna_48px.svg",  link : '/sensors',  avatarIcon: true, available: true}},
-        { name: "Servidores", options: { icon: "assets/icons/hardware/ic_device_hub_48px.svg", face : "assets/icons/hardware/ic_device_hub_48px.svg",  link : '/servers',  avatarIcon: true, available: true}},
+        { name: "Sinks", options: { icon: "assets/icons/hardware/ic_device_hub_48px.svg", face : "assets/icons/hardware/ic_device_hub_48px.svg",  link : '/sinks',  avatarIcon: true, available: true}},
         { name: "Alertas", options: { available: false, icon: "assets/icons/action/ic_settings_remote_48px.svg", face : "assets/icons/action/ic_settings_remote_48px.svg", link : '/alerts', avatarIcon: true}},
         { name: "Grupos", options: { available: false, icon: "assets/icons/action/ic_speaker_notes_48px.svg", face : "assets/icons/action/ic_speaker_notes_48px.svg", link : '/groups', avatarIcon: true}},
         { name: "Configurações", options: { available: false, icon: "assets/icons/action/ic_build_48px.svg", face : "assets/icons/action/ic_build_48px.svg", link : '/admin', avatarIcon: true }},
@@ -145,9 +145,9 @@
                 OFF: "assets/icons/device/ic_signal_wifi_off_24px.svg"
             }
         },
-        SERVERS: {
+        SINKS: {
             LIST: {
-                TITLE: "Servidores",
+                TITLE: "Sinks",
                 SENSORS: {
                   TITLE: "Sensores"
                 },

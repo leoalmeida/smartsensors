@@ -6,9 +6,9 @@
       .module('app.sensors')
       .controller('SensorListController', SensorListController);
 
-  SensorListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'SensorsService', 'ServersService', '$mdDialog'];
+  SensorListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'SensorsService', 'SinksService', '$mdDialog'];
 
-  function SensorListController(currentUser, $location, CONSTANTS, sensorsService, serversService, $mdDialog) {
+  function SensorListController(currentUser, $location, CONSTANTS, sensorsService, sinksService, $mdDialog) {
     var vm = this;
 
     vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SENSORS;
@@ -30,20 +30,20 @@
         //var ret = vm.listItems.$save(item);
     };
 
-    vm.navigateTo = function(serverKey, key, $event){
-        $location.path( "/sensors/public/" + serverKey + "/edit/" + key );
+    vm.navigateTo = function(sinkKey, key, $event){
+        $location.path( "/sensors/public/" + sinkKey + "/edit/" + key );
     };
 
-    vm.chooseServer = function($event) {
+    vm.chooseSink = function($event) {
 
-        vm.listValues = serversService.getOwn(currentUser);
+        vm.listValues = sinksService.getOwn(currentUser);
 
         vm.listValues.$loaded().then(function(snapshot){
           $mdDialog.show({
               controller: DialogController,
               parent: angular.element(document.body),
               targetEvent: $event,
-              templateUrl: 'app/core/layouts/select-server.dialog.templ.html',
+              templateUrl: 'app/core/layouts/select-sink.dialog.templ.html',
               clickOutsideToClose: true,
               locals: {
                 items: snapshot

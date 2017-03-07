@@ -1,0 +1,76 @@
+<div flex ng-cloak class="gridListDynamicTiles">
+    <md-grid-list
+            md-cols="2"
+            md-cols-sm="3"
+            md-cols-gt-sm="4"
+            md-cols-gt-lg="6"
+            md-row-height-gt-md="1:1"
+            md-row-height="4:3"
+            md-gutter="2px"
+            md-gutter-md="4px"
+            md-gutter-gt-md="8px" >
+
+            <md-grid-tile ng-repeat="item in vm.trendingTopics track by $index"
+                      md-rowspan="{{item.configurations.row}}"
+                      md-colspan="{{item.configurations.col}}"
+                      md-colspan-sm="1"
+                      md-colspan-xs="1"
+                      class="card" ng-click="vm.show">
+            <md-card layout-fill ng-class="item.severity">
+                <md-grid-tile-header  class="darkAlphaBackground" >
+                    <md-card-header>
+                        <md-card-avatar hide show-gt-xs>
+                            <img class="md-user-avatar" style="color:#FA8072;" ng-src="{{item.configurations.icon}}"/>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-title"><strong>{{item.configurations.label}}</strong></span>
+                            <h4>
+                                <span flex-end>{{item.startDate | date:'dd/MM/yyyy H:mm'}}</span>
+                            </h4>
+                        </md-card-header-text>
+                    </md-card-header>
+                </md-grid-tile-header>
+                <img ng-src="{{item.configurations.image}}" class="md-card-image" alt="Image" />
+                <md-grid-content ng-class="item.severity">
+                    <md-card-actions layout="row" layout-align="start center" >
+                        <p><md-icon ng-if="item.lastUpdate.value==1" style="color:#FA8072; max-height: 18px"
+                                 aria-label="announcement" md-svg-icon="{{vm.SCREENCONFIG.ICONS.WARNING}}">
+                        </md-icon></p>
+                        <label ng-if="item.lastUpdate.unit"><strong>{{item.lastUpdate.value}}{{item.lastUpdate.unit}}</strong>  </label>
+
+                        <md-card-icon-actions>
+                            <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Favorite">
+                                <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ASSESSMENT}}"></md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Settings">
+                                <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ACCOUNTS}}"></md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Share">
+                                <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.FAVORITE}}"></md-icon>
+                            </md-button>
+                        </md-card-icon-actions>
+                    </md-card-actions>
+                </md-grid-content>
+
+                <md-grid-tile-footer ng-class="item.configurations.background">
+                    <h3>{{item.configurations.localization.address}}</h3>
+                </md-grid-tile-footer>
+            </md-card>
+        </md-grid-tile>
+    </md-grid-list>
+</div>
+
+<div style="visibility: hidden">
+    <div class="md-dialog-container" id="addDialog">
+        <md-dialog aria-label="List dialog" flex="80">
+            <md-dialog-content>
+
+            </md-dialog-content>
+            <md-dialog-actions>
+                <md-button ng-click="vm.closeDialog()" class="md-primary">
+                    Fechar
+                </md-button>
+            </md-dialog-actions>
+        </md-dialog>
+    </div>
+</div>
