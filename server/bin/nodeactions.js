@@ -118,15 +118,7 @@ db.ref('info/public/')
 });
 */
 
-funclist.generateLog = function (message) {
-    let log = {
-        msg: message,
-        date: Date.now()
-    }
-    db.ref('logs').push(log);
-};
-
-funclist.createAlert = function (recipeKey, itemKey, alertinfo) {
+var createAlert = function (recipeKey, itemKey, alertinfo) {
     let alert = {
         active: true,
         enabled: true,
@@ -165,7 +157,7 @@ funclist.createAlert = function (recipeKey, itemKey, alertinfo) {
     return alertsListRef.key;
 };
 
-funclist.updateAlert = function (alertKey, alertinfo) {
+var updateAlert = function (alertKey, alertinfo) {
     let alertsListRef = db.ref('alerts/public/').child(alertKey);
 
     alertsListRef.update(alertinfo).then(function() {
@@ -173,7 +165,7 @@ funclist.updateAlert = function (alertKey, alertinfo) {
         });
 };
 
-funclist.removeAlert = function (recipeKey, itemKey, key) {
+var removeAlert = function (recipeKey, itemKey, key) {
     db.ref('alerts/public/').child(key)
         .remove()
         .then(function() {
@@ -183,46 +175,188 @@ funclist.removeAlert = function (recipeKey, itemKey, key) {
     // console.log("Removendo alerta:  " + key);
 };
 
-funclist.actuatorPerformAction = function (key, changes) {
+var actuatorPerformAction = function (key, changes) {
     console.log("Executando ação: Sensor-" + key + " Estado- " + JSON.stringify(changes) + '\n');
     db.ref('actuators/public/').child(key).update(changes);
 };
 
-funclist.validateAllData = function () {
+var validateAllData = function () {
     console.log("Sensores: "+ Object.keys(sensors).length);
     console.log("Atuadores: "+Object.keys(actuators).length);
     if (!Object.keys(sensors).length || !Object.keys(actuators).length) return false;
     else return true;
 };
 
-funclist.validateSensor = function (value) {
+var validateSensor = function (value) {
     console.log("Sensors: "+  value);
     let sensor = sensors[value];
     if (!sensor || !sensor.connected) return false;
     else return true;
 };
 
-funclist.validateActuator = function (value) {
+var validateActuator = function (value) {
     let actuator = actuators[actuators.indexOf(value)];
     console.log("Actuator: "+  JSON.stringify(actuator));
     if (!actuator || !actuator.connected) return false;
     else return true;
 };
 
-funclist.getSensorReadings = function (value) {
+var getSensorReadings = function (value) {
     return sensors[value].readings;
 }
 
-funclist.getActuatorUpdates = function (value) {
+var getActuatorUpdates = function (value) {
     return actuators[value].lastUpdates;
+};
+
+var processFormula = function (recipe) {
+
+    let performAction = false;
+    let sentenceAttributes = [];
+    let sentenceOperator = "";
+    let sentenceQue = [], sentenceArray = [];
+    let rootSentence = true;
+
+    for (let item  of recipe.ruleContainer) {
+        //process.stdout.write("Type: " + item.type.value + '\n');
+        let sentenceResult = false;
+        switch (item.type){
+            case "separador":
+                rootSentence = (rootSentence = false);
+                continue;
+            case "operador":
+                if (item.subtype === "boleano")
+                    if (sentenceArray.length > 0) sentenceArray.push(item.label);
+                    else sentenceQue.push(item.label);
+                sentenceOperator = item.label;
+                continue;
+            case "valor":
+                sentenceAttributes.push(item.value);
+                break;
+            case "sensor":
+                if (!validateSensor(item.key)){
+                    return false;
+                }
+                let readings = getSensorReadings(item.key);
+                sentenceAttributes.push(readings[item.evaluatedAttribute]);
+                break;
+            default:
+                return false;
+        };
+
+        if (sentenceAttributes.length == 2) {
+            switch (sentenceOperator){
+                case "GT":
+                    sentenceResult = (sentenceAttributes[0] > sentenceAttributes[1]);
+                    break;
+                case "GE":
+                    sentenceResult = (sentenceAttributes[0] >= sentenceAttributes[1]);
+                    break;
+                case "LT":
+                    sentenceResult = (sentenceAttributes[0] < sentenceAttributes[1]);
+                    break;
+                case "LE":
+                    sentenceResult = (sentenceAttributes[0] <= sentenceAttributes[1]);
+                    break;
+                case "EQ":
+                    sentenceResult = (sentenceAttributes[0] == sentenceAttributes[1]);
+                    break;
+                case "NE":
+                    sentenceResult = (sentenceAttributes[0] != sentenceAttributes[1]);
+                    break;
+            }
+            if (rootSentence)
+                sentenceQue.push(sentenceResult);
+            else if (sentenceArray.length > 0) {
+                switch (sentenceArray[1]) {
+                    case "AND":
+                        sentenceResult = (sentenceArray[0] && sentenceResult);
+                        break;
+                    case "OR":
+                        sentenceResult = (sentenceArray[0] || sentenceResult);
+                        break;
+                    case "NOT":
+                        break;
+                    default:
+                        return false;
+                }
+                sentenceQue.push(sentenceResult);
+                sentenceArray = [];
+            } else{
+                sentenceArray.push(sentenceResult);
+            }
+        }
+    }
+};
+
+funclist.processAllRecipes = function () {
+
+    if (!validateAllData()) return;
+
+    for (let value of Object.keys(recipes)) {
+        let recipe = recipes[value];
+        //process.stdout.write(value + "Recipe Enabled: " + recipe.enabled + '\n');
+        if (!recipe.enabled) continue;
+
+        let selectedScenario = "";
+
+        let performAction = processFormula(recipe);
+
+        if (performAction) {
+            let actionItem = -1;
+            for (let item of recipe.actionContainer) {
+                actionItem++;
+                process.stdout.write("Type: " + item.type.value + '\n');
+                if (item.type.value == "actuator") {
+                    let actionObj = {};
+                    process.stdout.write(JSON.stringify(item.rules[selectedScenario]) + '\n');
+                    for (let action  of item.rules[selectedScenario].actions) {
+                        //process.stdout.write(JSON.stringify(action) + '\n');
+                        actionObj[action.changedAttribute] = action.changedValue;
+                    }
+                    if (Object.keys(actionObj) > 0) actuatorPerformAction(item.key, actionObj);
+                } else if (item.type.value == "alert") {
+                    let alertInfo = {};
+
+                    if (item.rules[selectedScenario].type == "update") {
+                        alertInfo.lastUpdates = "";//getActuatorUpdates(item.key);
+
+                        process.stdout.write(JSON.stringify(item.rules[selectedScenario]) + '\n');
+                        for (let value  of item.rules[selectedScenario].values) {
+                            //process.stdout.write(JSON.stringify(action) + '\n');
+                            alertInfo[value.changedAttribute] = value.changedValue;
+                        };
+                        if (!item.key) {
+                            alertInfo.startDate = Date.now();
+                            createAlert(recipe.key, actionItem, alertInfo);
+                        } else {
+                            alertInfo.updatedDate = Date.now();
+                            updateAlert(item.key, alertInfo);
+                        }
+                    } else if (item.rules[selectedScenario].type == "remove") {
+                        //rule.alert.releaseDate = Date.now();
+                        removeAlert(item.key, recipe.key);
+                    }
+                }
+            }
+        }
+    }
+};
+
+funclist.generateLog = function (message) {
+    let log = {
+        msg: message,
+        date: Date.now()
+    }
+    db.ref('logs').push(log);
 };
 
 funclist.runactions = function () {
     return runactions;
 };
 
-funclist.recipes = function () {
+/*funclist.recipes = function () {
     return recipes;
-};
+};*/
 
 module.exports = funclist;

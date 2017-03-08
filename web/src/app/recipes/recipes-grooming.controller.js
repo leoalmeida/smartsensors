@@ -116,6 +116,16 @@
                 item = recipesService.pushNewItem(vm.recipe);
             }*/
 
+            if (vm.recipe.ruleContainer.length < 3){
+                var message =  'Necessário ao menos 1 regra completa cadastrada.';
+                notifyService.notify('Erro: Regras', message);
+                return;
+            } else if (vm.recipe.actionContainer.length < 1){
+                var message =  'Necessário ao menos 1 ação cadastrada.';
+                notifyService.notify('Erro: Ações', message);
+                return;
+            };
+
             if ($routeParams.type === "edit") {
                 vm.recipe.$save();
                 var message =  'Receita ' + vm.recipe.label + ' foi atualizada.';
@@ -125,7 +135,8 @@
                 item = recipesService.addOne(currentUser, vm.accessType , vm.recipe);
                 var message =  'Receita ' + vm.recipe.label + ' encontrada.';
                 notifyService.notify('Nova receita encontrada', message);
-            }
+            };
+            
             vm.navigateTo("recipes");
 
         };
@@ -216,7 +227,7 @@
 
         vm.showDetail = function(event, marker) {
             vm.mapCenter = event.latLng;
-            vm.selected = vm.sensors2[marker];
+            vm.selected = vm.sensors[marker];
             vm.map.showInfoWindow('external', this);
 
         };

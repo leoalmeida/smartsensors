@@ -72,8 +72,7 @@
                                         <strong ng-if="$chip.type!=='operador' && $chip.type!=='agregador'">{{$chip.label}}</strong>
                                         <em ng-if="$chip.type!=='operador' && $chip.type!=='agregador'">({{$chip.type}})</em>
                                         <md-tooltip md-direction="up" md-visible="tooltipVisible"
-                                                    md-autohide="false"
-                                                    ng-if="$chip.type!=='operador' && $chip.type!=='agregador'">
+                                                    md-autohide="false">
                                             {{$chip.name}}
                                         </md-tooltip>
                                     </span>
