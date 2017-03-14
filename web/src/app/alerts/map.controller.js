@@ -5,15 +5,16 @@
         .module('app.alerts')
         .controller('MapController', MapController);
 
-    MapController.$inject = ['currentUser', '$timeout', 'AlertService', 'SensorsService', 'SubscriptionsService', 'NgMap'];
+    MapController.$inject = ['currentUser', '$timeout', 'GroupsService', 'SensorsService', 'ActuatorsService', 'NgMap'];
 
-    function MapController(currentUser, $timeout, alertService, sensorsService, subscriptionsService, NgMap) {
+    function MapController(currentUser, $timeout, groupsService, sensorsService, actuatorsService, NgMap) {
         var vm = this;
 
-        vm.alertItems = alertService.getPublic();
-        vm.sensorItems = sensorsService.getOwn(currentUser);
-        vm.ownAlerts = alertService.getOwn(currentUser);
-        vm.subscribedItems = subscriptionsService.getOwn(currentUser);
+        vm.groupItems = groupsService.getPublicGroups();
+        vm.sensorItems = sensorsService.getPublicSensors();
+        vm.actuatorItems = actuatorsService.getPublicActuators();
+        vm.ownItems = groupsService.getAssociations(null, currentUser.uid, null);
+        vm.subscribedItems = groupsService.getSubscribes("subscribe", currentUser.uid, true );
 
         vm.mapCenter = "current-location";
 
@@ -144,7 +145,7 @@
             type: 'poly'
         };
 
-        vm.alertItems.$loaded().then(function(snapshot) {
+        vm.groupItems.$loaded().then(function(snapshot) {
             for (var i=0; i<snapshot.length; i++) {
                 for (var j=0; j<snapshot[i].length; j++) {
                     var marker = new google.maps.LatLng(snapshot[i][j].configurations.localization.lat,snapshot[i][j].configurations.localization.lng);
@@ -165,8 +166,8 @@
 
         vm.sensorItems.$loaded().then(function(snapshot) {
             for (var i=0; i<snapshot.length; i++) {
-                    if (snapshot[i].localization == null) continue;
-                    var marker = new google.maps.LatLng(snapshot[i].localization.lat,snapshot[i].localization.lng);
+                    if (snapshot[i].data.localization == null) continue;
+                    var marker = new google.maps.LatLng(snapshot[i].data.localization.lat,snapshot[i].data.localization.lng);
                     $timeout(function () {
                         // add a marker this way does not sync. marker with <marker> tag
                         new google.maps.Marker({
@@ -174,10 +175,28 @@
                             map: vm.map,
                             draggable: false,
                             animation: google.maps.Animation.DROP,
-                            icon: icons.sensor5,
+                            icon: icons.sensor4,
                             shape: shape
                         });
                     }, i * 200);
+            }
+        });
+
+        vm.actuatorItems.$loaded().then(function(snapshot) {
+            for (var i=0; i<snapshot.length; i++) {
+                if (snapshot[i].data.localization == null) continue;
+                var marker = new google.maps.LatLng(snapshot[i].data.localization.lat,snapshot[i].data.localization.lng);
+                $timeout(function () {
+                    // add a marker this way does not sync. marker with <marker> tag
+                    new google.maps.Marker({
+                        position: marker,
+                        map: vm.map,
+                        draggable: false,
+                        animation: google.maps.Animation.DROP,
+                        icon: icons.sensor5,
+                        shape: shape
+                    });
+                }, i * 200);
             }
         });
 

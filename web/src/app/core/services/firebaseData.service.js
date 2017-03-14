@@ -73,7 +73,9 @@
         };
 
         function firebaseArrayObjects(database, child, first) {
-            if (first == null)
+            if (database == null && first == null)
+                return FactoryWithCounter(root.ref().child("associations").orderByChild("objid").equalTo(child));
+            else if (first == null)
                 return FactoryWithCounter(root.ref().child(database).orderByChild(database.charAt(0) + "type").equalTo(child));
             else if (first)
                 return FactoryWithCounter(root.ref().child("associations").orderByChild("atype_objid").equalTo(database+ "_" +child));
