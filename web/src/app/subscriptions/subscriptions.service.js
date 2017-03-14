@@ -15,6 +15,9 @@
 
 
         var service = {
+            getAssociations: getAssociations,
+            setAssociation: setAssocitation,
+            setObject: setObject,
             getAll: getAll,
             getOwn: getOwn,
             addOne: addOne,
@@ -24,6 +27,31 @@
         return service;
 
         ////////////
+
+        function getAssociations(database, itemID, first) {
+            return firebaseDataService.getObjectsFirebaseArray(database, itemID, first);
+        }
+
+        function setAssocitation(type, data, userid, groupid) {
+            return firebaseDataService.addNewAssociation(type, data, userid, groupid);
+        }
+
+        function setObject(type, recipeData, objectid, modifyType) {
+            if (modifyType === "edit")
+                return firebaseDataService.editObject(recipeData, objectid);
+            else {
+                for (action of recipeData.actionContainer)
+                    if (action.type === 'alert') {
+                        firebaseDataService.addNewObject("group", action, objectid)
+                            .then(function(ref) {
+                                    firebaseDataService.addNewAssociation("publish", action, objectid, ref.key);
+                                }
+                            );
+                    }
+                return firebaseDataService.addNewObject(type, recipeData, objectid);
+            }
+
+        }
 
         function getAll() {
             return subscriptionsList;

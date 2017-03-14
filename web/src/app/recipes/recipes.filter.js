@@ -9,12 +9,12 @@
 
     function RecipesFilter() {
         return function (arr, list) {
-            var i, keys = Object.keys(arr), l = keys.length, r = [];
-            for (i = 0; i < l; i += 1) {
-                if (Object.isSealed(arr[keys[i]])) continue;
-                if (arr[keys[i]][list.column] == list.value) {
-                    arr[keys[i]].key = keys[i];
-                    r.push(arr[keys[i]]);
+            var i, r = [];
+            for (i = 0; i < arr.length; i += 1) {
+                if (Object.isSealed(arr[i])) continue;
+                if (arr[i].data[list.column] == list.value) {
+                    arr[i].index = i;
+                    r.push(arr[i]);
                 }
             }
             return r;

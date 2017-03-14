@@ -15,23 +15,57 @@
 
     vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.SINKS;
     vm.ICONS = CONSTANTS.ICONS;
-    vm.listItems = sinksService.getOwn(currentUser);
+    //vm.listItems = sinksService.getOwn(currentUser);
 
-    vm.currentNavItem = -1;
-    vm.listItems.$loaded().then(function (snapshot) {
-              vm.currentNavItem = 0;
-              vm.getEquipmentsFromSink(vm.currentNavItem);
-    });
+      //{"atype": "", "atype_objid": "", "atype_objid2": "", "data": "", "objid": "", "objid2": "", "time": 1477327375744}
+
+      vm.equipmentListItems = [];
+      vm.sinkList = [];
+      vm.sensorListItems = [];
+      vm.actuatorListItems = [];
+
+
+      vm.listItems = sinksService.getOwnSinks("own", currentUser.uid, true );
+
+      vm.currentNavItem = -1;
+
+      /*vm.listItems.$watch(function (data) {
+          if (data.event === 'child_added') {
+              sinksService.getObject(data.key).$loaded().then(function (data) {
+                    if (data.otype === 'sensor')
+                        vm.sensorListItems.push(data);
+                    else if (data.otype === 'actuator')
+                        vm.actuatorListItems.push(data);
+                    else vm.sinkList.push(data);
+              });
+          }
+      });*/
+
+      vm.listItems.$loaded().then(function (snapshot) {
+          for (var item of snapshot)
+              sinksService.getObject(item.objid2).$loaded().then(function (data) {
+                  if (data.otype === 'sensor')
+                      vm.sensorListItems.push(data);
+                  else if (data.otype === 'actuator')
+                      vm.actuatorListItems.push(data);
+                  else vm.sinkList.push(data);
+              });
+
+          vm.currentNavItem = 0;
+          //vm.getEquipmentsFromSink(vm.currentNavItem);
+      });
 
     vm.readingPeriod = 1000;
     vm.sinkMessage = "Processando solicitação";
 
     vm.getEquipmentsFromSink = function (sinkID){
-        vm.sensorListItems = sensorsService.getFromSink(vm.listItems[sinkID].$id);
+        vm.connectedItems = sinksService.getAssociations("connected", vm.sinkList[sinkID].objid, true);
+
+        /*vm.sensorListItems = sensorsService.getFromSink(vm.listItems[sinkID].$id);
         vm.actuatorListItems = actuatorsService.getFromSink(vm.listItems[sinkID].$id);
         vm.actuatorListItems.$loaded().then(function (snapshot) {
           vm.teste = 0;
-        });
+        });*/
     };
 
     vm.toggleState = function (location, key){
@@ -122,7 +156,7 @@
             ip: vm.hostip,
             port: vm.hostport,
             email: currentUser.email,
-            sink: vm.listItems[currentNavItem].$id,
+            sink: vm.sinkList[vm.currentNavItem].objid,
             serialport: ""
         }, cbStartBoardSuccess, cbStartBoardError);
     };

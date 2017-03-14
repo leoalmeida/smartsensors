@@ -5,20 +5,22 @@
         .module('app.groups')
         .factory('GroupsService', GroupsService);
 
-    GroupsService.$inject = ['firebaseDataService'];
+    GroupsService.$inject = ['firebaseDataService', '$filter'];
 
-    function GroupsService(firebaseDataService) {
+    function GroupsService(firebaseDataService, $filter) {
 
-        var groupsRef = firebaseDataService.groups;
-        var database = groupsRef.$id;
-        var groupsList = firebaseDataService.getFirebaseArray(groupsRef.$id);
+        var associationsList = "";
         var configRef = firebaseDataService.configurations;
 
-
         var service = {
+            getSubscribes: getSubscribes,
+            getGroup: getGroup,
+            getPublicGroups: getPublicGroups,
+            getAssociations: getAssociations,
+            setAssociation: setAssocitation,
+            removeAssocitation: removeAssocitation,
             getAll: getAll,
             getPublic: getPublic,
-            getOwn: getOwn,
             getOne: getOne,
             addOne: addOne,
             removeOne: removeOne
@@ -27,6 +29,30 @@
         return service;
 
         ////////////
+
+        function getSubscribes(database, userid, first) {
+            if (!associationsList) associationsList = firebaseDataService.getObjectsFirebaseArray(database, userid, first);
+            return associationsList;
+        }
+        function getGroup(groupid) {
+            return firebaseDataService.getObjectItemFirebase(groupid);
+        }
+
+        function getAssociations(database, itemID, first) {
+            return firebaseDataService.getObjectsFirebaseArray(database, itemID, first);
+        }
+
+        function setAssocitation(type, data, userid, groupid) {
+            return firebaseDataService.addNewAssociation(type, data, userid, groupid);
+        }
+
+        function removeAssocitation(key, list) {
+            return firebaseDataService.delAssociationObject(key, list);
+        }
+
+        function getPublicGroups (){
+            return firebaseDataService.getObjectsFirebaseArray("objects", "group");
+        }
 
         function getAll() {
             return groupsList;

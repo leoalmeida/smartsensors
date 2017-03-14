@@ -21,8 +21,15 @@
         var database = firebaseDataService.sinks;
         var sinksList = firebaseDataService.getRefFirebaseArray(database, 'owner');
         var configRef = firebaseDataService.configurations;
+        var associationsList = "";
 
         var service = {
+            getOwnSinks: getOwnSinks,
+            getObject: getObject,
+            getPublicSinks: getPublicSinks,
+            getAssociations: getAssociations,
+            setAssociation: setAssocitation,
+            setObject: setObject,
             getAll: getAll,
             getPublic: getPublic,
             getOwn: getOwn,
@@ -35,6 +42,46 @@
         };
 
         return service;
+
+        function getOwnSinks(database, userid, first) {
+            if (!associationsList) associationsList = firebaseDataService.getObjectsFirebaseArray(database, userid, first);
+            return associationsList;
+        }
+
+        function getPublicSinks (){
+            return firebaseDataService.getObjectsFirebaseArray("objects", "sink");
+        }
+
+
+        function getObject(id) {
+            return firebaseDataService.getObjectItemFirebase(id);
+        }
+
+
+        function getAssociations(database, itemID, first) {
+            return firebaseDataService.getObjectsFirebaseArray(database, itemID, first);
+        }
+
+        function setAssocitation(type, data, userid, groupid) {
+            return firebaseDataService.addNewAssociation(type, data, userid, groupid);
+        }
+
+        function setObject(type, recipeData, objectid, modifyType) {
+            if (modifyType === "edit")
+                return firebaseDataService.editObject(recipeData, objectid);
+            else {
+                for (action of recipeData.actionContainer)
+                    if (action.type === 'alert') {
+                        firebaseDataService.addNewObject("group", action, objectid)
+                            .then(function(ref) {
+                                    firebaseDataService.addNewAssociation("publish", action, objectid, ref.key);
+                                }
+                            );
+                    }
+                return firebaseDataService.addNewObject(type, recipeData, objectid);
+            }
+
+        }
 
         function getAll() {
             return sinksList;

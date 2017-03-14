@@ -1,4 +1,4 @@
-<div flex ng-cloak class="gridListDynamicTiles">
+<div flex class="gridListDynamicTiles">
     <md-grid-list
             md-cols="2"
             md-cols-sm="3"
@@ -10,59 +10,63 @@
             md-gutter-md="4px"
             md-gutter-gt-md="8px" >
 
-            <!--<md-grid-tile ng-repeat="item in vm.items  track by $index"-->
-            <md-grid-tile ng-repeat="item in vm.alertItems | AlertsFilter:{values: vm.subscribedItems, type:'recipe', reversal: false} track by $index"
-                      md-rowspan="{{item.configurations.row}}"
-                      md-colspan="{{item.configurations.col}}"
+        <!--<md-grid-tile ng-repeat="item in vm.alertItems | AlertsFilter:{values: vm.subscribedItems, type:'recipe', reversal: false} track by $index"-->
+            <md-grid-tile ng-repeat="item in vm.groupItems"
+                      md-rowspan="{{item.data.dataconfigurations.row}}"
+                      md-colspan="{{item.data.configurations.col}}"
                       md-colspan-sm="1"
                       md-colspan-xs="1"
-                      class="card" ng-click="vm.show">
-            <md-card layout-fill ng-class="item.severity">
+                      class="card" ng-click="vm.show" ng-cloak >
+            <md-card layout-fill ng-class="item.data.severity">
                 <md-grid-tile-header  class="darkAlphaBackground" >
                     <md-card-header>
                         <md-card-avatar hide show-gt-xs>
-                            <img class="md-user-avatar" style="color:#FA8072;" ng-src="{{item.configurations.icon}}"/>
+                            <img class="md-user-avatar" style="color:#FA8072;" ng-src="{{item.data.configurations.icon}}"/>
                         </md-card-avatar>
                         <md-card-header-text>
-                            <span class="md-title"><strong>{{item.configurations.label}}</strong></span>
+                            <span class="md-title"><strong>{{item.data.configurations.label}}</strong></span>
                             <h4>
-                                <span flex-end>{{item.startDate | date:'dd/MM/yyyy H:mm'}}</span>
+                                <span flex-end>{{item.data.startDate | date:'dd/MM/yyyy H:mm'}}</span>
                             </h4>
                         </md-card-header-text>
                     </md-card-header>
                 </md-grid-tile-header>
-                <img ng-src="{{item.configurations.image}}" class="md-card-image" alt="Image" />
-                <md-grid-content ng-class="item.severity">
+                <img ng-src="{{item.data.configurations.image}}" class="md-card-image" alt="Image" />
+                <md-grid-content ng-class="item.data.severity">
                     <md-card-actions layout="row" layout-align="start center" >
-                        <p><md-icon ng-if="item.lastUpdate.value==1" style="color:#FA8072; max-height: 18px"
+                        <p><md-icon ng-if="item.data.lastUpdate.value==1" style="color:#FA8072; max-height: 18px"
                                  aria-label="announcement" md-svg-icon="{{vm.SCREENCONFIG.ICONS.WARNING}}">
                         </md-icon></p>
-                        <label ng-if="item.lastUpdate.unit"><strong>{{item.lastUpdate.value}}{{item.lastUpdate.unit}}</strong>  </label>
+                        <label ng-if="item.data.lastUpdate.unit"><strong>{{item.data.lastUpdate.value}}{{item.data.lastUpdate.unit}}</strong>  </label>
 
                         <md-card-icon-actions>
-                            <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Favorite">
+                            <!--<md-button class="md-icon-button md-stack-button" ng-click="vm.openGroup('like', item.$id)" aria-label="Favorite">
+                                <span class="md-stack md-stack-1x">0</span>
                                 <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ASSESSMENT}}"></md-icon>
-                            </md-button>
-                            <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Settings">
+                            </md-button>-->
+                            <md-button class="md-icon-button md-stack-button" ng-click="vm.openGroup(item.$id)" aria-label="Settings">
+                                <span class="md-stack md-stack-1x">{{vm.subscriptions[$index]}}</span>
                                 <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ACCOUNTS}}"></md-icon>
                             </md-button>
-                            <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Share">
-                                <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.FAVORITE}}"></md-icon>
+                            <md-button class="md-icon-button md-stack-button"
+                                       ng-click="vm.associate('like', (vm.liked[$index].like)?vm.liked[$index].key:item.$id, (vm.liked[$index].like)?vm.groupLikes[$index]:undefined)" aria-label="Share">
+                                <span class="md-stack md-stack-1x">{{vm.likes[$index]}}</span>
+                                <md-icon ng-class="{ 'liked': vm.liked[$index].like }" md-svg-src="{{vm.SCREENCONFIG.ICONS.FAVORITE}}"></md-icon>
                             </md-button>
                         </md-card-icon-actions>
                     </md-card-actions>
                 </md-grid-content>
 
 
-                <!-- <img ng-src="{{item.localization.image}}" class="md-card-image" alt="image caption"  layout-fill/>
+                <!-- <img ng-src="{{item.data.localization.image}}" class="md-card-image" alt="image caption"  layout-fill/>
 
                 <div class="alert-selected" >
                     <div flex layout-xs="column" layout="row" class="alert-content">
                         <div layout="row" flex-gt-sm="40" >
-                            <img ng-src="{{item.configurations.icon}}" class="card-image" alt="Washed Out">
+                            <img ng-src="{{item.data.configurations.icon}}" class="card-image" alt="Washed Out">
                         </div>
                         <div layout="column" flex-gt-sm="60" >
-                            <div layout-align="center center">alerta: {{item.configurations.label}} ({{item.$key}})</div>
+                            <div layout-align="center center">alerta: {{item.data.configurations.label}} ({{item.data.$key}})</div>
                             <div layout-align="space-around center">
                                 <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Favorite">
                                     <md-icon md-svg-src="{{vm.SCREENCONFIG.ICONS.ACCOUNTS}}"></md-icon>
@@ -77,8 +81,8 @@
                         </div>
                     </div>
                 </div>-->
-                <md-grid-tile-footer ng-class="item.configurations.background">
-                    <h3>{{item.configurations.localization.address}}</h3>
+                <md-grid-tile-footer ng-class="item.data.configurations.background">
+                    <h3>{{item.data.configurations.localization.address}}</h3>
                 </md-grid-tile-footer>
             </md-card>
 

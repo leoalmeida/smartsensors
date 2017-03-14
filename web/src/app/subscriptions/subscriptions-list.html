@@ -15,17 +15,17 @@
         <md-subheader class="md-no-sticky md-accent md-padding">{{vm.SCREENCONFIG.LIST.SUBSCRIBED.TITLE}}</md-subheader>
         <md-list ng-animate="'animate'" class="md-dense">
             <!--ng-click="vm.navigateTo(item.$id, $event)"-->
-            <md-list-item class="md-3-line"  ng-repeat="item in vm.listItems.subscribed">
-                <img alt="{{ item.label }}" ng-src="{{item.catalogImage}}" class="md-avatar" />
+            <md-list-item class="md-3-line"  ng-repeat="item in vm.listItems.groups | SubscriptionFilter:{values: vm.listItems.subscribed, type:'subscribe', reversal: false} as filteredRecipes">
+                <img alt="{{ item.data.configurations.label }}" ng-src="{{item.data.configurations.image}}" class="md-avatar" />
                 <div class="md-list-item-text" >
-                    <h3>{{ item.label }}</h3>
-                    <h4>{{ item.description }}</h4>
+                    <h3>{{ item.data.configurations.label }}</h3>
+                    <h4>{{ item.data.configurations.description }}</h4>
                 </div>
                 <span flex></span>
                 <h4> {{ item.subscribeDate }} </h4>
                 <md-icon md-svg-icon="{{vm.ICONS.CLOCK}}" aria-label="Assinantes"></md-icon>
                 <span flex></span>
-                <md-switch class="md-secondary" ng-model="value" ng-change="vm.toggleState(item)" ng-init="value=true"></md-switch>
+                <md-switch class="md-secondary" ng-model="value" ng-change="vm.toggleState(item.data)" ng-init="value=true"></md-switch>
             </md-list-item>
             <md-divider></md-divider>
         </md-list>
@@ -33,7 +33,7 @@
         <!--<md-list ng-animate="'animate'" class="md-dense">
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFIG.LIST.ALERTS.TITLE}}</md-subheader>
-            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.recipes | SubscriptionFilter:{values: vm.listItems.subscribed, type:'recipe', reversal: true} as filteredRecipes" >
+            <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems.groups | SubscriptionFilter:{values: vm.listItems.subscribed, type:'recipe', reversal: true} as filteredRecipes" >
                 <img alt="{{ item.configurations.name }}" ng-src="{{item.configurations.localization.image}}" class="md-avatar" />
                 <div class="md-list-item-text" >
                     <h3>{{ item.configurations.name }}</h3>
@@ -52,7 +52,7 @@
 
     <md-divider></md-divider>
 
-    <md-content class="md-padding" ng-if="vm.listItems.recipes.length - vm.listItems.subscribed.length > 0">
+    <md-content class="md-padding" ng-if="vm.listItems.groups.length - vm.listItems.subscribed.length > 0">
         <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFIG.LIST.CATALOG.TITLE}}</md-subheader>
 
         <md-grid-list md-cols-gt-md="12" md-cols="3" md-cols-md="8"
@@ -60,26 +60,26 @@
                 md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px">
             <!--ng-click="vm.navigateTo(item.$id, $event)"-->
             <md-grid-tile
-                          ng-repeat="item in vm.listItems.recipes | SubscriptionFilter:{values: vm.listItems.subscribed, type:'recipe', reversal: true} as filteredRecipes"
+                          ng-repeat="item in vm.listItems.groups | SubscriptionFilter:{values: vm.listItems.subscribed, type:'subscribe', reversal: true} as filteredRecipes"
                           md-colspan-gt-sm="{{vm.RANDOMSPAN}}"
                           md-rowspan-gt-sm="{{vm.RANDOMSPAN}}" class="card" >
                 <md-tooltip md-direction="up" md-visible="tooltipVisible"
                             md-autohide="false">
-                    {{item.description}}
+                    {{item.data.configurations.description}}
                 </md-tooltip>
                 <md-card layout-fill ng-style="{'background': vm.RANDOMCOLOR}" >
-                    <img ng-src="{{item.image}}" class="md-card-image" alt="Image" />
+                    <img ng-src="{{item.data.configurations.image}}" class="md-card-image" alt="Image" />
                     <md-grid-tile-header layout-align="center center" class="darkAlphaBackground capitalize" >
-                        <small class="md-caption">{{ item.label }} </small>
+                        <small class="md-caption">{{ item.data.configurations.label }} </small>
                         <div class="md-body-2"> Receita </div>
                     </md-grid-tile-header>
                     <md-card-actions layout="row" layout-align="end center">
                         <span>
                             <md-icon md-svg-icon="{{vm.ICONS.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
-                            <span class="md-subhead"><strong>{{ (item.subscribers.length)?item.subscribers.length:0 }}</strong></span>
+                            <span class="md-subhead"><strong>{{ (item.data.subscribers.length)?item.data.subscribers.length:0 }}</strong></span>
                         </span>
                         <span flex></span>
-                        <md-switch class="md-secondary" ng-model="subscribed" ng-change="vm.subscribeToRecipe(item)"></md-switch>
+                        <md-switch class="md-secondary" ng-model="subscribed" ng-change="vm.subscribeToGroup(item.data, item.objid)"></md-switch>
                     </md-card-actions>
                 </md-card>
             </md-grid-tile>

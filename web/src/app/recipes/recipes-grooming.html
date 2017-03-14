@@ -15,13 +15,13 @@
         <md-card class="dropzone"  ng-cloak="">
                 <md-card-header>
                     <md-card-avatar>
-                        <img class="md-user-avatar" ng-src="{{vm.recipe.icon}}"/>
+                        <img class="md-user-avatar" ng-src="{{vm.recipe.data.icon}}"/>
                     </md-card-avatar>
                     <md-card-header-text>
                         <span class="md-headline">
                             <md-input-container md-no-float>
                                 <label>Receita</label>
-                                <input ng-model="vm.recipe.label">
+                                <input ng-model="vm.recipe.data.label">
                             </md-input-container>
                         </span>
                     </md-card-header-text>
@@ -30,14 +30,14 @@
                     <span layout="column" flex layout-padding class="autocomplete" >
                         <md-input-container md-no-float>
                                 <label>Descrição</label>
-                                <input ng-model="vm.recipe.description">
+                                <input ng-model="vm.recipe.data.description">
                         </md-input-container>
 
                         <div class="box" flex>
                             <div class="md-padding" >
                                 <h2>Regras</h2>
                             </div>
-                            <md-chips ng-model="vm.recipe.ruleContainer" md-autocomplete-snap
+                            <md-chips ng-model="vm.recipe.data.ruleContainer" md-autocomplete-snap
                                       md-transform-chip="vm.transformChip($chip)"
                                       md-require-match="false"
                                       md-on-select="vm.showConfig($event, $chip)"
@@ -50,7 +50,7 @@
                                         md-item-text="item.name"
                                         md-menu-class="autocomplete-custom-template"
                                         placeholder="Adicione suas regras aqui"
-                                        ng-hide="vm.recipe.ruleContainer.length >= vm.recipe.max">
+                                        ng-hide="vm.recipe.data.ruleContainer.length >= vm.recipe.data.max">
                                     <md-item-template>
                                         <span class="item-title">
                                             <md-icon md-svg-icon="{{item.icon}}"></md-icon>
@@ -62,7 +62,7 @@
                                             <span><strong>{{item.watchers}}</strong></span>
                                         </span>
                                         <md-not-found>
-                                            Inserir regra de valor?.
+                                            Nenhum registro encontrado
                                         </md-not-found>
                                     </md-item-template>
                                 </md-autocomplete>
@@ -70,7 +70,7 @@
                                     <span>
                                         <md-icon md-svg-src="{{$chip.icon}}" aria-label="Rule Icon"></md-icon>
                                         <strong ng-if="$chip.type!=='operador' && $chip.type!=='agregador'">{{$chip.label}}</strong>
-                                        <em ng-if="$chip.type!=='operador' && $chip.type!=='agregador'">({{$chip.type}})</em>
+                                        <em hide show-gt-xs ng-if="$chip.type!=='operador' && $chip.type!=='agregador'">({{$chip.subtype}})</em>
                                         <md-tooltip md-direction="up" md-visible="tooltipVisible"
                                                     md-autohide="false">
                                             {{$chip.name}}
@@ -84,11 +84,11 @@
                             <div class="md-padding" >
                                 <h2>Ações</h2>
                             </div>
-                            <md-chips ng-model="vm.recipe.actionContainer" md-autocomplete-snap
+                            <md-chips ng-model="vm.recipe.data.actionContainer" md-autocomplete-snap
                                       md-transform-chip="vm.transformChip($chip)"
                                       md-require-match="true"
                                       md-on-select="vm.showConfig($event, $chip)"
-                                      md-max-chips="{{vm.recipe.maxActions}}">
+                                      md-max-chips="{{vm.recipe.data.maxActions}}">
                                 <md-autocomplete
                                         md-selected-item="vm.selectedAction"
                                         md-search-text="vm.searchActionText"
@@ -96,7 +96,7 @@
                                         md-item-text="item.name"
                                         md-menu-class="autocomplete-custom-template"
                                         placeholder="Adicione suas ações aqui"
-                                        ng-hide="vm.recipe.actionContainer.length >= vm.recipe.maxActions">
+                                        ng-hide="vm.recipe.data.actionContainer.length >= vm.recipe.data.maxActions">
                                     <md-item-template>
                                         <span class="item-title">
                                           <md-icon md-svg-icon="{{item.icon}}"></md-icon>
@@ -116,7 +116,7 @@
                                         <span>
                                             <md-icon md-svg-src="{{$chip.icon}}" aria-label="Action Icon"></md-icon>
                                             <strong>{{$chip.name}}</strong>
-                                            <em>({{$chip.type}})</em>
+                                            <em hide show-gt-xs>({{$chip.subtype}})</em>
                                             <md-tooltip md-direction="up" md-visible="tooltipVisible"
                                                         md-autohide="false">
                                                 {{$chip.name}}
@@ -127,12 +127,12 @@
                                                     <!--<md-grid-list md-cols="2"
                                           md-cols-xs="1"
                                           md-cols-sm="2"
-                                          md-cols-gt-md={{vm.recipe.maxActions}}
+                                          md-cols-gt-md={{vm.recipe.data.maxActions}}
                                           md-row-height-gt-md="1:1"
                                           md-row-height="4:3"
                                           md-gutter="8px"
                                           md-gutter-gt-sm="4px" class="gridListDynamicTiles">
-                                <md-grid-tile class="card" ng-repeat="item in vm.recipe.actionContainer"
+                                <md-grid-tile class="card" ng-repeat="item in vm.recipe.data.actionContainer"
                                               md-rowspan="1"
                                               md-colspan="1">
                                     <md-button class="md-primary" layout-margin layout-fill>

@@ -23,8 +23,8 @@
                     }]
                 },
             }).when('/home', {
-                templateUrl: 'app/home/twits.html',
-                controller: 'TwitsController',
+                templateUrl: 'app/home/home.html',
+                controller: 'HomeController',
                 controllerAs: 'vm',
                 resolve: {
                     "currentUser": ["AuthService", function(authService) {

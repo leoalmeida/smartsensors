@@ -29,18 +29,28 @@
                         <label>Label</label>
                         <input ng-model="vm.selected.label" type="text">
                     </md-input-container>
-                    <md-input-container flex>
-                        <label>Atributo</label>
-                        <input ng-model="vm.selected.evaluatedAttribute" type="text">
-                    </md-input-container>
-                    <!--<md-input-container class="md-icon-float" flex="32">
-                        <label>Regra</label>
-                        <md-select ng-model="vm.selected.attribute">
-                            <md-option ng-repeat="sign in vm.signTypes" ng-value="sign.value" ng-disabled="$index === -1">
-                                {{sign.display}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>-->
+                    <md-content layout="column" layout-padding>
+                        <label>Resultado avaliado</label>
+                        <div layout="row">
+                            <md-input-container flex flex-gt-xs=33>
+                                <label>Atributo avaliado</label>
+                                <input ng-model="vm.selected.evaluated.attribute" type="text">
+                            </md-input-container>
+                            <md-input-container class="md-icon-float" flex flex-gt-xs="33">
+                                <label>Relacional</label>
+                                <md-select ng-model="vm.selected.evaluated.connector" id="conector">
+                                    <md-option ng-repeat="option in vm.connectors | filter:'relacional'" ng-value="option.label" >
+                                        <md-icon md-svg-src="{{option.icon}}" class="name"></md-icon>
+                                        {{option.name}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-input-container class="capitalize"flex flex-gt-xs="33">
+                                <label class="capitalize">Resultado Esperado (Value)</label>
+                                <input ng-model="vm.selected.evaluated.value" type="text">
+                            </md-input-container>
+                        </div>
+                    </md-content>
                 </div>
             </div>
         </md-dialog-content>

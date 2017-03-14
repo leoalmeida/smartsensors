@@ -25,30 +25,39 @@
         vm.RANDOMSPAN = CONSTANTS.SCREENCONFIG.RANDOMSPAN;
 
         vm.listItems = {};
-        vm.listItems.subscribed = subscriptionsService.getOwn(currentUser);
+        //vm.listItems.subscribed = subscriptionsService.getOwn(currentUser);
+
+        vm.listItems.subscribed = groupsService.getSubscribes("subscribe", currentUser.uid, true );
+
         vm.listItems.recipes = [];
 
         vm.listItems.recipes = recipesService.getPublic();
 
-        //vm.listItems.groups = groupsService.getPublic();
+        vm.listItems.groups = groupsService.getPublicGroups();
+
+        vm.listItems.groups.$loaded(function (data) {
+           console.log(data);
+        });
 
         vm.toggleState = function (item){
-            let subscribedID = vm.listItems.subscribed.$indexFor(item.$id);
+            let subscribedID = vm.listItems.subscribed.$getRecord(index);
 
-            vm.listItems.subscribed.$remove(subscribedID);
+            groupsService.removeAssocitation(subscribedID, vm.listItems.subscribed);
 
-            let receipeKEY = vm.listItems.subscribed[subscribedID].id;
+            //vm.listItems.subscribed.$remove(subscribedID);
+
+            /*let receipeKEY = vm.listItems.subscribed[subscribedID].id;
             let receipeArrID = vm.listItems.recipes.$indexFor(receipeKEY);
 
             vm.listItems.recipes[receipeArrID].subscribers.splice(vm.listItems.recipes[receipeArrID].subscribers.indexOf(currentUser.uid), 1);
 
             vm.listItems.recipes.$save(receipeArrID).then(function(ref) {
                 notifyService.notify('Assinatura removida com sucesso', ref.key);
-            });
+            });*/
         };
 
 
-        vm.subscribeToRecipe = function (item){
+        vm.subscribeToRecipe = function (item, groupid){
             var newItem = {
                 catalogImage: item.image,
                 id: item.$id,
@@ -75,20 +84,19 @@
             });
         };
 
-        vm.subscribeToGroup = function (item){
+        vm.subscribeToGroup = function (item, groupid){
             var newItem = {
-                avatar: item.avatar,
-                description: item.description,
-                id: item.$id,
-                name: item.name,
-                owner: item.owner,
-                startDate: item.startDate,
+                image: item.configurations.image,
+                id: item.key,
+                label: item.configurations.label,
+                description: item.configurations.description,
+                startDate: "",
                 status: true,
                 subscribeDate: new Date().toLocaleString(),
-                type: "messenger"
+                type: "recipe"
             };
 
-            subscriptionsService.addOne(currentUser, newItem);
+            groupsService.setAssociation("subscribe", newItem, currentUser.uid, groupid);
             //vm.listItems.subscribed.$add(newItem);
         };
 

@@ -17,7 +17,8 @@
         vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.RECIPES;
         vm.ICONS = CONSTANTS.ICONS;
 
-        vm.listItems = recipesService.getPublic();
+        vm.listItems = recipesService.getPublicRecipes();
+        //vm.listItems = recipesService.getPublic();
         //vm.listItems = recipesService.getOwn(currentUser);
 
         vm.currentNavItem = -1;

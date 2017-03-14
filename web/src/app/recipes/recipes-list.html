@@ -13,18 +13,18 @@
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-accent">{{vm.SCREENCONFIG.LIST.OWNED.TITLE}}</md-subheader>
             <md-list-item class="md-3-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems | RecipesFilter: {column: 'enabled', value: true} as filteredRecipes">
-                <img alt="{{ item.icon }}" ng-src="{{item.icon}}" class="md-avatar" />
+                <img alt="{{ item.data.icon }}" ng-src="{{item.data.icon}}" class="md-avatar" />
                 <div class="md-list-item-text" >
-                    <h3>{{ item.label }}</h3>
-                    <h4>{{ item.container.size }}</h4>
-                    <p ng-if="item.enabled">{{vm.SCREENCONFIG.LIST.ACTIVE.TITLE}}</p>
-                    <p ng-if="!item.enabled">{{vm.SCREENCONFIG.LIST.NOTACTIVE.TITLE}}</p>
+                    <h3>{{ item.data.label }}</h3>
+                    <h4>{{ item.data.container.size }}</h4>
+                    <p ng-if="item.data.enabled">{{vm.SCREENCONFIG.LIST.ACTIVE.TITLE}}</p>
+                    <p ng-if="!item.data.enabled">{{vm.SCREENCONFIG.LIST.NOTACTIVE.TITLE}}</p>
                 </div>
                 <span flex></span>
                 <md-icon md-svg-icon="{{vm.ICONS.SUBSCRIBERS}}" aria-label="Assinantes"></md-icon>
-                <h4 class="md-padding"><strong>{{ vm.subscribersQty(item.subscribers) }} </strong></h4>
+                <h4 class="md-padding"><strong>{{ vm.subscribersQty(item.data.subscribers) }} </strong></h4>
                 <span flex></span>
-                <md-switch class="md-secondary" ng-model="item.enabled" ng-change="vm.toggleState(item)"></md-switch>
+                <md-switch class="md-secondary" ng-model="item.data.enabled" ng-change="vm.toggleState(item.data)"></md-switch>
             </md-list-item>
             <md-divider></md-divider>
         </md-list>
@@ -32,14 +32,14 @@
         <md-list ng-animate="'animate'" class="md-dense" data-ng-init="vm.initList()">
             <md-divider></md-divider>
             <md-subheader class="md-no-sticky md-warn">{{vm.SCREENCONFIG.LIST.COPIED.TITLE}}</md-subheader>
-            <md-list-item class="md-2-line" ng-click="vm.navigateTo(item.$id, $event)" ng-repeat="item in vm.listItems | filter:{ enabled: false }">
-                <img alt="{{ item.configurations.name }}" ng-src="assets/images/{{item.localization.image}}" class="md-avatar" />
+            <md-list-item class="md-2-line" ng-click="vm.navigateTo(item.data.$id, $event)" ng-repeat="item in vm.listItems | filter:{ enabled: false }">
+                <img alt="{{ item.data.configurations.name }}" ng-src="assets/images/{{item.data.localization.image}}" class="md-avatar" />
                 <div class="md-list-item-text" >
-                    <h3>{{ item.configurations.name }}</h3>
-                    <h4>{{ item.configurations.type }}</h4>
+                    <h3>{{ item.data.configurations.name }}</h3>
+                    <h4>{{ item.data.configurations.type }}</h4>
                 </div>
                 <span flex></span>
-                <md-switch class="md-secondary" ng-model="item.enabled" ng-change="vm.toggleState(item)"></md-switch>
+                <md-switch class="md-secondary" ng-model="item.data.enabled" ng-change="vm.toggleState(item.data)"></md-switch>
             </md-list-item>
             <md-divider></md-divider>
         </md-list>
@@ -89,28 +89,28 @@
             md-gutter-gt-sm="4px"
             data-ng-init="vm.initList()" >
         <md-grid-tile ng-repeat="item in vm.alertItems track by $index"
-                      md-rowspan="{{item.configurations.row}}"
-                      md-colspan="{{item.configurations.col}}"
+                      md-rowspan="{{item.data.configurations.row}}"
+                      md-colspan="{{item.data.configurations.col}}"
                       md-colspan-sm="1"
                       md-colspan-xs="1"
                       class="card" ng-click="vm.show">
-            <md-card layout-fill ng-class="item.severity">
+            <md-card layout-fill ng-class="item.data.severity">
                 <md-grid-tile-header layout-padding class="darkAlphaBackground" >
                     <md-card-header>
                         <md-card-avatar>
-                            <img class="md-user-avatar" ng-src="assets/icons/{{item.configurations.icon}}"/>
+                            <img class="md-user-avatar" ng-src="assets/icons/{{item.data.configurations.icon}}"/>
                         </md-card-avatar>
                         <md-card-header-text>
-                            <span class="md-title">{{item.configurations.name}}</span>
+                            <span class="md-title">{{item.data.configurations.name}}</span>
                                 <h4>
-                                  {{item.configurations.label}} - 
-                                  <span flex-end>{{item.startDate}}</span>
+                                  {{item.data.configurations.label}} -
+                                  <span flex-end>{{item.data.startDate}}</span>
                                 </h4>
                         </md-card-header-text>
                     </md-card-header>
                 </md-grid-tile-header>
-                <img ng-src="assets/images/{{item.localization.image}}" class="md-card-image" alt="Image" />
-                <md-grid-content ng-class="item.severity">
+                <img ng-src="assets/images/{{item.data.localization.image}}" class="md-card-image" alt="Image" />
+                <md-grid-content ng-class="item.data.severity">
                     <md-card-actions layout="row" layout-align="start center" >
                         <md-card-icon-actions>
                             <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Favorite">
@@ -122,7 +122,7 @@
                             <md-button class="md-icon-button" ng-click="vm.close()" aria-label="Share">
                                 <md-icon md-svg-src="assets/icons/action/ic_favorite_24px.svg"></md-icon>
                             </md-button>
-                            <h4>{{item.lastUpdate.value}}{{item.lastUpdate.unit}}</h4>
+                            <h4>{{item.data.lastUpdate.value}}{{item.data.lastUpdate.unit}}</h4>
                         </md-card-icon-actions>
                         <md-button>Assinar</md-button>
                     </md-card-actions>
@@ -130,8 +130,8 @@
 
 
 
-                <md-grid-tile-footer ng-class="item.configurations.background">
-                    <h3>{{item.localization.address}}</h3>
+                <md-grid-tile-footer ng-class="item.data.configurations.background">
+                    <h3>{{item.data.localization.address}}</h3>
                 </md-grid-tile-footer>
             </md-card>
 

@@ -32,10 +32,17 @@
 
         if ($routeParams.type === "edit") {
             vm.activity = "Alterar Receita";
-            vm.recipe = recipesService.getOne(key);
+            //vm.recipe = recipesService.getOne(key);
+
+            vm.recipe = recipesService.getRecipe(key);
         } else {
             vm.activity = "Nova Receita";
-            vm.recipe = "";
+            vm.recipe = {
+                id: "",
+                oaccess: "public",
+                otype: "recipe",
+                data: ""
+            };
         };
 
         vm.configurations = sensorsService.getAllConfigurations();
@@ -55,6 +62,8 @@
             vm.searchOptionTypes = infoData.searchOptionTypes;
             vm.alertAttributes = infoData.alertAttributes;
             vm.alertAttributesValues = infoData.alertAttributesValues;
+
+            vm.externalAPIs = infoData.externalAPIs;
 
             vm.recipes = infoData.templates.recipes;
             vm.connectors = infoData.templates.connectors;
@@ -116,24 +125,26 @@
                 item = recipesService.pushNewItem(vm.recipe);
             }*/
 
-            if (vm.recipe.ruleContainer.length < 3){
+            if (vm.recipe.data.ruleContainer.length < 1){
                 var message =  'Necessário ao menos 1 regra completa cadastrada.';
                 notifyService.notify('Erro: Regras', message);
                 return;
-            } else if (vm.recipe.actionContainer.length < 1){
+            } else if (vm.recipe.data.actionContainer.length < 1){
                 var message =  'Necessário ao menos 1 ação cadastrada.';
                 notifyService.notify('Erro: Ações', message);
                 return;
             };
 
+            //recipesService.setObject("recipe" , vm.recipe, vm.recipe.$id, $routeParams.type);
+
             if ($routeParams.type === "edit") {
                 vm.recipe.$save();
-                var message =  'Receita ' + vm.recipe.label + ' foi atualizada.';
+                var message =  'Receita ' + vm.recipe.data.label + ' foi atualizada.';
                 notifyService.notify('Receita atualizada', message);
             } else{
                 vm.accessType = vm.isPrivateAccess ? "private": "public";
                 item = recipesService.addOne(currentUser, vm.accessType , vm.recipe);
-                var message =  'Receita ' + vm.recipe.label + ' encontrada.';
+                var message =  'Receita ' + vm.recipe.data.label + ' encontrada.';
                 notifyService.notify('Nova receita encontrada', message);
             };
             
@@ -170,18 +181,12 @@
         //    vm.modelAsJson = angular.toJson(model, true);
         //}, true);
 
-        vm.addItem = function(item){
-            if (item.type === 'operador' || item.type === 'agregador') {
-                vm.recipe.max++;
-            }
-        };
+        vm.addItem = function(item){if (item.type === 'operador' || item.type === 'separador') vm.recipe.data.max++;};
 
-        vm.removeItem = function(item, index){
-            if (item.type === 'operador' || item.type === 'agregador') vm.recipe.max--;
-        };
+        vm.removeItem = function(item, index){if (item.type === 'operador' || item.type === 'separador') vm.recipe.data.max--;};
 
         vm.showConfig = function(ev, item) {
-            if (!item || item.type === 'agregador' || item.type === 'operador') return;
+            if (!item || item.type === 'separador' || item.type === 'operador') return;
             vm.selected = item;
             $mdDialog.show({
                 controller: function DialogController($scope, $mdDialog) {
@@ -193,20 +198,6 @@
                     }
                     vm.cancel = function() {
                         $mdDialog.cancel();
-                    };
-                    vm.addRule = function(scenario) {
-                        if (vm.selected.type == "sensor") {
-                            vm.selected.scenarios[scenario].rules[vm.selected.scenarios[scenario].rules.length - 1].logicalOperator = "&&";
-                            vm.selected.scenarios[scenario].rules.push({"compareOperator": ">","expectedResult": 0, "evaluatedAttribute": "", "logicalOperator": "", "evaluatedObjectKey": vm.selected.key});
-                        } else if (vm.selected.type == "actuator"){
-                            vm.selected.rules.push({"actions": [{}], "type": ""});
-                        }
-                    };
-                    vm.removeRule = function(scenario, index) {
-                        vm.selected.scenarios[scenario].rules.splice(index, 1);
-                        if (vm.selected.type == "sensor") {
-                            vm.selected.scenarios[scenario].rules[vm.selected.scenarios[scenario].rules.length - 1].connector = "";
-                        }
                     };
                 },
                 parent: angular.element(document.body),
@@ -237,11 +228,11 @@
         vm.transformChip = transformChip;
 
         function validateItems(chip) {
-            var lastItem = vm.recipe.ruleContainer[vm.recipe.ruleContainer.length-1];
-            //var beforeLastItem = vm.recipe.ruleContainer[vm.recipe.ruleContainer.length-2];
+            var lastItem = vm.recipe.data.ruleContainer[vm.recipe.data.ruleContainer.length-1];
+            //var beforeLastItem = vm.recipe.data.ruleContainer[vm.recipe.data.ruleContainer.length-2];
 
             if (chip.type !== 'operador' && chip.type !== 'separador'){
-                if (vm.recipe.ruleContainer.length >= vm.recipe.max) return null;
+                if (vm.recipe.data.ruleContainer.length >= vm.recipe.data.max) return null;
                 if (lastItem && lastItem.type !== 'operador' && lastItem.type !== 'separador') return null;
 
             }else{
@@ -267,7 +258,7 @@
             }
 
             // Otherwise, create a new one
-            return { name: chip, type: 'valor', icon: "assets/icons/editor/ic_mode_edit_24px.svg", label: chip}
+            return { name: 'valor', type: 'valor', icon: "assets/icons/editor/ic_mode_edit_24px.svg", label: chip}
         }
 
 
@@ -287,15 +278,23 @@
 
             return function filterFn(item) {
                 return (item._lowername.indexOf(lowercaseQuery) >= 0) ||
-                    (item._lowertype.indexOf(lowercaseQuery) >= 0);
+                    (item._lowertype.indexOf(lowercaseQuery) >= 0) ||
+                    (item._lowersubtype.indexOf(lowercaseQuery) >= 0) ;
             };
 
         }
 
         function loadItems(items) {
-            return items.map(function (item) {
+            return items.filter(function (item) {
+                if ('subtype' in item && item.subtype === 'relacional') {
+                    return false;
+                } else {
+                    return true;
+                }
+            }).map(function (item) {
                 item._lowername = item.name.toLowerCase();
                 item._lowertype = item.type.toLowerCase();
+                item._lowersubtype = item.subtype.toLowerCase();
                 item._icon = item.icon;
                 return item;
             });

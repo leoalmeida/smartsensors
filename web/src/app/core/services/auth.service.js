@@ -38,7 +38,8 @@
 
     function AuthService($location,$rootScope, firebase, $firebaseAuth, $firebaseArray, $firebaseObject) {
 
-        var root = new firebase.database().ref('users');
+        var root = new firebase.database().ref('objects');
+        //var root = new firebase.database().ref('users');
         var authObj = $firebaseAuth();
 
         this.user = authObj.currentUser;
@@ -64,19 +65,19 @@
 
             var obj = $firebaseObject(root.child(uid));
 
-            obj.$loaded().then( function (data) {
-                if (!data.uid || data.token.value != newObject.refreshToken){
-                    obj.$value = {
-                        "displayName": newObject.displayName,
-                        "email": newObject.email,
-                        "emailVerified": newObject.emailVerified,
-                        "isAnonymous": newObject.isAnonymous,
-                        "photoURL": newObject.photoURL,
-                        "uid": uid,
-                        "providerData": newObject.providerData,
-                        "token":{
-                            "value": newObject.refreshToken
-                        }
+            obj.$loaded().then( function (object) {
+                if (!object.data.uid || object.data.token.value != newObject.refreshToken){
+                    obj.data = {
+                            "displayName": newObject.displayName,
+                            "email": newObject.email,
+                            "emailVerified": newObject.emailVerified,
+                            "isAnonymous": newObject.isAnonymous,
+                            "photoURL": newObject.photoURL,
+                            "uid": uid,
+                            "providerData": newObject.providerData,
+                            "token": {
+                                "value": newObject.refreshToken
+                            }
                     };
                     updated = obj.$save();
                 }
