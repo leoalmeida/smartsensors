@@ -12,7 +12,8 @@
         'firebase',
         //'btford.socket-io',
         'ngMap',
-        'base64'];
+        'base64',
+        'angularPaho'];
     var myAppComponents = [
         'app.core',
         'app.auth',

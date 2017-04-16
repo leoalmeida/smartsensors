@@ -1,7 +1,7 @@
 'use strict';
 
 // ******** Initialize Firebase
-const admin = require("firebase-admin");
+/*const admin = require("firebase-admin");
 
 const serviceAccount = require("./bin/serviceAccountKey.json");
 
@@ -13,13 +13,18 @@ admin.initializeApp({
 const db = admin.database();
 
 module.exports = db;
+*/
 
-// const Lancamento = require('./models/transaction-model');
-// const mongoose = require('mongoose');
+const Configurations = require('./models/configurations-model');
+const Associations = require('./models/associations-model');
+const Objects = require('./models/objects-model');
+//const Knowledge = require('./models/knowledge-model');
+//const Contexts = require('./models/contexts-model');
+//const Semantics = require('./models/semantics-model');
+const mongoose = require('mongoose');
 
-// mongoose.connect('mongodb://dev:dev@ds021731.mlab.com:21731/finance');
-// mongoose.connect('mongodb://dev:dev@ds017195.mlab.com:17195/smartsensors');
-/*
+mongoose.connect('mongodb://dev:dev@ds060649.mlab.com:60649/guifragmento');
+
 const db = mongoose.connection;
 
 db.on('connected', () => {
@@ -54,4 +59,3 @@ process.on('SIGINT', () => {
 });
 
 module.exports = db;
-*/

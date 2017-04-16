@@ -6,12 +6,51 @@
         .controller('HomeController', HomeController);
 
 
-    HomeController.$inject = ['$rootScope', 'CONSTANTS','currentUser', 'GroupsService', '$mdDialog', 'ToastService', 'NotifyService', '$filter'];
+    HomeController.$inject = ['$rootScope', 'CONSTANTS','currentUser', 'GroupsService', '$mdDialog', 'ToastService', 'NotifyService', '$filter', 'MqttClient'];
 
-    function HomeController($rootScope, CONSTANTS, currentUser, groupsService, $mdDialog, toastService, notifyService, $filter) {
+    function HomeController($rootScope, CONSTANTS, currentUser, groupsService, $mdDialog, toastService, notifyService, $filter, MqttClient) {
 
         var vm = this;
 
+/*        MqttClient.init("servpub", "teste", "m11.cloudmqtt.com");
+
+        MqttClient.mqtt.on('connect', function(){
+            MqttClient.subscribe('advertisements');
+            MqttClient.publish("advertisements", "Hello");
+
+            toastService.showMessage(" Conectado com sucesso [cloudmqtt]: advertisements");
+            notifyService.notify(" Conectado com sucesso [cloudmqtt]: advertisements", "Advertisements");
+            console.log(event);
+            console.log(message);
+        });
+
+        MqttClient.mqtt.on('message', function (topic, message) {
+            // message is Buffer
+            console.log(message.toString());
+            MqttClient.end();
+        });
+
+        MqttClient.mqtt.on('error', function(topic, message, packet){
+            toastService.showMessage(" Erro ao conectar no canal: " + topic);
+            notifyService.notify(" Erro ao conectar no canal: " + topic, message);
+            console.log(message);
+        });
+
+        // set callback handlers
+        // called when the client loses its connection
+        MqttClient.onConnectionLost = function(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("onConnectionLost:"+responseObject.errorMessage);
+            }
+        }
+
+        // called when a message arrives
+        MqttClient.onMessageArrived = function (message) {
+            toastService.showMessage(message.payloadString);
+            notifyService.notify(message.payloadString, "Advertisements");
+            console.log("onMessageArrived:"+message.payloadString);
+        }
+*/
         vm.SCREENCONFIG = CONSTANTS.SCREENCONFIG.HOME;
 
         vm.subscribedItems = groupsService.getSubscribes("subscribe", currentUser.uid, true);

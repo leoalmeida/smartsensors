@@ -5,9 +5,9 @@
       .module('app.sinks')
       .controller('SinkListController', SinkListController);
 
-  SinkListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'SinksService', 'ActuatorsService','SensorsService', '$mdDialog', '$interval'];
+  SinkListController.$inject = ['currentUser', '$location', 'CONSTANTS', 'SinksService', 'ActuatorsService','SensorsService', '$mdDialog', '$interval', 'apisDataService'];
 
-  function SinkListController(currentUser, $location, CONSTANTS, sinksService, actuatorsService, sensorsService, $mdDialog, $interval) {
+  function SinkListController(currentUser, $location, CONSTANTS, sinksService, actuatorsService, sensorsService, $mdDialog, $interval, apisDataService) {
     var vm = this;
     var alert;
 
@@ -19,13 +19,37 @@
 
       //{"atype": "", "atype_objid": "", "atype_objid2": "", "data": "", "objid": "", "objid2": "", "time": 1477327375744}
 
-      vm.equipmentListItems = [];
       vm.sinkList = [];
       vm.sensorListItems = [];
       vm.actuatorListItems = [];
+      vm.listItems = [];
+      
+      apisDataService.getDataInfo(["association",currentUser.uid,"own"])
+      		.then(function(result) {
+      			console.log(result); // "Stuff worked!"
+      			for (let item of result.filter(function(n){ return n != undefined })){
+      				if (item.data.type === 'sensor')
+      					vm.sensorListItems.push(item);
+      				else if (item.data.type === 'actuator')
+      					vm.actuatorListItems.push(item);
+      				else {
+      					apisDataService.getDataInfo(["object", item.objid2])
+      						.then(function(result) {
+      							var keyvalye = Object.entries(result);
+      							console.log(keyvalye);
+      							vm.sinkList[keyvalye[0][0]]= keyvalye[0][1];
+      						});
+      					vm.listItems.push(item);
+      				}
+      			}
+  //    			vm.currentNavItem = 0;
+//      			vm.getEquipmentsFromSink(vm.currentNavItem);
+      		}, function(err) {
+      			console.log(err); // Error: "It broke"
+      		});
+      		
 
-
-      vm.listItems = sinksService.getOwnSinks("own", currentUser.uid, true );
+//      vm.listItems = sinksService.getOwnSinks("own", currentUser.uid, true );
 
       vm.currentNavItem = -1;
 
@@ -41,25 +65,21 @@
           }
       });*/
 
-      vm.listItems.$loaded().then(function (snapshot) {
-          for (var item of snapshot)
-              sinksService.getObject(item.objid2).$loaded().then(function (data) {
-                  if (data.otype === 'sensor')
-                      vm.sensorListItems.push(data);
-                  else if (data.otype === 'actuator')
-                      vm.actuatorListItems.push(data);
-                  else vm.sinkList.push(data);
-              });
-
-          vm.currentNavItem = 0;
-          //vm.getEquipmentsFromSink(vm.currentNavItem);
-      });
-
     vm.readingPeriod = 1000;
     vm.sinkMessage = "Processando solicitação";
 
     vm.getEquipmentsFromSink = function (sinkID){
-        vm.connectedItems = sinksService.getAssociations("connected", vm.sinkList[sinkID].objid, true);
+    	apisDataService.getDataInfo(["association",vm.sinkList[sinkID].objid2,"connected"])
+      					.then(function(result) {
+	      					console.log(result); // "Stuff worked!"
+      					  	vm.connectedItems = result;
+      					}, function(err) {
+						    console.log(err); // Error: "It broke"
+						});
+        //vm.connectedItems = sinksService.getAssociations("connected", vm.sinkList[sinkID].objid, true);
+        //vm.connectedItems.$loaded().then(function (snapshot) {
+        //  vm.teste = 0;
+        //});
 
         /*vm.sensorListItems = sensorsService.getFromSink(vm.listItems[sinkID].$id);
         vm.actuatorListItems = actuatorsService.getFromSink(vm.listItems[sinkID].$id);

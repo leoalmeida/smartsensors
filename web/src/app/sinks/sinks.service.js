@@ -21,7 +21,7 @@
         var database = firebaseDataService.sinks;
         var sinksList = firebaseDataService.getRefFirebaseArray(database, 'owner');
         var configRef = firebaseDataService.configurations;
-        var associationsList = "";
+        var associationsList = {};
 
         var service = {
             getOwnSinks: getOwnSinks,
@@ -46,6 +46,12 @@
         function getOwnSinks(database, userid, first) {
             if (!associationsList) associationsList = firebaseDataService.getObjectsFirebaseArray(database, userid, first);
             return associationsList;
+        }
+        
+        function getSinkAssociations(database, itemID, first) {
+        	if(!associationsList[itemID])
+        		associationsList[itemID] = firebaseDataService.getObjectsFirebaseArray(database, itemID, first);
+            return associationsList[itemID];
         }
 
         function getPublicSinks (){

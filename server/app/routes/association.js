@@ -1,0 +1,29 @@
+'use strict'
+
+const router = require('express').Router();
+
+module.exports = function(app){
+  const ctrl = app.controllers.associationController;
+
+  router.get('/', ctrl.getContract);
+  router.get('/all', ctrl.getAll);
+  //router.get('/bylast/:id/:type', ctrl.getAssociationsByLastVerticeId);
+  //router.get('/bynext/:id/:type', ctrl.getAssociationsByNextVerticeId);
+  router.get('/key/:id', ctrl.getById);
+  router.get('/:subtype/all', ctrl.getByType);
+  router.get('/:subtype/last/:id', ctrl.getAssociationsByLastVerticeId);
+  router.get('/:subtype/next/:id', ctrl.getAssociationsByNextVerticeId);
+  router.get('/:id', ctrl.getByAssociationKey);
+
+  //router.post('/apis/association', ctrl.create);
+  //router.put('/apis/association/:id', ctrl.update);
+  //router.delete('/apis/association/:id', ctrl.remove);
+
+
+  //router.post('/apis/object', ctrl.create);
+  //router.put('/apis/object/:id', ctrl.update);
+  //router.delete('/apis/object/:id', ctrl.remove);
+
+
+  return router;
+};

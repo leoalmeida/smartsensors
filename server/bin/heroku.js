@@ -27,12 +27,74 @@ let sensorsActionProcess = function () {
 
     actionsObj.generateLog("Fim do processamento de ações");
 
-    //setTimeout(sensorsActionProcess, 1000);
-    setTimeout(sensorsActionProcess,450000);
+    setTimeout(sensorsActionProcess, 10000);
+    //setTimeout(sensorsActionProcess,450000);
 };
 
 sensorsActionProcess();
 
+/*const externalActionsObj = require('./externalactions');
+
+let twitterActionTrends = function () {
+    console.log("Verificando Trends");
+
+    let params = {
+        requestedApi: 'trends',
+        apiService: 'twitter',
+        parameters: {
+            id: 1
+        }
+    };
+
+    if (externalActionsObj.apiRequest(params))
+        setTimeout(twitterActionTrends,1800000);
+    else
+        setTimeout(twitterActionTrends,5000);
+};
+
+//twitterActionTrends();
+
+let twitterActionSearch = function () {
+    console.log("Verificando Tweets");
+
+    let params = {
+        requestedApi: 'search',
+        apiService: 'twitter',
+        parameters: {
+            q: "#cacaushow"
+        }
+    };
+
+    if (externalActionsObj.apiRequest(params))
+        setTimeout(twitterActionSearch,1800000);
+    else
+        setTimeout(twitterActionSearch,5000);
+};
+
+//twitterActionSearch();
+
+let googleActionTrends = function () {
+    console.log("Verificando Google Trends");
+
+    let params = {
+        requestedApi: 'interestByRegion',
+        apiService: 'google',
+        parameters: {
+            keyword: "cacau show",
+            geo: "BR-SP"
+        }
+    };
+
+    if (externalActionsObj.apiRequest(params))
+        setTimeout(googleActionTrends,1800000);
+    else
+        setTimeout(googleActionTrends,5000);
+};
+
+
+
+googleActionTrends();
+*/
 /*const facebookActionsObj = require('./facebookactions');
 const twitterActionsObj = require('./twitteractions');
 

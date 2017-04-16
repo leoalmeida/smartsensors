@@ -3,8 +3,20 @@
 const funclist = require('express').Router();
 
 const db = require('../db');
+const externalActionsObj = require('./externalactions');
 
 let sensors={}, recipes={}, actuators={}, info={};
+
+let external={
+    facebook:"",
+    google:{
+        interestByRegion:[],
+        interestOverTime:[],
+        relatedQueries:[],
+        relatedTopics:[]
+    },
+    twitter:""
+}
 
 let runactions = false;
 
@@ -18,28 +30,31 @@ db.ref('configurations/runactions')
         runactions = true;
     });
 
-db.ref('recipes/public/')
-    .on("child_added", function (snapshot) {
-        let item = snapshot.val() ;
-        //console.log("ValRecipe: " + snapshot.key + "\n");
-        if (!item.enabled) return;
-        recipes[snapshot.key] = item;
-    });
+let objectsRef = db.ref()
+    .child("objects")
+    .orderByChild("otype");
 
-db.ref('recipes/public/')
-    .on("child_changed", function (snapshot) {
+let recipesRef = objectsRef.equalTo("recipe");
+recipesRef.on("child_added", function (snapshot) {
+    let item = snapshot.val() ;
+    //console.log("ValRecipe: " + snapshot.key + "\n");
+    if (!item.enabled) return;
+    recipes[snapshot.key] = item;
+});
+recipesRef.on("child_changed", function (snapshot) {
         let item = snapshot.val() ;
         //console.log("ValRecipe: " + JSON.stringify(item) + "\n");
         if (!item.enabled) delete recipes[item.key];
         else recipes[item.key] = item;
     });
-db.ref('recipes/public/')
-    .on("child_removed", function (snapshot) {
+recipesRef.on("child_removed", function (snapshot) {
     let item = snapshot.val() ;
     //console.log("ValRecipe: " + JSON.stringify(item) + "\n");
     //if (!recipes.enabled) return;
     recipes.splice(recipes.indexOf(item.key), 1);
 });
+
+//let actuatorsRef = objectsRef.equalTo("actuator");
 
 db.ref('actuators/public/')
     .on("child_added", function (snapshot) {
@@ -63,6 +78,8 @@ db.ref('actuators/public/')
     actuators.splice(actuators.indexOf(item.key), 1);
 });
 
+//let sensorsRef = objectsRef.equalTo("sensor");
+
 db.ref('sensors/public/')
     .on("child_added", function (snapshot) {
         let item = snapshot.val() ;
@@ -85,6 +102,45 @@ db.ref('sensors/public/')
         sensors.splice(sensors.indexOf(item.key), 1);
     });
 
+
+/*
+db.ref('external/google/interestByRegion')
+    .on("child_added", function (snapshot) {
+        let added = snapshot.val();
+        for (let item of added) {
+            console.log("ValGoogle interestByRegion: " + item.geoName + " - " + JSON.stringify(item) + "\n");
+            external.google.interestByRegion[item.geoName] = item;
+        }
+    });
+db.ref('external/google/interestOverTime')
+    .on("child_added", function (snapshot) {
+        let added = snapshot.val();
+        for (let item of added) {
+            console.log("ValGoogle interestOverTime: " + item.geoName + " - " + JSON.stringify(item) + "\n");
+            external.google.interestOverTime = item;
+        }
+    });
+db.ref('external/google/relatedQueries')
+    .on("child_added", function (snapshot) {
+        let added = snapshot.val();
+        for (let item of added) {
+            console.log("ValGoogle relatedQueries: " + item.geoName + " - " + JSON.stringify(item) + "\n");
+            external.google.relatedQueries = item;
+        }
+    });
+db.ref('external/google/relatedTopics')
+    .on("child_added", function (snapshot) {
+        let added = snapshot.val();
+        for (let item of added) {
+            console.log("ValGoogle relatedTopics: " + item.geoName + " - " + JSON.stringify(item) + "\n");
+            external.google.relatedTopics = item;
+        }
+    });
+
+*/
+
+//let sensorsRef = objectsRef.equalTo("sensor");
+
 db.ref('info/public/')
     .on("child_added", function (snapshot) {
         let item = snapshot.val() ;
@@ -92,6 +148,7 @@ db.ref('info/public/')
         //console.log("ValSensor: " + snapshot.key + " - " + JSON.stringify(item) + "\n");
         info[snapshot.key] = item;
     });
+
 db.ref('info/public/')
     .on("child_changed", function (snapshot) {
         let item = snapshot.val() ;
@@ -103,20 +160,6 @@ db.ref('info/public/')
     .on("child_removed", function (snapshot) {
         delete info[snapshot.key];
     });
-
-/*refAllSensors = db.ref('sensors/').on("child_added", function (snapshot) {
-    let item = [];
-    item.push(snapshot.val());
-
-    //console.log("--> New Sensor: " + JSON.stringify(item) + "\n");
-
-    publicSensFilter(allSensors, item, [{"column": "enabled","value": true}]);
-    publicSensFilter(allActuators, item, [{"column": "enabled","value": true}]);
-
-    //console.log("--> New Sensors: " + JSON.stringify(allSensors) + "\n");
-    //console.log("--> New Actuators: " + JSON.stringify(allActuators) + "\n");
-});
-*/
 
 var createAlert = function (recipeKey, itemKey, alertinfo) {
     let alert = {
@@ -181,6 +224,7 @@ var actuatorPerformAction = function (key, changes) {
 };
 
 var validateAllData = function () {
+    console.log("Recipes: "+ Object.keys(recipes).length);
     console.log("Sensores: "+ Object.keys(sensors).length);
     console.log("Atuadores: "+Object.keys(actuators).length);
     if (!Object.keys(sensors).length || !Object.keys(actuators).length) return false;
@@ -199,6 +243,18 @@ var validateActuator = function (value) {
     console.log("Actuator: "+  JSON.stringify(actuator));
     if (!actuator || !actuator.connected) return false;
     else return true;
+};
+
+var requestExternalReadings = function (item) {
+    console.log("Verificando Google Trends");
+
+    let params = {
+        requestedApi: item.searchOption,
+        apiService: item.type,
+        parameters: item.parameters
+    };
+
+    return externalActionsObj.apiRequest(params);
 };
 
 var getSensorReadings = function (value) {
@@ -220,7 +276,7 @@ var processFormula = function (recipe) {
     for (let item  of recipe.ruleContainer) {
         //process.stdout.write("Type: " + item.type.value + '\n');
         let sentenceResult = false;
-        switch (item.type){
+        switch (item.type) {
             case "separador":
                 rootSentence = (rootSentence = false);
                 continue;
@@ -230,64 +286,78 @@ var processFormula = function (recipe) {
                     else sentenceQue.push(item.label);
                 sentenceOperator = item.label;
                 continue;
-            case "valor":
-                sentenceAttributes.push(item.value);
+            case "google":
+                let googleVal = requestExternalReadings(item);
+                console.log("Valor: " + JSON.stringify(googleVal));
+                let results = false;
+                let foundItem = -1;
+                for (let externalResponse of external[item.type][item.searchOption]){
+                    for (let value in item.responseParameters) {
+                        results = evaluate(externalResponse[item.responseParameters[value].column],
+                            item.responseParameters[value].value,
+                            item.responseParameters[value].connector);
+                        if (results) foundItem = value;
+                    }
+                    if (foundItem) break;
+                }
+                sentenceAttributes.push(results);
                 break;
             case "sensor":
                 if (!validateSensor(item.key)){
                     return false;
                 }
                 let readings = getSensorReadings(item.key);
-                sentenceAttributes.push(readings[item.evaluatedAttribute]);
+                sentenceAttributes.push(evaluate(readings[item.evaluated.attribute], item.evaluated.value, item.evaluated.connector));
                 break;
             default:
                 return false;
         };
 
-        if (sentenceAttributes.length == 2) {
-            switch (sentenceOperator){
-                case "GT":
-                    sentenceResult = (sentenceAttributes[0] > sentenceAttributes[1]);
+        if (rootSentence)
+            sentenceQue.push(sentenceResult);
+        else if (sentenceArray.length > 0) {
+            switch (sentenceArray[1]) {
+                case "AND":
+                    sentenceResult = (sentenceArray[0] && sentenceResult);
                     break;
-                case "GE":
-                    sentenceResult = (sentenceAttributes[0] >= sentenceAttributes[1]);
+                case "OR":
+                    sentenceResult = (sentenceArray[0] || sentenceResult);
                     break;
-                case "LT":
-                    sentenceResult = (sentenceAttributes[0] < sentenceAttributes[1]);
+                case "NOT":
                     break;
-                case "LE":
-                    sentenceResult = (sentenceAttributes[0] <= sentenceAttributes[1]);
-                    break;
-                case "EQ":
-                    sentenceResult = (sentenceAttributes[0] == sentenceAttributes[1]);
-                    break;
-                case "NE":
-                    sentenceResult = (sentenceAttributes[0] != sentenceAttributes[1]);
-                    break;
+                default:
+                    return false;
             }
-            if (rootSentence)
-                sentenceQue.push(sentenceResult);
-            else if (sentenceArray.length > 0) {
-                switch (sentenceArray[1]) {
-                    case "AND":
-                        sentenceResult = (sentenceArray[0] && sentenceResult);
-                        break;
-                    case "OR":
-                        sentenceResult = (sentenceArray[0] || sentenceResult);
-                        break;
-                    case "NOT":
-                        break;
-                    default:
-                        return false;
-                }
-                sentenceQue.push(sentenceResult);
-                sentenceArray = [];
-            } else{
-                sentenceArray.push(sentenceResult);
-            }
+            sentenceQue.push(sentenceResult);
+            sentenceArray = [];
+        } else{
+            sentenceArray.push(sentenceResult);
         }
     }
 };
+
+function evaluate(firstAttr, secondAttr, sentenceOperator) {
+    switch (sentenceOperator){
+        case "GT":
+            retutn (firstAttr > secondAttr);
+            break;
+        case "GE":
+            retutn (firstAttr >= secondAttr);
+            break;
+        case "LT":
+            retutn (firstAttr < secondAttr);
+            break;
+        case "LE":
+            retutn (firstAttr <= secondAttr);
+            break;
+        case "EQ":
+            retutn (firstAttr == secondAttr);
+            break;
+        case "NE":
+            return (firstAttr != secondAttr);
+            break;
+    }
+}
 
 funclist.processAllRecipes = function () {
 
