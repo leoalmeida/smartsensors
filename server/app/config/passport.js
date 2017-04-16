@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var User = require('../models/userModel');
 var local = require('./passport/local');
-//var google = require('./passport/google');
-//var facebook = require('./passport/facebook');
+var google = require('./passport/google');
+var facebook = require('./passport/facebook');
 //var twitter = require('./passport/twitter');
 //var linkedin = require('./passport/linkedin');
 
@@ -31,10 +31,10 @@ module.exports = function(passport){
 
 	// use these strategies
 	passport.use('local-signup',local.signup);
-  passport.use('local-login',local.login);
+        passport.use('local-login',local.login);
 
-	//passport.use(google);
-	//passport.use('facebook',facebook);
+	passport.use(google);
+	passport.use('facebook',facebook);
 	//passport.use('twitter',twitter);
 	//passport.use(linkedin);
 };
