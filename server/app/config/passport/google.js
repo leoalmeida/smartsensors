@@ -1,5 +1,5 @@
 var passport = require('passport');
-var TwitterStrategy = require(passport-google-oauth2').Strategy;
+var GoogleStrategy = require(passport-google-oauth2').Strategy;
 
 var User = require('User');
 //var config = require('../_config');
