@@ -2,6 +2,8 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var bcrypt = require("bcrypt-nodejs");
+const passportLocalMongoose = require('passport-local-mongoose');
+
 // User schema
 var UserSchema = new Schema({
    name: { type: String, default: '' },
@@ -20,6 +22,8 @@ var UserSchema = new Schema({
        password: String
    }
 });
+
+UserSchema.plugin(passportLocalMongoose);
 
 // Bcrypt middleware on UserSchema
 /*UserSchema.pre('save', function(next) {

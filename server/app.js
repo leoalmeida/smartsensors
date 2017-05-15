@@ -25,8 +25,9 @@ console.log('host address: ' + host);
 ////////////////////////////////////////////////////////////////
 
 // Application config
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
+//app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 ////////////////////////////////////////////////////////////////
@@ -40,7 +41,7 @@ app.set('view engine', 'ejs'); // set up ejs for templating
 app.use(session({
 	secret: 'keepthisstringsecret',
 	resave: true,
-	saveUninitialized: false
+	saveUninitialized: true
 	})
 ); // session secret
 app.use(passport.initialize());
