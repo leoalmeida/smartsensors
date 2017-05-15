@@ -4,27 +4,7 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 const ctrl = {};
 
-ctrl.getAll = (req, res) => {
-  User.getAll(req.query)
-      .then(data => {
-        return res.status(200).send(data);
-      })
-      .catch(err => {
-        return res.status(500).send(err);
-      });
-};
-
-ctrl.getById = (req, res) => {
-  User.getById(req.params.id)
-    .then(data => {
-      return res.status(200).send(data);
-    })
-    .catch(err => {
-      return res.status(500).send(err);
-    });
-};
-
-ctrl.create = (req, res) => {
+ctrl.createProfile = (req, res) => {
   User.create(req.body)
     .then(data => {
       return res.status(201).send(data);
@@ -34,7 +14,7 @@ ctrl.create = (req, res) => {
     });
 };
 
-ctrl.update = (req, res) => {
+ctrl.updateProfile = (req, res) => {
   User.update(req.params.id, req.body)
     .then(data => {
       return res.status(200).send(data);
@@ -44,8 +24,9 @@ ctrl.update = (req, res) => {
     });
 };
 
-ctrl.remove = (req, res) => {
-  User.remove(req.params.id)
+
+ctrl.removeUser = (req, res) => {
+  User.remove(req.params.key)
     .then(data => {
       return res.status(200).send(data);
     })
@@ -53,5 +34,6 @@ ctrl.remove = (req, res) => {
       return res.status(400).send(err);
     });
 };
+
 
 module.exports = ctrl;

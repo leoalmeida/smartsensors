@@ -20,7 +20,7 @@ ctrl.getContract = (req, res, next) => {
 };
 
 ctrl.getAll = (req, res, next) => {
-  AssociationModel.find({type: "association"}, (err, data) => {
+  AssociationModel.find({"type": "association"}, (err, data) => {
      console.log("err" + err);
      if (err){
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
@@ -28,7 +28,7 @@ ctrl.getAll = (req, res, next) => {
      if (!data) {
        return next({ data: err, code: 404, messageKeys: ['not-found'] });
      }
-     console.log(data);
+     console.log("getAll request");
      return res.status(200).send(data);
    });
 };
@@ -43,14 +43,14 @@ ctrl.getById = (req, res, next) => {
       if (!data) {
         return next({ data: data, code: 404, messageKeys: ['not-found'] });
       }
-      console.log("data" + data);
+      console.log("getById request");
       //.once("value", data => {
       return res.status(200).send(data);
   });
 };
 
 ctrl.getByType = (req, res, next) => {
-  AssociationModel.find({ subtype: req.params.subtype}, function(err, data) {
+  AssociationModel.find({ "subtype": req.params.subtype}, function(err, data) {
     console.log("err" + err);
     if (err){
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
@@ -58,7 +58,7 @@ ctrl.getByType = (req, res, next) => {
     if (!data) {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
-    console.log("data" + data);
+    console.log("getByType request");
     //.once("value", data => {
     return res.status(200).send(data);
   });
@@ -66,7 +66,7 @@ ctrl.getByType = (req, res, next) => {
 
 
 ctrl.getByAssociationKey = (req, res, next) => {
-  AssociationModel.find({ key: req.params.id}, function(err, data) {
+  AssociationModel.find({ "key": req.params.key}, function(err, data) {
     console.log("err" + err);
     if (err){
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
@@ -74,14 +74,14 @@ ctrl.getByAssociationKey = (req, res, next) => {
     if (!data) {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
-    console.log("data" + data);
+    console.log("getByAssociationKey request");
     //.once("value", data => {
     return res.status(200).send(data);
   });
 };
 
 ctrl.getAssociationsByLastVerticeId = (req, res, next) => {
-  AssociationModel.find({ previous: req.params.id, subtype: req.params.subtype}, function(err, data) {
+  AssociationModel.find({ "relations.previous": req.params.id, "subtype": req.params.subtype}, function(err, data) {
     console.log("err" + err);
     if (err){
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
@@ -89,14 +89,14 @@ ctrl.getAssociationsByLastVerticeId = (req, res, next) => {
     if (!data) {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
-    console.log("data" + data);
+    console.log("getAssociationsByLastVerticeId request");
     //.once("value", data => {
     return res.status(200).send(data);
   });
 };
 
 ctrl.getAssociationsByNextVerticeId = (req, res, next) => {
-  AssociationModel.find({ next: req.params.id, subtype: req.params.type}, function(err, data) {
+  AssociationModel.find({ "relations.next": req.params.id, "subtype": req.params.subtype}, function(err, data) {
     console.log("err" + err);
     if (err){
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
@@ -104,10 +104,58 @@ ctrl.getAssociationsByNextVerticeId = (req, res, next) => {
     if (!data) {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
-    console.log("data" + data);
+    console.log("getAssociationsByNextVerticeId request");
     //.once("value", data => {
     return res.status(200).send(data);
   });
 };
+
+ctrl.getByParentId = (req, res, next) => {
+  KnowledgeModel.find({ "parent": req.params.parent}, function(err, data) {
+    console.log("err" + err);
+    if (err){
+        return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    }
+    if (!data) {
+      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+    }
+    console.log("getByParentId request");
+    //.once("value", data => {
+    return res.status(200).send(data);
+  });
+};
+
+
+ctrl.getByPrevious = (req, res, next) => {
+  KnowledgeModel.find({ "previous": req.params.previous}, function(err, data) {
+    console.log("err" + err);
+    if (err){
+        return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    }
+    if (!data) {
+      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+    }
+    console.log("getByPrevious request");
+    //.once("value", data => {
+    return res.status(200).send(data);
+  });
+};
+
+ctrl.getByNext = (req, res, next) => {
+  KnowledgeModel.find({ "next": req.params.next}, function(err, data) {
+    console.log("err" + err);
+    if (err){
+        return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    }
+    if (!data) {
+      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+    }
+    console.log("getByNext request");
+    //.once("value", data => {
+    return res.status(200).send(data);
+  });
+};
+
+
 
 module.exports = ctrl;

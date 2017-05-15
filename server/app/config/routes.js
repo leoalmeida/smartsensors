@@ -12,13 +12,14 @@ module.exports = function (app,passport){
       //configure public folders
       //app.use('/', express.static(path.resolve('wwwroot', '../web/src')));
       app.use('/', app.routes.index);
-      app.use('/users', app.routes.user);
+      app.use('/profile', app.routes.profile);
       //app.use('/graph', app.routes.graph);
       //app.use('/retrieve', app.routes.retrieve);
       app.use('/context', app.routes.context);
-      app.use('/knowledge', app.routes.knowledge);
+      app.use('/reference', app.routes.reference);
       app.use('/object', app.routes.object);
       app.use('/association', app.routes.association);
+      app.use('/knowledge', app.routes.knowledge);
       //app.use('/trigger', app.routes.trigger);
       //app.use('/remove', app.routes.remove);
 

@@ -9,11 +9,13 @@ module.exports = function(app){
   router.get('/all', ctrl.getAll);
   //router.get('/bylast/:id/:type', ctrl.getAssociationsByLastVerticeId);
   //router.get('/bynext/:id/:type', ctrl.getAssociationsByNextVerticeId);
-  router.get('/key/:id', ctrl.getById);
+  router.get('/one/:id', ctrl.getById);
+  router.get('/:key', ctrl.getByAssociationKey);
   router.get('/:subtype/all', ctrl.getByType);
+  router.get('/:subtype/:key', ctrl.getByType);
   router.get('/:subtype/last/:id', ctrl.getAssociationsByLastVerticeId);
   router.get('/:subtype/next/:id', ctrl.getAssociationsByNextVerticeId);
-  router.get('/:id', ctrl.getByAssociationKey);
+
 
   //router.post('/apis/association', ctrl.create);
   //router.put('/apis/association/:id', ctrl.update);

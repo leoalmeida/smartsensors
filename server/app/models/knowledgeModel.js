@@ -2,26 +2,9 @@
 
 const mongoose = require('mongoose');
 const KnowledgeSchema = new mongoose.Schema({
-  abstraction: {
-    type: String,
-    default: ""
-  },
-  previous: {
-    type: String,
-    default: ""
-  },
-  next: {
-    type: String,
-    default: ""
-  },
-  parent: {
-    type: String,
-    default: ""
-  },
-  direction: {
-    type: String,
-    enum: ['all','one'],
-    required: true
+  relations: {
+    type: mongoose.Schema.Types.Mixed,
+    default: ''
   },
   data: {
     type: mongoose.Schema.Types.Mixed,
@@ -32,10 +15,10 @@ const KnowledgeSchema = new mongoose.Schema({
     enum: ['association','object'],
     required: true
   },
-  types: {
-    type: Array,
-    default: '',
-    trim: true
+  subtype: {
+    type: String,
+    enum: ['profile','social','actuator','sensor','topic','sink','own','connected','notify','publish'],
+    required: true
   },
   version: {
     type: String,
@@ -54,6 +37,34 @@ KnowledgeSchema.methods = {
     return Knowledge.findOne({ _id });
   },
 
+  getKnowledgeByType: (_type) => {
+    return Knowledge.findOne({ "type": _type });
+  },
+
+  getKnowledgeBySubtype: (_subtype) => {
+    return Knowledge.findOne({ "subtype": _subtype });
+  },
+
+  getKnowledgeByKey: (_key) => {
+    return Knowledge.findOne({ "key": _key });
+  },
+
+  getKnowledgeBySubtypeKey: (_key, _subtype) => {
+    return Knowledge.find({"key": _key, "subtype": _subtype});
+  },
+
+  getKnowledgeByTypeKey: (_key, _type) => {
+    return Knowledge.find({"key": _key, "type": _type});
+  },
+
+  getKnowledgeByTypeSubtype: (_type, _subtype) => {
+    return Knowledge.find({"type": _type, "subtype": _subtype});
+  },
+
+  getKnowledgeByTypeSubtypeKey: ( _key, _type, _subtype ) => {
+    return Knowledge.find({"key": _key, "type": _type, "subtype": _subtype});
+  },
+
   create: (transaction) => {
     return Knowledge.create(transaction);
   },
@@ -63,8 +74,13 @@ KnowledgeSchema.methods = {
   },
 
   remove: (_id) => {
-    return Knowledge.update({ _id }, {active: false});
+    return Knowledge.remove({ _id }, {active: false});
+  },
+
+  archive: (_key) => {
+    return Knowledge.update({ "key": _key }, {active: false});
   }
+
 }
 
 mongoose.model('Knowledge', KnowledgeSchema);

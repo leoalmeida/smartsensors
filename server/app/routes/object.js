@@ -29,9 +29,10 @@ module.exports = function(app){
   //router.get('/bykey/:id', ctrl.getById);
   //router.get('/:id', ctrl.getAllFromObjId);
 
-  router.get('/key/:id', ctrl.getById);
+  router.get('/one/:id', ctrl.getById);
+  router.get('/:key', ctrl.getAllFromObjKey);
   router.get('/:subtype/all', ctrl.getAllFromObjType);
-  router.get('/:id', ctrl.getAllFromObjId);
+  router.get('/:subtype/:key', ctrl.getAllFromObjTypeKey);
 
   //router.post('/apis/association', ctrl.create);
   //router.put('/apis/association/:id', ctrl.update);

@@ -52,8 +52,8 @@ ctrl.getById = (req, res, next) => {
   });
 };
 
-ctrl.getAllFromObjId = (req, res, next) => {
-  ObjectModel.find({ key: req.params.id}, function(err, data) {
+ctrl.getAllFromObjKey = (req, res, next) => {
+  ObjectModel.find({ key: req.params.key}, function(err, data) {
     console.log("err" + err);
     if (err){
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
@@ -69,6 +69,21 @@ ctrl.getAllFromObjId = (req, res, next) => {
 
 ctrl.getAllFromObjType = (req, res, next) => {
   ObjectModel.find({ subtype: req.params.subtype}, function(err, data) {
+    console.log("err" + err);
+    if (err){
+        return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    }
+    if (!data) {
+      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+    }
+    console.log("data" + data);
+    //.once("value", data => {
+    return res.status(200).send(data);
+  });
+};
+
+ctrl.getAllFromObjTypeKey = (req, res, next) => {
+  ObjectModel.find({ subtype: req.params.subtype, key: req.params.key}, function(err, data) {
     console.log("err" + err);
     if (err){
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
