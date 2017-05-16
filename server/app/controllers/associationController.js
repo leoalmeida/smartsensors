@@ -13,7 +13,7 @@ const contract = [
 
 ctrl.getContract = (req, res, next) => {
     if (contract)
-        return res.status(200).send(contract);
+        return res.status(200).json(contract);
     else
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
 
@@ -29,7 +29,7 @@ ctrl.getAll = (req, res, next) => {
        return next({ data: err, code: 404, messageKeys: ['not-found'] });
      }
      console.log("getAll request");
-     return res.status(200).send(data);
+     return res.status(200).json(data);
    });
 };
 
@@ -45,7 +45,7 @@ ctrl.getById = (req, res, next) => {
       }
       console.log("getById request");
       //.once("value", data => {
-      return res.status(200).send(data);
+      return res.status(200).json(data);
   });
 };
 
@@ -60,7 +60,7 @@ ctrl.getByType = (req, res, next) => {
     }
     console.log("getByType request");
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 
@@ -76,7 +76,7 @@ ctrl.getByAssociationKey = (req, res, next) => {
     }
     console.log("getByAssociationKey request");
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 
@@ -91,7 +91,7 @@ ctrl.getAssociationsByLastVerticeId = (req, res, next) => {
     }
     console.log("getAssociationsByLastVerticeId request");
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 
@@ -106,7 +106,7 @@ ctrl.getAssociationsByNextVerticeId = (req, res, next) => {
     }
     console.log("getAssociationsByNextVerticeId request");
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 
@@ -121,7 +121,7 @@ ctrl.getByParentId = (req, res, next) => {
     }
     console.log("getByParentId request");
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 
@@ -137,7 +137,7 @@ ctrl.getByPrevious = (req, res, next) => {
     }
     console.log("getByPrevious request");
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 
@@ -152,7 +152,7 @@ ctrl.getByNext = (req, res, next) => {
     }
     console.log("getByNext request");
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 

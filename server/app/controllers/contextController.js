@@ -13,7 +13,7 @@ const contract = [
 
 ctrl.getContract = (req, res, next) => {
     if (contract)
-        return res.status(200).send(contract);
+        return res.status(200).json(contract);
     else
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
 
@@ -29,7 +29,7 @@ ctrl.getAll = (req, res, next) => {
            return next({ data: err, code: 404, messageKeys: ['not-found'] });
          }
          console.log(data);
-         return res.status(200).send(data);
+         return res.status(200).json(data);
        });
 };
 
@@ -45,7 +45,7 @@ ctrl.getById = (req, res, next) => {
       }
       console.log("data" + data);
       //.once("value", data => {
-      return res.status(200).send(data);
+      return res.status(200).json(data);
   });
 };
 
@@ -60,7 +60,7 @@ ctrl.getByType = (req, res, next) => {
     }
     console.log("data" + data);
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 
@@ -75,7 +75,7 @@ ctrl.getByParent = (req, res, next) => {
     }
     console.log("data" + data);
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 
@@ -90,7 +90,7 @@ ctrl.getByName = (req, res, next) => {
     }
     console.log("data" + data);
     //.once("value", data => {
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   });
 };
 

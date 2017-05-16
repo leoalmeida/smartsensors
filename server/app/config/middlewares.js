@@ -9,10 +9,13 @@ var express = require('express')
     , multer = require('multer')
     //, load = require('express-load')
     //var config = require('config')
+//    , auth = require('../middlewares/auth')
     , pkg = require('../../package.json');
 
 
 var env = process.env.NODE_ENV || 'development';
+
+
 
 module.exports = function (app){
   //load("middlewares", {cwd: 'server/app', verbose:true})
@@ -32,7 +35,7 @@ app.use(cookieParser());
 
 // configure Middlewares
 app.use(require('../middlewares/i18n'));
-//app.use(require('./middlewares/auth-middleware'));
+app.use(require('../middlewares/auth'));
 
 // Config Error Handdler
 app.use(require('../middlewares/error'));

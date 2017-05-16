@@ -4,5 +4,6 @@
   "invalid-token": "Session expired. Start a new session before request again.",
   "invalid-conntrigger": "Invalid parameter. 'connect' is the only valid parameter for this session.",
   "board-error": "Failed to start the required board, try again.",
-  "timeout10": "Timeout fired after 10s"
+  "invalid-credentials": "Invalid Credentials",
+  "not-connected": "Not connected"
 }

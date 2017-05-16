@@ -1,13 +1,10 @@
 var mongoose = require('mongoose');
-var User = require('../models/userModel');
+var Profile = mongoose.model('Profile');
 var local = require('./passport/local');
-var google = require('./passport/google');
-var facebook = require('./passport/facebook');
+//var google = require('./passport/google');
+//var facebook = require('./passport/facebook');
 //var twitter = require('./passport/twitter');
 //var linkedin = require('./passport/linkedin');
-
-
-
 
 module.exports = function(passport){
 	/*
@@ -17,24 +14,24 @@ module.exports = function(passport){
 	*/
 
 	//used to serialize the user for the session
-	passport.serializeUser(function(user, done) {
-		 done(null, user.id)
+	passport.serializeUser(function(profile, done) {
+		 done(null, profile.id)
 	});
 
 	//used to deserialize the user
 	passport.deserializeUser(function(id, done) {
-		User.findById(id, function (err, user) {
-			done(err, user)
+		Profile.findById(id, function (err, profile) {
+			done(err, profile)
 		})
 	});
 
 
 	// use these strategies
 	passport.use('local-signup',local.signup);
-        passport.use('local-login',local.login);
+  passport.use('local-login',local.login);
 
-	passport.use(google);
-	passport.use('facebook',facebook);
+	//passport.use(google);
+	//passport.use('facebook',facebook);
 	//passport.use('twitter',twitter);
 	//passport.use(linkedin);
 };

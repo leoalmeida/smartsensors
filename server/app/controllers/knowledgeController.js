@@ -25,7 +25,7 @@ const contract = [
 
 ctrl.getContract = (req, res, next) => {
     if (contract)
-        return res.status(200).send(contract);
+        return res.status(200).json(contract);
     else
         return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
 
@@ -37,7 +37,7 @@ ctrl.getAll = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getAll request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -52,7 +52,7 @@ ctrl.getById = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getById request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -66,7 +66,7 @@ ctrl.getKnowledgeByType = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getKnowledgeByType request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -80,7 +80,7 @@ ctrl.getKnowledgeBySubtype = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getKnowledgeBySubtype request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -94,7 +94,7 @@ ctrl.getKnowledgeByKey = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getKnowledgeByKey request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -108,7 +108,7 @@ ctrl.getKnowledgeBySubtypeKey = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getKnowledgeBySubtypeKey request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -122,7 +122,7 @@ ctrl.getKnowledgeByTypeKey = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getKnowledgeByTypeKey request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -136,7 +136,7 @@ ctrl.getKnowledgeByTypeSubtype = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getKnowledgeByTypeSubtype request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -150,7 +150,7 @@ ctrl.getKnowledgeByTypeSubtypeKey = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getKnowledgeByTypeSubtypeKey request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -171,7 +171,7 @@ ctrl.getKnowledgeByData = (req, res, next) => {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("data" + data);
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
@@ -182,7 +182,7 @@ ctrl.getKnowledgeByData = (req, res, next) => {
 ctrl.remove = (req, res, next) => {
   KnowledgeModel.remove(req.params).then(data => {
     console.log("remove request");
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   })
   .catch(err => {
     return next({ data: err, code: 400, messageKeys: ['validation-error'] });
@@ -204,7 +204,7 @@ ctrl.update = (req, res) => {
   KnowledgeModel.update(req.params.id, req.body)
     .then(data => {
       console.log("update request");
-      return res.status(200).send(data);
+      return res.status(200).json(data);
     })
     .catch(err => {
       return res.status(400).send(err);
@@ -224,7 +224,7 @@ ctrl.updateAttribute = (req, res) => {
   console.log("update request");
   KnowledgeModel.update({_id: req.params.id}, {"$set": expression})
     .then(data => {
-      return res.status(200).send(data);
+      return res.status(200).json(data);
     })
     .catch(err => {
       return res.status(400).send(err);

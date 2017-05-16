@@ -1,33 +1,35 @@
 'use strict'
+var passport = require('passport');
 
 const router = require('express').Router();
 
 module.exports = function(app){
   const ctrl = app.controllers.knowledgeController;
 
-  router.get('/', ctrl.getContract);
+  router.get('/', passport.authenticate('local-login'), ctrl.getContract);
 
-  router.get('/all', ctrl.getAll);
-  router.get('/all/:subtype/:key', ctrl.getKnowledgeBySubtypeKey);
-  router.get('/data/:query/:value', ctrl.getKnowledgeByData);
-  router.get('/key/:key', ctrl.getKnowledgeByKey);
-  router.get('/subtype/:subtype', ctrl.getKnowledgeBySubtype);
-  router.get('/type/:type', ctrl.getKnowledgeByType);
-  router.get('/type/:type/:key', ctrl.getKnowledgeByTypeKey);
+  router.get('/all', passport.authenticate('local-login'), ctrl.getAll);
+  router.get('/all/:subtype/:key', passport.authenticate('local-login'), ctrl.getKnowledgeBySubtypeKey);
+  router.get('/data/:query/:value', passport.authenticate('local-login'), ctrl.getKnowledgeByData);
+  router.get('/key/:key', passport.authenticate('local-login'), ctrl.getKnowledgeByKey);
+  router.get('/subtype/:subtype', passport.authenticate('local-login'), ctrl.getKnowledgeBySubtype);
+  router.get('/type/:type', passport.authenticate('local-login'), ctrl.getKnowledgeByType);
+  router.get('/type/:type/:key', passport.authenticate('local-login'), ctrl.getKnowledgeByTypeKey);
 
-  router.get('/:id', ctrl.getById);
-  router.get('/:type/:subtype', ctrl.getKnowledgeByTypeSubtype);
-  router.get('/:type/:subtype/:key', ctrl.getKnowledgeByTypeSubtypeKey);
+  router.get('/:id', passport.authenticate('local-login'), ctrl.getById);
+  router.get('/:type/:subtype', passport.authenticate('local-login'), ctrl.getKnowledgeByTypeSubtype);
+  router.get('/:type/:subtype/:key', passport.authenticate('local-login'), ctrl.getKnowledgeByTypeSubtypeKey);
 
   //router.put('/:id', ctrl.update);
-  router.post('/:id', ctrl.updateAttribute);
 
-  router.delete('/:id', ctrl.remove);
-  router.delete('/all/:key', ctrl.remove);
-  router.delete('/:id/:query', ctrl.removeAttribute);
-  router.delete('/:type/:subtype/:key', ctrl.remove);
+  router.post('/:id', passport.authenticate('local'), ctrl.updateAttribute);
 
-  router.put('/:type/:subtype/:key', ctrl.create);
+  router.delete('/:id', passport.authenticate('local-login'), ctrl.remove);
+  router.delete('/all/:key', passport.authenticate('local-login'), ctrl.remove);
+  router.delete('/:id/:query', passport.authenticate('local-login'), ctrl.removeAttribute);
+  router.delete('/:type/:subtype/:key', passport.authenticate('local-login'), ctrl.remove);
+
+  router.put('/:type/:subtype/:key', passport.authenticate('local-login'), ctrl.create);
 
   //router.post('/apis/association', ctrl.create);
   //router.put('/apis/association/:id', ctrl.update);

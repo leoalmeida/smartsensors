@@ -1,76 +1,82 @@
 var mongoose = require('mongoose');
-var User = mongoose.model('User');
+var Profile = mongoose.model('Profile');
 var LocalStrategy   = require('passport-local').Strategy;
 
-module.exports.signup = new LocalStrategy({
-	// by default, local strategy uses username and password, we will override with email
-	usernameField : 'inputUsername',
-	passwordField : 'inputPassword',
-	passReqToCallback : true // allows us to pass back the entire request to the callback
-	},
+module.exports.signup = new LocalStrategy({passReqToCallback : true},
 	function(req,username,password,done){
+	  //console.log(username);
 		// asynchronous
-		// User.findOne wont fire unless data is sent back
-		     console.log("start signup");
+		// Profile.findOne wont fire unless data is sent back
 		process.nextTick(function() {
-			// find a user whose email is the same as the forms email
-			// we are checking to see if the user trying to login already exists
-            console.log("antes find");
-			User.findOne({ 'local.user' :  username },function(err,user){
-			    console.log("dentro find");
-				if(err)
-					return done(err);
-				if(user){
-					return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+		// find a profilewhose email is the same as the forms email
+		// we are checking to see if the profile trying to login already exists
+			Profile.findOne({ 'username' :  username }).then(profile => {
+				console.log("dentro find profile: ", profile);
+	              // Profile. found
+				if(profile){
+					return done(null, false);
 				}else{
-					// if there is no user with that email
-					// create the user
-					var newUser            = new User();
-					// set the user's local credentials
-					newUser.local.user    = username;
-					newUser.local.password = newUser.generateHash(password);
-          newUser.displayName = username;//req.body.displayName;
-					// save the user
-					
-					console.log(newUser);
-					newUser.save(function(err) {
-					     if (err) throw err;
-						   return done(null, newUser);
+					// if there is no profile with that email
+					// create the profile
+					var newProfile = new Profile();
+					newProfile.set('password', password);
+
+					//console.log("pass: ", newProfile.password);
+					//console.log("hashed: ", newProfile.hashed_password);
+					// set the profile's local credentials
+	  			newProfile.username   	= username;
+	  			newProfile.displayName 	= req.body.displayName;
+	  			newProfile.email    		= req.body.email;
+	  			newProfile.name    		  = req.body.name;
+	  			newProfile.provider    	= req.body.provider;
+	  			newProfile.is_admin    	= req.body.is_admin;
+					//newProfile.authToken  = req.body.provider;
+	  			newProfile.profile_pic  = req.body.provider;
+	  			newProfile.created    	= Date.now();
+					// save the profile
+
+					//console.log(newProfile);
+					newProfile.save(function(err) {
+						console.log("err:", err);
+			    	if (err) throw err;
+				   	return done(null, newProfile);
 					});
 				}
-			});
+		  })
+		  .catch(err => {
+		    console.log("err---" + err);
+		    err.toString();
+		    return done(err);
+		  });
 		});
-	}
-);
+	});
 
-module.exports.login = new LocalStrategy({
-	// by default, local strategy uses username and password, we will override with email
-	usernameField : 'inputUsername',
-	passwordField : 'inputPassword',
-	passReqToCallback : true // allows us to pass back the entire request to the callback
-	},
+module.exports.login = new LocalStrategy({passReqToCallback : true},
 	function(req,username,password,done){
 		// asynchronous
-		// User.findOne wont fire unless data is sent back
+		// Profile.findOne wont fire unless data is sent back
+		//console.log("username: ", username);
+		//console.log("password: ", password);
 		process.nextTick(function() {
-			// find a user whose email is the same as the forms email
-			// we are checking to see if the user trying to login already exists
-			User.findOne({ 'local.user' :  username },function(err,user){
-				if(err)
-					return done(err);
-				//if no user is found, return the message
-				if(!user){
-					return done(null, false, req.flash('loginMessage', 'No user found.'));
+			// find a profile whose email is the same as the forms email
+			// we are checking to see if the profile trying to login already exists
+			Profile.findOne({ 'username' :  username }).then(profile => {
+				//console.log("profile: ", profile);
+				if(!profile){
+					return done(null, false);
 				}
-				if(!user.validPassword(password)){
-					// if there is user with that email, but password is wrong
-					return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); 
+				if(!profile.validatePassword(password)){
+					// if there is profile with that email, but password is wrong
+					return done(null, false);
 					// // create the loginMessage and save it to session as flashdata
 				}
-				 // all is well, return successful user
-				return done(null, user);
-			});
-		});
-	}
+				 // all is well, return successful profile
+				return done(null, profile);
 
-	);
+  		}).catch(err => {
+		    console.log("err---" + err);
+		    err.toString();
+		    return done(err);
+		  });
+		});
+	});

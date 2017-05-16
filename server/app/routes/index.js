@@ -10,22 +10,17 @@ module.exports = function(app){
     res.render('index', { title: 'teste',path : '../web/src/' });
   });
 
-  router.post('/users/create', passport.authenticate('local-signup', { successFlash: 'Welcome!' ,failureFlash: 'Invalid username or password.',successRedirect : '/profile',failureRedirect : '/signup', failureFlash : true  })); //Register
-  /*app.post('/create',passport.authenticate('local-signup',{
-                            successRedirect : '/profile', // redirect to the secure profile section
-                            failureRedirect : '/signup', // redirect back to the signup page if there is an error
-                            failureFlash : true // allow flash messages
-                          }));*/
+  router.post('/users/create', passport.authenticate('local-signup', { successFlash: 'Welcome!' ,failureFlash: 'Invalid username or password.',successRedirect : '/profile',failureRedirect : '/signup', failureFlash : true  }));
 
   router.post('/users/login', passport.authenticate('local-login',{
-       successRedirect : '/profile', // redirect to the secure profile section
-       failureRedirect : '/login', // redirect back to the signup page if there is an error
-       failureFlash : true // allow flash messages
+       successRedirect : '/profile',
+       failureRedirect : '/login',
+       failureFlash : true
     })); //Login
 
   // PROFILE SECTION we will want this protected so you have to be logged in to visit
   // we will use route middleware to verify this (the isLoggedIn function)
-  router.get('/profile', isLoggedIn, function(req, res) {
+  /*router.get('/profile', isLoggedIn, function(req, res) {
     res.render('profile.ejs', {
       user : req.user, // get the user out of session and pass to template
           title: "Kuwait Classified App",
@@ -33,7 +28,7 @@ module.exports = function(app){
           pp: 'hello pp',
           urlPath : '/profile'
     });
-  });
+  });*/
 
   // LOGOUT
   router.get('/logout', function(req, res) {

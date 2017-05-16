@@ -1,3 +1,0 @@
-/* - NodeJS */
-/* - NPM */
-/* - Módulos﻿ */

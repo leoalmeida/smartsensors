@@ -4,5 +4,7 @@
   "invalid-token": "Sessão expirada. Comece uma nova sessão antes de continuar.",
   "invalid-conntrigger": "Parâmetro solicitado inválido. Apenas parâmetro 'connect' é válido nessa sessão.",
   "board-error": "Ocorreu um erro ao inicializar placa, tente novamente.",
-  "timeout10": "Ocorreu timeout após 10s"
+  "timeout10": "Ocorreu timeout após 10s",
+  "invalid-credentials": "Credênciais inválidas",
+  "not-connected": "Usuário não conectado"
 }
