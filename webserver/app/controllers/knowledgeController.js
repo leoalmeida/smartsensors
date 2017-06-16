@@ -309,6 +309,7 @@ ctrl.updateAttribute = (req, res, next) => {
   for (let item of keys)
     expression["data."+item] = req.body[item];
 
+  expression["sync"] = Date.now();
 
   console.log("update request");
   KnowledgeModel.update({_id: req.params.id}, {"$set": expression})
@@ -424,7 +425,7 @@ ctrl.pushAttrInfo = (req, res, next) => {
     var expression = {};
     expression["data.info"] = req.body;
     expression["data.info"].name = req.params.name;
-    
+
     KnowledgeModel.update({ _id: req.params.id }, { $push: expression })
       .then(data => {
         console.log("create request");
@@ -583,7 +584,7 @@ ctrl.removeAttrInfo = (req, res , next) => {
   if (!req.params.name) return next({ data: req.params.name, code: 422, messageKeys: ['not-found'] });
 
   var expression = {};
-  expression["data.info"] = = {"name":req.params.name};
+  expression["data.info"] = {"name":req.params.name};
   console.log("delete info request");
   KnowledgeModel.update({_id: req.params.id}, {$pull: expression})
     .then(data => {
