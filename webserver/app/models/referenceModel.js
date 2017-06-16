@@ -2,95 +2,12 @@
 
 const mongoose = require('mongoose');
 const ReferenceSchema = new mongoose.Schema({
-  actuatorTypes: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  sensorTypes: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  signTypes: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  gatt: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  ledStyles: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  status: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  runaction: {
+  name:{
     type: String,
-    default: ''
+    required: true,
+    trim: true
   },
-  msg_status: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  pins: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  units: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  icons: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  types: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  states: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  country: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  addressTypes: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  localTypes: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  signTypes: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  alertTypes: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  searchOptionTypes: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  alertAttributes: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  alertAttributesValues: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  externalAPIs: {
-    type: mongoose.Schema.Types.Mixed,
-    default: ''
-  },
-  templates: {
+  values: {
     type: mongoose.Schema.Types.Mixed,
     default: ''
   }
