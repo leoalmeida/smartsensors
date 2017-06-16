@@ -1,21 +1,44 @@
 'use strict'
 
+const debug = require('debug')('smartsensors');
 const http = require('http');
-const port = process.env.PORT || 8080;
+const https = require('https');
+
+//const port = process.env.PORT || 8080;
+
 const app = require('../app');
-const httpServer = http.createServer(app);
+
+app.set('port', process.env.PORT || 3001);
+app.set('httpsport', process.env.PORT || 3002);
+
+
+//const httpServer = http.createServer(app);
+
+https.createServer(options, app).listen(app.get('httpsport'), function(){
+  console.log('Listen Https on port ' + app.get('httpsport'));
+});
 
 /* socket usage
     const getDecorateIO = require('./devices');
     const io = require('socket.io')(httpServer);
     var startBoard = getDecorateIO();
     startBoard(io);
-*/
+
 
 const server = httpServer.listen(port, function(){
     console.log('Listen on port ' + port);
 });
+*/
+const server = app.listen(app.get('port'), function() {
+  console.log('Express server is in '+process.env.NODE_ENV+' mode and listening on port ' + server.address().port);
 
+  var host = server.address().address;
+  var port = server.address().port;
+
+  console.log('Example app listening at http://%s:%s', host, port);
+});
+
+/*
 const actionsObj = require('./nodeactions');
 
 let sensorsActionProcess = function () {
@@ -32,7 +55,7 @@ let sensorsActionProcess = function () {
 };
 
 sensorsActionProcess();
-
+*/
 /*const externalActionsObj = require('./externalactions');
 
 let twitterActionTrends = function () {
