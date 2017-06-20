@@ -1,6 +1,6 @@
 var EtherPortClient = require("etherport-client").EtherPortClient;
 var five = require('johnny-five');
-//const db = require('../db');
+//const db = require('../../db');
 const mongoose = require('mongoose');
 var Knowledge = mongoose.model('Knowledge');
 var Messenger = mongoose.model('Messenger');
