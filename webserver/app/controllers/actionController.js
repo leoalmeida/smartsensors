@@ -3,10 +3,10 @@
 var mongoose = require('mongoose');
 var Action = mongoose.model('Action');
 
-const getBoardDecorateIO = require('../../modules/board');
+const getBoardDecorateIO = require('../modules/board');
 let boardDecorator = getBoardDecorateIO();
 
-const getTopicDecorateIO = require('../../modules/topic');
+const getTopicDecorateIO = require('../modules/topic');
 let topicDecorator = getTopicDecorateIO();
 
 
