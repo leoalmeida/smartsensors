@@ -527,7 +527,7 @@ ctrl.pullRelations = (req, res, next) => {
 
 ctrl.remove = (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  KnowledgeModel.remove(req.params.id).then(data => {
+  KnowledgeModel.remove({"_id": mongoose.Types.ObjectId(req.params.id)}).then(data => {
     console.log("remove request");
     return res.status(200).json(data);
   })

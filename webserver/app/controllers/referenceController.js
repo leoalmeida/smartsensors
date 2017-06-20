@@ -21,7 +21,7 @@ ctrl.getByName = (req, res, next) => {
        return next({ data: err, code: 404, messageKeys: ['not-found'] });
      }
      console.log(data);
-     return res.status(200).send(data);
+     return res.status(200).json(data)
    });
 }
 

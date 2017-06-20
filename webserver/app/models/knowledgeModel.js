@@ -58,13 +58,17 @@ const KnowledgeSchema = new mongoose.Schema({
       view: { type: Boolean, default: false}
      }]
   },
+  connection: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
+  },
   data: {
     type: mongoose.Schema.Types.Mixed,
     default: {}
   },
   type: {
     type: String,
-    enum: ['profile','social','actuator','sensor','topic','sink','channel'],
+    enum: ['profile','social','actuator','sensor','topic','board','channel'],
     required: true
   },
   category: {

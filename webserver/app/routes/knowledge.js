@@ -12,6 +12,8 @@ module.exports = function(app){
 
   router.get('/data/:query/:value',  ctrl.getByData);
   router.get('/loc/:lat/:lng/:radius',  ctrl.getByLocation);
+  router.get('/loc/:lat/:lng/:radius/:type',  ctrl.getByLocation);
+  router.get('/loc/:lat/:lng/:radius/:type/:category',  ctrl.getByLocation);
   router.get('/root/:root',  ctrl.getByRoot);
   //router.get('/category/:category',  ctrl.getByCategory);
   //router.get('/:type/:relation/:id',  ctrl.getByCategoryKey);
