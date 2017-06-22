@@ -29,9 +29,10 @@ module.exports = function(app){
   router.post('/:id/relation/:relation',  ctrl.pushRelations);
   router.post('/:id', ctrl.updateAttribute);
 
+
+  router.delete('/:id',  ctrl.remove);
   router.delete('/relations/unsubscribe',  ctrl.pullTopics);
   router.delete('/relations/:relation',  ctrl.pullRelations);
-  router.delete('/:id',  ctrl.remove);
 
   router.delete('/:id/:query',  ctrl.removeAttribute);
   router.delete('/:id/attr/:name',  ctrl.removeAttrInfo);
