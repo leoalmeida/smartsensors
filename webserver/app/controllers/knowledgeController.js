@@ -53,7 +53,7 @@ ctrl.getChannel = (req, res, next) => {
   expression["type"] = "channel";
   if (req.query.connected === true){
       expression["relations.subscribedBy.id"] = req.params.key;
-  }else
+  }else{
     expression["relations.subscribedBy.id"] = { $nin: [req.params.key]};
   }
 
