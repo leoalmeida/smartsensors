@@ -9,7 +9,8 @@ module.exports = function(app){
   router.get('/all',  ctrl.getAll);
   router.get('/all/:type',  ctrl.getByType);
   router.get('/all/:type/:category',  ctrl.getByTypeCategory);
-
+  router.get('/channels/connected',  ctrl.getConnectedChannel);
+  router.get('/channels/disconnected',  ctrl.getDisconnectedChannel);
   router.get('/data/:query/:value',  ctrl.getByData);
   router.get('/loc/:lat/:lng/:radius',  ctrl.getByLocation);
   router.get('/loc/:lat/:lng/:radius/:type',  ctrl.getByLocation);
@@ -18,7 +19,6 @@ module.exports = function(app){
   //router.get('/category/:category',  ctrl.getByCategory);
   //router.get('/:type/:relation/:id',  ctrl.getByCategoryKey);
 
-  router.get('/channels',  ctrl.getChannel);
   router.get('/:id',  ctrl.getById);
   router.get('/:relation/:id',  ctrl.getByRelations);
   router.get('/:type/:relation/:id',  ctrl.getByTypeRelations);

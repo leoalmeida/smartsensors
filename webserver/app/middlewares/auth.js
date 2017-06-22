@@ -6,6 +6,7 @@ const USER_PASS_SPLIT = ':';
 var passport = require('passport');
 var mongoose = require('mongoose');
 var Profile = mongoose.model('Profile');
+var Knowledge = mongoose.model('Knowledge');
 
 var request = require("request");
 var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzOWRhOTNjZi01YmMxLTRmZWYtYWE5Mi02MDkxODhkNGU2ZDMifQ.2fOWOPw8DsNkssI9OQUAuJ0TzBFaOxq_fIbD02AIfew'
@@ -30,7 +31,6 @@ module.exports = (req, res, next) => {
 
   req.params.username = _arrayUserName[0];
   req.params.token = _arrayUserName[1];
-
 
   var options = {
     method: 'GET',
@@ -59,10 +59,27 @@ module.exports = (req, res, next) => {
     //req.body.username = profile.data.details.uuid;
     //req.body.password = profile.hashed_password;
     req.profile = metadata.data;
-    req.connectedStatus = true;
-    return next();
 
+    Knowledge.findOne({"data.email": metadata.data.details.email},{"_id": 1}).then(data => {
+      if (!data) {
+        return res.status(404).send({ message: 'invalid-credentials' });
+      }
+      req.body.keyId = data._id;
+
+      req.connectedStatus = true;
+      return next();
+    })
+    .catch(err => {
+      console.log("err" + err);
+      return res.status(500).send({ message: 'unexpected-error' });
     });
+
+
+    //var expression = {};
+    //expression["data.email"] = "leoalmeida.rj@gmail.com";
+
+    //return next();
+  });
 
   /*Profile.findOne({ 'username' :  req.params.username }).then(profile => {
     console.log(profile);
