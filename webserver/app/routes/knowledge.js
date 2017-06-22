@@ -18,6 +18,7 @@ module.exports = function(app){
   //router.get('/category/:category',  ctrl.getByCategory);
   //router.get('/:type/:relation/:id',  ctrl.getByCategoryKey);
 
+  router.get('/channels',  ctrl.getChannel);
   router.get('/:id',  ctrl.getById);
   router.get('/:relation/:id',  ctrl.getByRelations);
   router.get('/:type/:relation/:id',  ctrl.getByTypeRelations);

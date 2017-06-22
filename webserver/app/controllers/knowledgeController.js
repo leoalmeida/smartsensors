@@ -41,8 +41,37 @@ ctrl.getById = (req, res, next) => {
   });
 };
 
+ctrl.getChannel = (req, res, next) => {
+  if (!req.query) return next({ data: req.query, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.params.key)) return next({ data: req.params.key, code: 422, messageKeys: ['not-found'] });
+
+  var query = req.query.columns.split(','), projection = {};
+  for (let q in query) projection[query[q]] = 1;
+  console.log("getByData request");
+
+  var expression = {};
+  expression["type"] = "channel";
+  if (req.query.connected === true){
+      expression["relations.subscribedBy.id"] = req.params.key;
+  }else
+    expression["relations.subscribedBy.id"] = { $nin: [req.params.key]};
+  }
+
+  KnowledgeModel.find(expression).then(data => {
+    if (!data) {
+      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+    }
+    console.log("getByType request");
+    return res.status(200).json(data);
+  })
+  .catch(err => {
+    console.log("err" + err);
+    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+  });
+};
+
 ctrl.getByType = (req, res, next) => {
-  if (!req.query) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.type) return next({ data: req.params.type, code: 422, messageKeys: ['not-found'] });
   KnowledgeModel.find({"type": req.params.type}).then(data => {
     if (!data) {
       return next({ data: data, code: 404, messageKeys: ['not-found'] });
