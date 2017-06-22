@@ -14,7 +14,13 @@ const KnowledgeSchema = new mongoose.Schema({
   },
   relations: {
     abstraction : { type: Boolean, default: false},
-    parent : { type: String, default: "", trim: true },
+    parent : [{
+         id: mongoose.Schema.Types.ObjectId,
+         sync: { type: Number, default: Date.now()},
+         access: { type: String, default: "public"},
+         publish: { type: Boolean, default: false},
+         view: { type: Boolean, default: false}
+     }],
     ownedBy : [{
          id: mongoose.Schema.Types.ObjectId,
          sync: { type: Number, default: Date.now()},
