@@ -6,5 +6,7 @@
   "board-error": "Ocorreu um erro ao inicializar placa, tente novamente.",
   "timeout10": "Ocorreu timeout após 10s",
   "invalid-credentials": "Credênciais inválidas",
-  "not-connected": "Usuário não conectado"
+  "not-connected": "Usuário não conectado",
+  "conflict-relation": "Relacionamento já existe",
+  "conflict": "Objeto já existe"
 }

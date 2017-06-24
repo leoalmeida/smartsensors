@@ -42,6 +42,13 @@ const KnowledgeSchema = new mongoose.Schema({
       publish: { type: Boolean, default: false},
       view: { type: Boolean, default: false}
      }],
+    likedBy : [{
+       id: mongoose.Schema.Types.ObjectId,
+       sync: { type: Number, default: Date.now()},
+       access: { type: String, default: "public"},
+       publish: { type: Boolean, default: false},
+       view: { type: Boolean, default: false}
+      }],
     likedTo : [{
       id: mongoose.Schema.Types.ObjectId,
       sync: { type: Number, default: Date.now()},
@@ -49,6 +56,13 @@ const KnowledgeSchema = new mongoose.Schema({
       publish: { type: Boolean, default: false},
       view: { type: Boolean, default: false}
      }],
+    commentedBy : [{
+       id: mongoose.Schema.Types.ObjectId,
+       sync: { type: Number, default: Date.now()},
+       access: { type: String, default: "public"},
+       publish: { type: Boolean, default: false},
+       view: { type: Boolean, default: false}
+      }],
     commentedAt : [{
       id: mongoose.Schema.Types.ObjectId,
       sync: { type: Number, default: Date.now()},

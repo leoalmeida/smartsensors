@@ -5,5 +5,7 @@
   "invalid-conntrigger": "Invalid parameter. 'connect' is the only valid parameter for this session.",
   "board-error": "Failed to start the required board, try again.",
   "invalid-credentials": "Invalid Credentials",
-  "not-connected": "Not connected"
+  "not-connected": "Not connected",
+  "conflict-relation": "Relation already exists",
+  "conflict": "Object already exists"
 }

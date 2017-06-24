@@ -4,6 +4,7 @@
 const https = require('https');
 var mongoose = require('mongoose');
 var KnowledgeModel = mongoose.model('Knowledge');
+var ObjectId = require('mongodb').ObjectID;
 
 const ctrl = {};
 
@@ -14,80 +15,80 @@ const ctrl = {};
 ctrl.getAll = (req, res, next) => {
   KnowledgeModel.find({}).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getAll request");
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getById = (req, res, next) => {
-  if (!req.query) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.query) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   KnowledgeModel.findById(req.params.id).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getById request");
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getConnectedChannel = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.keyId)) return next({ data: req.body.keyId, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.body.keyId)) return res.status(422).send({ data: req.body.keyId, code: 422, messageKeys: ['not-found'] });
 
-  KnowledgeModel.find({"type": "channel", "relations.subscribedBy.id": mongoose.Types.ObjectId(req.body.keyId)}).then(data => {
+  KnowledgeModel.find({"type": "channel", "relations.subscribedBy.id": ObjectId(req.body.keyId)}).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getDisconnectedChannel = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.keyId)) return next({ data: req.body.keyId, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.body.keyId)) return res.status(422).send({ data: req.body.keyId, code: 422, messageKeys: ['not-found'] });
 
-  KnowledgeModel.find({"type": "channel", "relations.subscribedBy.id": { $nin: [ mongoose.Types.ObjectId(req.body.keyId)]}}).then(data => {
+  KnowledgeModel.find({"type": "channel", "relations.subscribedBy.id": { $nin: [ ObjectId(req.body.keyId)]}}).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getByType = (req, res, next) => {
-  if (!req.params.type) return next({ data: req.params.type, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.type) return res.status(422).send({ data: req.params.type, code: 422, messageKeys: ['not-found'] });
   KnowledgeModel.find({"type": req.params.type}).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getByType request");
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getByData = (req, res, next) => {
-  if (req.query==="") return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (req.query==="") return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   var query = req.query.columns.split(','), projection = {};
   for (let q in query) projection[query[q]] = 1;
   console.log("getByData request");
@@ -96,21 +97,21 @@ ctrl.getByData = (req, res, next) => {
   expression[req.params.query] = req.params.value;
   KnowledgeModel.find(expression, projection).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("data" + data);
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getByLocation = (req, res, next) => {
-  if (req.params.lat==="") return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (req.params.lng==="") return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (req.params.radius==="") return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (req.params.lat==="") return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (req.params.lng==="") return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (req.params.radius==="") return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   //var query = req.query.columns.split(','), projection = {};
   //for (let q in query) projection[query[q]] = 1;
   console.log("getByLocation request");
@@ -122,79 +123,79 @@ ctrl.getByLocation = (req, res, next) => {
 
   KnowledgeModel.find(expression).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("data" + data);
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getByRoot = (req, res, next) => {
-  if (!req.query) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.query) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   KnowledgeModel.find({"root": req.params.root}).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getByRoot request");
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 /*ctrl.getByCategory = (req, res, next) => {
     KnowledgeModel.find({"category": req.params.category}).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getByCategory request");
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getByCategoryKey = (req, res, next) => {
   KnowledgeModel.find({"owner": req.params.owner, "category": req.params.category}).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getByCategoryKey request");
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };*/
 
 
 ctrl.getByTypeCategory = (req, res, next) => {
-  if (!req.query) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.query) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   KnowledgeModel.find({"type": req.params.type, "category": req.params.category}).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getByTypeCategory request");
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getByRelations = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (!req.params.relation) return next({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
   var expression = {};
 
   if (Object.keys(req.query).length){
@@ -202,10 +203,10 @@ ctrl.getByRelations = (req, res, next) => {
     expression['sync'] = req.query;
   }
 
-  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$eq: mongoose.Types.ObjectId(req.params.id)}}}
+  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$eq: ObjectId(req.params.id)}}}
   KnowledgeModel.find(expression).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getRelations request");
     //.once("value", data => {
@@ -213,13 +214,13 @@ ctrl.getByRelations = (req, res, next) => {
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 ctrl.getByTypeRelations = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (!req.params.relation) return next({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
 
   var expression = {};
   expression["type"] = req.params.type;
@@ -231,27 +232,27 @@ ctrl.getByTypeRelations = (req, res, next) => {
   }
 
       //if (req.params.relation === "connectedTo")
-      //expression["relations." + req.params.relation] = {$eq: mongoose.Types.ObjectId(req.params.id)};
-  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$eq: mongoose.Types.ObjectId(req.params.id)}}}
+      //expression["relations." + req.params.relation] = {$eq: ObjectId(req.params.id)};
+  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$eq: ObjectId(req.params.id)}}}
   console.log("express: ", expression);
 
   KnowledgeModel.find(expression).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getByTypeRelations request");
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
 
 ctrl.getByTypeCategoryRelations = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (!req.params.relation) return next({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
   var expression = {};
   expression["type"] = req.params.type;
   expression["category"] = req.params.category;
@@ -261,19 +262,19 @@ ctrl.getByTypeCategoryRelations = (req, res, next) => {
     expression['sync'] = req.query;
   }
           //if (req.params.relation === "connectedTo")
-          //expression["relations." + req.params.relation] = {$eq: mongoose.Types.ObjectId(req.params.id)};
+          //expression["relations." + req.params.relation] = {$eq: ObjectId(req.params.id)};
 
-  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$eq: mongoose.Types.ObjectId(req.params.id)}}}
+  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$eq: ObjectId(req.params.id)}}}
   KnowledgeModel.find(expression).then(data => {
     if (!data) {
-      return next({ data: data, code: 404, messageKeys: ['not-found'] });
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
     console.log("getByTypeCategoryRelations request");
     return res.status(200).json(data);
   })
   .catch(err => {
     console.log("err" + err);
-    return next({ data: err, code: 500, messageKeys: ['unexpected-error'] });
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
   });
 };
 
@@ -282,7 +283,8 @@ ctrl.getByTypeCategoryRelations = (req, res, next) => {
 **/
 
 ctrl.create = (req, res) => {
-  if (!req.body) return next({ data: req.body, code: 422, messageKeys: ['not-found'] });
+  console.log(req.body);
+  if (!req.body) return res.status(422).send({ data: req.body, code: 422, messageKeys: ['not-found'] });
   let newVal = new KnowledgeModel(req.body);
   console.log(newVal);
   KnowledgeModel.create(newVal)
@@ -291,6 +293,7 @@ ctrl.create = (req, res) => {
       return res.status(201).send(data);
     })
     .catch(err => {
+      console.log(err);
       return res.status(400).send(err);
     });
 };
@@ -331,7 +334,7 @@ ctrl.update = (req, res) => {
 };
 
 ctrl.updateAttribute = (req, res, next) => {
-  if (req.params.query==="" || req.params.value==="") return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (req.params.query==="" || req.params.value==="") return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   //console.log("body: " + JSON.stringify(req.body));
   var expression = {};
   var keys = Object.keys(req.body);
@@ -352,8 +355,8 @@ ctrl.updateAttribute = (req, res, next) => {
 };
 
 ctrl.pushTopics = (req, res, next) => {
-    if (!mongoose.Types.ObjectId.isValid(req.body.item.topic)) return next({ data: req.body.item.topic, code: 422, messageKeys: ['not-found'] });
-    if (!req.body.item.options) return next({ data: req.body.item.options, code: 422, messageKeys: ['not-found'] });
+    if (!mongoose.Types.ObjectId.isValid(req.body.item.topic)) return res.status(422).send({ data: req.body.item.topic, code: 422, messageKeys: ['not-found'] });
+    if (!req.body.item.options) return res.status(422).send({ data: req.body.item.options, code: 422, messageKeys: ['not-found'] });
 
     var subscribeOptions = {
       host: 'api.cloudmqtt.com',
@@ -388,7 +391,7 @@ ctrl.pushTopics = (req, res, next) => {
       console.log("Topic: ", req.body.items);
 
       var expressions = {}, toPush = {}, pushedItems = [];
-      toPush["id"] = mongoose.Types.ObjectId(req.body.items.id);
+      toPush["id"] = ObjectId(req.body.items.id);
       for (let attr of req.body.items.attrs) toPush[attr.key] = attr.value;
       pushedItems.push(toPush);
 
@@ -400,7 +403,7 @@ ctrl.pushTopics = (req, res, next) => {
           console.log("create request 1");
 
           var expressions = {}, toPush = {}, pushedItems = [];
-          toPush["id"] = mongoose.Types.ObjectId(req.body.id);
+          toPush["id"] = ObjectId(req.body.id);
           for (let attr of req.body.items.attrs) toPush[attr.key] = attr.value;
           pushedItems.push(toPush);
           expressions["relations.subscribedBy"] = { $in: pushedItems};
@@ -428,29 +431,39 @@ ctrl.pushTopics = (req, res, next) => {
 };
 
 ctrl.pushRelations = (req, res, next) => {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-    if (!req.params.relation) return next({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
-    if (!req.body) return next({ data: req.body, code: 422, messageKeys: ['not-found'] });
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return  res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+    if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
+    if (!req.body) return res.status(422).send({ data: req.body, code: 422, messageKeys: ['not-found'] });
 
-    var expression = {};
-    expression["relations." + req.params.relation] = {};
-    expression["relations." + req.params.relation].id = mongoose.Types.ObjectId(req.body.id);
-    if (req.body.view) expression["relations." + req.params.relation].view = req.body.view;
-    if (req.body.publish) expression["relations." + req.params.relation].publish = req.body.publish;
-    if (req.body.access) expression["relations." + req.params.relation].access = req.body.access;
+    var itemid ="", access="public";
 
-    KnowledgeModel.update({ _id: req.params.id }, { $push: expression })
-      .then(data => {
-        console.log("create request");
-        return res.status(201).json(data);
-      }).catch(err => {
-        return res.status(400).send(err);
-      });
+    if (req.params.id === req.body.keyId){
+      itemid = req.body.id;
+    }else {
+      itemid = req.body.keyId;
+    };
+
+    KnowledgeModel.findOne({_id: ObjectId(req.params.id), ['relations.'+ req.params.relation + ".id"]: ObjectId(itemid)}).then(data => {
+      //console.log("pushRelations request", data);
+      if (data) return res.status(409).send({ data: itemid, code: 409, messageKeys: ['conflict-relation'] });
+
+      if (req.body.access) access = req.body.access;
+
+      KnowledgeModel.update({_id: ObjectId(req.params.id)}, {$push: { ['relations.'+ req.params.relation]: { id: ObjectId(itemid), access: access }}})
+        .then(data => {
+          console.log("pushRelations request");
+          return res.status(201).json(data);
+        }).catch(err => {
+          return res.status(400).send(err);
+        });
+    }).catch(err => {
+      return res.status(400).send(err);
+    });
 };
 ctrl.pushAttrInfo = (req, res, next) => {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-    if (!req.params.name) return next({ data: req.params.name, code: 422, messageKeys: ['not-found'] });
-    if (!req.body) return next({ data: req.body, code: 422, messageKeys: ['not-found'] });
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+    if (!req.params.name) return res.status(422).send({ data: req.params.name, code: 422, messageKeys: ['not-found'] });
+    if (!req.body) return res.status(422).send({ data: req.body, code: 422, messageKeys: ['not-found'] });
 
     var expression = {};
     expression["data.info"] = req.body;
@@ -469,8 +482,8 @@ ctrl.pushAttrInfo = (req, res, next) => {
 **/
 
 ctrl.pullTopics = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.item.topic)) return next({ data: req.body.item.topic, code: 422, messageKeys: ['not-found'] });
-  if (!req.body.item.options) return next({ data: req.body.item.options, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.body.item.topic)) return res.status(422).send({ data: req.body.item.topic, code: 422, messageKeys: ['not-found'] });
+  if (!req.body.item.options) return res.status(422).send({ data: req.body.item.options, code: 422, messageKeys: ['not-found'] });
 
 
   var deleteOptions = {
@@ -498,8 +511,8 @@ ctrl.pullTopics = (req, res, next) => {
     console.log("Topic: ", req.body.item.topic);
 
     var expressions = [{},{}];
-    expressions[0]["relations.subscriberAt"] = { $in: [{"id": mongoose.Types.ObjectId(req.body.item.topic)}]};
-    expressions[1]["relations.subscribedBy"] = { $in: [{"id": mongoose.Types.ObjectId(req.body.id)}]};
+    expressions[0]["relations.subscriberAt"] = { $in: [{"id": ObjectId(req.body.item.topic)}]};
+    expressions[1]["relations.subscribedBy"] = { $in: [{"id": ObjectId(req.body.id)}]};
 
     KnowledgeModel.update( { _id: req.body.id },
                            { $pull: expressions[0] })
@@ -531,17 +544,17 @@ ctrl.pullTopics = (req, res, next) => {
 };
 
 ctrl.pullRelations = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.body.item.id)) return next({ data: req.body.item.topic, code: 422, messageKeys: ['not-found'] });
-  if (!req.body.item.options) return next({ data: req.body.item.options, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.body.item.id)) return res.status(422).send({ data: req.body.item.topic, code: 422, messageKeys: ['not-found'] });
+  if (!req.body.item.options) return res.status(422).send({ data: req.body.item.options, code: 422, messageKeys: ['not-found'] });
 
   console.log("Profile id: ", req.body.id);
   console.log("Topic: ", req.body.item.id);
 
   var expressions = {}, pulledItems = [];
   if (req.params.relation === "connectedTo")
-    expressions["relations." + req.body.type] = { $in: [mongoose.Types.ObjectId(req.body.items)]};
+    expressions["relations." + req.body.type] = { $in: [ObjectId(req.body.items)]};
   else {
-    for (let item of req.body.items) pulledItems.push({"id": mongoose.Types.ObjectId(item.id)});
+    for (let item of req.body.items) pulledItems.push({"id": ObjectId(item.id)});
     expressions["relations." + req.body.type] = { $in: pulledItems};
   }
 
@@ -556,13 +569,13 @@ ctrl.pullRelations = (req, res, next) => {
 };
 
 ctrl.remove = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  KnowledgeModel.remove({"_id": mongoose.Types.ObjectId(req.params.id)}).then(data => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  KnowledgeModel.remove({"_id": ObjectId(req.params.id)}).then(data => {
     console.log("remove request");
     return res.status(200).json(data);
   })
   .catch(err => {
-    return next({ data: err, code: 400, messageKeys: ['validation-error'] });
+    return res.status(400).send({ data: err, code: 400, messageKeys: ['validation-error'] });
   });
 };
 
@@ -581,21 +594,21 @@ ctrl.removeProfile = (req, res) => {
 };
 
 ctrl.removeByRelations = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (!req.params.relation) return next({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
   var expression = {};
-  expression["relations." + req.params.relation] = {$eq: mongoose.Types.ObjectId(req.params.id)};
+  expression["relations." + req.params.relation] = {$eq: ObjectId(req.params.id)};
   KnowledgeModel.find(expression).then(data => {
     console.log("remove request");
     return res.status(200).json(data);
   })
   .catch(err => {
-    return next({ data: err, code: 400, messageKeys: ['validation-error'] });
+    return res.status(400).send({ data: err, code: 400, messageKeys: ['validation-error'] });
   });
 }
 
 ctrl.removeAttribute = (req, res , next) => {
-  if (req.params.query==="") return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (req.params.query==="") return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   var expression = {};
   expression["data."+req.params.query] = 1;
   console.log("delete request");
@@ -609,9 +622,9 @@ ctrl.removeAttribute = (req, res , next) => {
     });
 };
 ctrl.removeAttrInfo = (req, res , next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (req.params.attr==="") return next({ data: req.params.attr, code: 422, messageKeys: ['not-found'] });
-  if (!req.params.name) return next({ data: req.params.name, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (req.params.attr==="") return res.status(422).send({ data: req.params.attr, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.name) return res.status(422).send({ data: req.params.name, code: 422, messageKeys: ['not-found'] });
 
   var expression = {};
   expression["data.info"] = {"name":req.params.name};
@@ -626,12 +639,12 @@ ctrl.removeAttrInfo = (req, res , next) => {
     });
 };
 ctrl.removeRelation = (req, res , next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (req.params.relation==="") return next({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
-  if (!req.params.relid) return next({ data: req.params.relid, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (req.params.relation==="") return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.relid) return res.status(422).send({ data: req.params.relid, code: 422, messageKeys: ['not-found'] });
 
   var expression = {};
-  expression["relations."+req.params.relation] = {"id": mongoose.Types.ObjectId(req.params.relid)};
+  expression["relations."+req.params.relation] = {"id": ObjectId(req.params.relid)};
   console.log("delete relation request");
   KnowledgeModel.update({_id: req.params.id}, {$pull: expression})
     .then(data => {
@@ -644,18 +657,18 @@ ctrl.removeRelation = (req, res , next) => {
 };
 
 ctrl.removeByTypeCategoryRelations = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return next({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (!req.params.relation) return next({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
   var expression = {};
   expression["type"] = req.params.type;
   expression["category"] = req.params.category;
-  expression["relations." + req.params.relation] = {$eq: mongoose.Types.ObjectId(req.params.id)};
+  expression["relations." + req.params.relation] = {$eq: ObjectId(req.params.id)};
   KnowledgeModel.find(expression).then(data => {
     console.log("remove request");
     return res.status(200).json(data);
   })
   .catch(err => {
-    return next({ data: err, code: 400, messageKeys: ['validation-error'] });
+    return res.status(400).send({ data: err, code: 400, messageKeys: ['validation-error'] });
   });
 }
 
