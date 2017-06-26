@@ -398,7 +398,7 @@ ctrl.pushTopics = (req, res, next) => {
       expressions["relations.subscriberAt"] = { $in: pushedItems};
 
       KnowledgeModel.update( { _id: req.body.id },
-                             { $push: expressions })
+                             {$set: {sync: Date.now()},  $push: expressions })
         .then(data => {
           console.log("create request 1");
 
@@ -435,21 +435,21 @@ ctrl.pushRelations = (req, res, next) => {
     if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
     if (!req.body) return res.status(422).send({ data: req.body, code: 422, messageKeys: ['not-found'] });
 
-    var itemid ="", access="public";
-
-    if (req.params.id === req.body.keyId){
-      itemid = req.body.id;
-    }else {
-      itemid = req.body.keyId;
-    };
-
-    KnowledgeModel.findOne({_id: ObjectId(req.params.id), ['relations.'+ req.params.relation + ".id"]: ObjectId(itemid)}).then(data => {
+    var access="public";
+    KnowledgeModel.findOne({_id: ObjectId(req.params.id)}).then(data => {
       //console.log("pushRelations request", data);
-      if (data) return res.status(409).send({ data: itemid, code: 409, messageKeys: ['conflict-relation'] });
+      if (!data) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+
+      console.log(req.body);
+      console.log(data.root);
+      if (data.root != req.body.keyId) return res.status(409).send({ data: req.body.keyId, code: 409, messageKeys: ['conflict-relation'] });
+
+      for (let item in data['relations'][req.params.relation])
+        if (item.id == req.body.id) return res.status(409).send({ data: req.body.id, code: 409, messageKeys: ['conflict-relation'] });
 
       if (req.body.access) access = req.body.access;
 
-      KnowledgeModel.update({_id: ObjectId(req.params.id)}, {$push: { ['relations.'+ req.params.relation]: { id: ObjectId(itemid), access: access }}})
+      KnowledgeModel.update({_id: ObjectId(req.params.id)}, {$set: {sync: Date.now()}, $push: { ['relations.'+ req.params.relation]: { id: ObjectId(req.body.id), access: access }}})
         .then(data => {
           console.log("pushRelations request");
           return res.status(201).json(data);
@@ -469,7 +469,7 @@ ctrl.pushAttrInfo = (req, res, next) => {
     expression["data.info"] = req.body;
     expression["data.info"].name = req.params.name;
 
-    KnowledgeModel.update({ _id: req.params.id }, { $push: expression })
+    KnowledgeModel.update({ _id: req.params.id }, {$set: {sync: Date.now()}, $push: expression })
       .then(data => {
         console.log("create request");
         return res.status(201).json(data);
@@ -515,7 +515,7 @@ ctrl.pullTopics = (req, res, next) => {
     expressions[1]["relations.subscribedBy"] = { $in: [{"id": ObjectId(req.body.id)}]};
 
     KnowledgeModel.update( { _id: req.body.id },
-                           { $pull: expressions[0] })
+                           {$set: {sync: Date.now()},  $pull: expressions[0] })
       .then(data => {
         console.log("create request 1");
         KnowledgeModel.update( { _id: req.body.item.topic },
@@ -559,7 +559,7 @@ ctrl.pullRelations = (req, res, next) => {
   }
 
   KnowledgeModel.update( { _id: req.body.id },
-                         { $pull: expressions })
+                         {$set: {sync: Date.now()},  $pull: expressions })
     .then(data => {
       console.log("create request");
       return res.status(201).json(data);
@@ -612,7 +612,7 @@ ctrl.removeAttribute = (req, res , next) => {
   var expression = {};
   expression["data."+req.params.query] = 1;
   console.log("delete request");
-  KnowledgeModel.update({_id: req.params.id}, {"$unset": expression})
+  KnowledgeModel.update({_id: req.params.id}, {$set: {sync: Date.now()}, "$unset": expression})
     .then(data => {
       data.query = req.params.query;
       return res.status(200).send(data);
@@ -629,7 +629,7 @@ ctrl.removeAttrInfo = (req, res , next) => {
   var expression = {};
   expression["data.info"] = {"name":req.params.name};
   console.log("delete info request");
-  KnowledgeModel.update({_id: req.params.id}, {$pull: expression})
+  KnowledgeModel.update({_id: req.params.id}, {$set: {sync: Date.now()}, $pull: expression})
     .then(data => {
       data.query = req.params.query;
       return res.status(200).send(data);
@@ -646,7 +646,7 @@ ctrl.removeRelation = (req, res , next) => {
   var expression = {};
   expression["relations."+req.params.relation] = {"id": ObjectId(req.params.relid)};
   console.log("delete relation request");
-  KnowledgeModel.update({_id: req.params.id}, {$pull: expression})
+  KnowledgeModel.update({_id: req.params.id}, {$set: {sync: Date.now()}, $pull: expression})
     .then(data => {
       data.query = req.params.query;
       return res.status(200).send(data);

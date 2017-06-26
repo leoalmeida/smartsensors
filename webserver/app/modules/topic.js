@@ -84,32 +84,36 @@ function getTopicDecorateIO() {
     console.log('Topic started doing the job!');
     let topicsItems = [];
 
-    let createTopic = function(id, callback) {
-      verifyTopicStatus(paramsData[id].topicId, function(status){
-        if (status) {
-          console.log('Topic already started!');
-          callback({err: { code: 400, msg: "Error: Topic already started!" }}, null);
+    let processTopic = function(id, callback) {
+      verifyTopicEnabled(topicKeys[id].topicId, function(err, status){
+        if (!status) {
+          console.log('Topic ' +  topicKeys[id].topicId + ' is not enabled.');
+          callback({"err": 'Topic ' +  topicKeys[id].topicId + ' is not enabled.'}, null);
         }else{
-          requestTopics(paramsData[id], function(item){
+          let requiredTopic = {
+            topicId: topicKeys[id].topicId,
+            coords: coords,
+            radius: radius
+          }
+
+          requestTopics(requiredTopic, function(err, topicInfo){
             //console.log("xxxxx",topic);
-            topicsItems.push({
-              topic: item.topic.id,
-              subscriptions: item.subscriptions,
-              status: true
-            });
-            callback(null, topic);
+            evaluateTopics(topicInfo , function(err, evaluation){
+              console.log('Subscriptions: ',  topicInfo.equipmentsObj);
+              evaluation.equipments = topicInfo.equipmentsObj;
+              callback(err, evaluation);
+            })
           });
         };
       });
     };
 
-    asyncObj.times(paramsData.length, function(n, next) {
-      createTopic(n, function(err, topic) {
+    asyncObj.times(topicKeys.length, function(n, next) {
+      processTopic(n, function(err, topic) {
         next(err, topic);
       });
     }, function(err, topics) {
-        //console.log("teste",topics);
-        cb(err, topicsItems);
+        cb(topics);
     });
   };
 
@@ -159,33 +163,10 @@ function retrieveDbInfo(task, callback){
     let staticExpression = { $elemMatch: { "id": {$eq: mongoose.Types.ObjectId(thisTopic._id)}}};
     asyncObj.auto({
         subscriptions: function(cbsub) {
-          console.log('Get related equipments');
-          var expression = {};
-          if (task.coords) expression["location"] = {$geoWithin: { $centerSphere: [task.coords, task.radius/7871100]}};
-          else expression["relations.subscribedBy"] = staticExpression;
-          if (topic.data.types) expression["type"] = { $in: topic.data.types};
-          if (topic.data.categories) expression["category"] = { $in: topic.data.categories};
-          //expression["data.connected"] = true;
-
-          console.log(expression);
-
-          //Knowledge.find({"relations.subscribedBy": { $elemMatch: { "id": {$eq: mongoose.Types.ObjectId(thisTopic._id)}}}})
-          Knowledge.find(expression)
-                .then(subscriptions => {
-                  let subs = {
-                    connected: [],
-                    disconnected: []
-                  };
-                  for (let sub of subscriptions){
-                    if (sub.data.connected) subs.connected.push(sub);
-                    else subs.disconnected.push(sub);
-                  };
-                  cbsub(null, subs);
-                }).catch(err => {
-                  console.log("err" + err);
-                  cbsub(err, null);
-                });
-
+          if (topic.category === "dynamic")
+            requestDynamicSubscriptions(topic, staticExpression, cbsub);
+          else
+            requestStaticSubscriptions(topic, staticExpression, cbsub);
         },
         channels: function(cbchan) {
             console.log('Get related channels');
@@ -209,6 +190,61 @@ function retrieveDbInfo(task, callback){
     callback(err, null);
   });
 }
+
+function requestDynamicSubscriptions(topic, staticExpression, task, cbsub){
+  console.log('Get related equipments');
+  var expression = {};
+  if (task.coords) expression["location"] = {$geoWithin: { $centerSphere: [task.coords, task.radius/7871100]}};
+  else expression["relations.subscribedBy"] = staticExpression;
+  if (topic.data.types) expression["type"] = { $in: topic.data.types};
+  if (topic.data.categories) expression["category"] = { $in: topic.data.categories};
+  //expression["data.connected"] = true;
+
+  console.log(expression);
+
+  Knowledge.find(expression)
+        .then(subscriptions => {
+          let subs = {
+            connected: [],
+            disconnected: []
+          };
+          for (let sub of subscriptions){
+            if (sub.data.connected) subs.connected.push(sub);
+            else subs.disconnected.push(sub);
+          };
+          cbsub(null, subs);
+        }).catch(err => {
+          console.log("err" + err);
+          cbsub(err, null);
+        });
+
+}
+
+function requestStaticSubscriptions(topic, staticExpression, task, cbsub){
+  console.log('Get related equipments');
+  var expression = {};
+  expression["relations.subscribedBy"] = staticExpression;
+
+  console.log(expression);
+
+  Knowledge.find(expression)
+        .then(subscriptions => {
+          let subs = {
+            connected: [],
+            disconnected: []
+          };
+          for (let sub of subscriptions){
+            if (sub.data.connected) subs.connected.push(sub);
+            else subs.disconnected.push(sub);
+          };
+          cbsub(null, subs);
+        }).catch(err => {
+          console.log("err" + err);
+          cbsub(err, null);
+        });
+
+}
+
 function prepareReadingsList(task, callback){
   console.log("----> Starting: ");
   console.log("----> ", task.topic._id.toString());
@@ -222,12 +258,19 @@ function prepareReadingsList(task, callback){
   Messenger.find(expression)
     .then(messages => {
       //console.log(messages);
+      let msgs = {};
+      if (!task.topic.category==="dynamic")
+        for (let msg of messages) {
+          if (!msgs[messages.root]) msgs[messages.root] = [];
+          msgs[messages.root].push(msg);
+        }
+      else msgs = messages;
       callback(null, {
         topic: task.topic,
         equipments: listSubscriptions,
         equipmentsObj: task.subscriptions,
         channels: task.channels,
-        messages: messages
+        messages: msgs
       });
     }).catch(err => {
       console.log("err" + err);
@@ -261,7 +304,19 @@ function processTopicEvaluation(task, callback){
       results.rules.push(rule);
       continue;
     }
-    if (!rule.multiple){
+    if (!task.topic.category==="dynamic"){
+      console.log("rule.evaluatedAttribute: ", rule.evaluatedAttribute);
+      if (rule.evaluatedAttribute.type === 'number'){
+        let value2 = null;
+        if (rule.evaluatedAttribute.sign === "><") value2 = rule.evaluatedAttribute.value2;
+        let med = calculateNumberMed(rule.evaluatedAttribute.attribute, rule.evaluatedAttribute.time, task.messages[rule.knowledge]);
+        if (med<0) results.rules.push(-1)
+        else results.rules.push(compareArguments(rule.evaluatedAttribute.sign, med, rule.evaluatedAttribute.value, value2));
+        }else if (rule.evaluatedAttribute.type === 'boolean'){
+        let med = calculateBoolMed(rule.evaluatedAttribute.attribute, rule.evaluatedAttribute.time, task.messages[rule.knowledge]);
+         results.rules.push(compareArguments(rule.evaluatedAttribute.sign, med.resultmed, rule.evaluatedAttribute.value));
+      }
+    }else if (!rule.multiple){
       console.log("rule.evaluatedAttribute: ", rule.evaluatedAttribute);
       if (rule.evaluatedAttribute.type === 'number'){
         let value2 = null;
