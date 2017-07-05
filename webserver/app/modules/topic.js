@@ -43,9 +43,9 @@ function getTopicDecorateIO() {
     //console.log(topicKeys);
 
     let processTopic = function(id, callback) {
-      verifyTopicEnabled(topicKeys[id].topicId, function(err, status){
+      verifyTopicStatus(topicKeys[id].topicId, function(err, result){
         //console.log(status);
-        if (!status) {
+        if (!result.enabled) {
           console.log('Topic ' +  topicKeys[id].topicId + ' is not enabled.');
           callback({"err": 'Topic ' +  topicKeys[id].topicId + ' is not enabled.'}, null);
         }else{
@@ -65,6 +65,7 @@ function getTopicDecorateIO() {
             evaluateTopics(topicInfo , function(err, evaluation){
               console.log('Subscriptions: ',  topicInfo.equipmentsObj);
               evaluation.equipments = topicInfo.equipmentsObj;
+              evaluation.status = result.status;
               callback(err, evaluation);
             })
           });
@@ -117,8 +118,23 @@ function getTopicDecorateIO() {
     });
   };
 
+  methods.verifyTopicStatus = verifyTopicStatus;
+
   return methods;
 };
+
+function verifyTopicStatus(objectid, cb){
+  Knowledge.findOne({"_id" : mongoose.Types.ObjectId(objectid)},{"data.status": 1, "data.enabled": 1})
+            .then(data => {
+              console.log(data);
+              cb(null, data.data);
+            })
+            .catch(err => {
+              console.log("err" + err);
+              cb(err, null);
+            });
+}
+
 function requestTopics(topicKey, callback){
   dbq.push(topicKey, function (err, data) {
     if(err){
@@ -151,7 +167,7 @@ function requestTopics(topicKey, callback){
   });
 }
 function retrieveDbInfo(task, callback){
-  //console.log('Request Topic Info: ', task);
+  console.log('Request Topic Info: ', task);
   Knowledge.findOne(mongoose.Types.ObjectId(task.topicId)).then(topic => {
     if (!topic) {
       console.log("Error: Not-found");
@@ -164,9 +180,9 @@ function retrieveDbInfo(task, callback){
     asyncObj.auto({
         subscriptions: function(cbsub) {
           if (topic.category === "dynamic")
-            requestDynamicSubscriptions(topic, staticExpression, cbsub);
+            requestDynamicSubscriptions(topic, staticExpression, task, cbsub);
           else
-            requestStaticSubscriptions(topic, staticExpression, cbsub);
+            requestStaticSubscriptions(topic, staticExpression, task, cbsub);
         },
         channels: function(cbchan) {
             console.log('Get related channels');
@@ -397,7 +413,7 @@ function publishEvaluation(task, callback){
       },
       topic: function(cb) {
           console.log('update related topic');
-          Knowledge.update({"_id": mongoose.Types.ObjectId(task.id)}, {$set: {"data.status": "", "data.updatedValue": task.result, "sync": updateDate}})
+          Knowledge.update({"_id": mongoose.Types.ObjectId(task.id)}, {$set: {"data.status": "running", "data.updatedValue": task.result, "sync": updateDate}})
             .then(data => {
               console.log("Topic successfully changed:  ", data);
               cb(null, data);
@@ -453,17 +469,6 @@ function updateTopicStatus(task, callback){
                 callback(err, null);
               });
   callback(null, item);
-}
-function verifyTopicStatus(objectid, callback){
-  Knowledge.findOne({"_id" : mongoose.Types.ObjectId(objectid)},{"data.connected": 1})
-            .then(data => {
-              console.log(data);
-              callback(null, data.data.connected);
-            })
-            .catch(err => {
-              console.log("err" + err);
-              callback(err, null);
-            });
 }
 function verifyTopicEnabled(objectid, callback){
   Knowledge.findOne({"_id" : mongoose.Types.ObjectId(objectid)}, {"data.enabled": 1})

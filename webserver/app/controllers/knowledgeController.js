@@ -643,15 +643,19 @@ ctrl.removeRelation = (req, res , next) => {
   if (req.params.relation==="") return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
   if (!req.params.relid) return res.status(422).send({ data: req.params.relid, code: 422, messageKeys: ['not-found'] });
 
-  var expression = {};
-  expression["relations."+req.params.relation] = {"id": ObjectId(req.params.relid)};
-  console.log("delete relation request");
-  KnowledgeModel.update({_id: req.params.id}, {$set: {sync: Date.now()}, $pull: expression})
+  //var expression = {};
+  //expression["relations."+req.params.relation+".id"] = ObjectId(req.params.relid);
+
+  //console.log("delete relation request", expression);
+  console.log("params: ", req.params);
+
+  KnowledgeModel.update({_id: ObjectId(req.params.id)}, {$set: {sync: Date.now()}, $pull: { ['relations.'+ req.params.relation +'.id']: ObjectId(req.params.relid) }})
     .then(data => {
-      data.query = req.params.query;
+      data.id = req.params.id;
       return res.status(200).send(data);
     })
     .catch(err => {
+      console.log("errr: ", err);
       return res.status(400).send(err);
     });
 };

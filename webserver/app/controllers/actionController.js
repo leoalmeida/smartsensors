@@ -2,9 +2,11 @@
 
 var mongoose = require('mongoose');
 var Action = mongoose.model('Action');
+var KnowledgeModel = mongoose.model('Knowledge');
+var ObjectId = require('mongodb').ObjectID;
 
-const getBoardDecorateIO = require('../modules/board');
-let boardDecorator = getBoardDecorateIO();
+const getEquipmentDecorateIO = require('../modules/equipments');
+let equipmentDecorator = getEquipmentDecorateIO();
 
 const getTopicDecorateIO = require('../modules/topic');
 let topicDecorator = getTopicDecorateIO();
@@ -58,24 +60,37 @@ ctrl.processDynamic = (req, res, next) => {
     });
 }
 
-ctrl.connectBoards = (req, res, next) => {
-  console.log("Controol: ",req.body.boardKeys);
-  if (!req.body.boardKeys) return next({data: req.body.boardKeys, code: 422, messageKeys: ['not-found'] });
+ctrl.connectEquipments = (req, res, next) => {
+  console.log("Controol: ",req.body.keys);
+  if (!req.body.keys) return next({data: req.body.keys, code: 422, messageKeys: ['not-found'] });
 
-  boardDecorator.connectBoards(req.body.boardKeys, function(data){
-    return res.status(201).json(data);
+  equipmentDecorator.connectEquipments(req.body.keys, function(data){
+    console.log("update request");
+    KnowledgeModel.update({"_id": ObjectId(req.body.keys[0].keyId)}, {"$set": {"sync": Date.now(), "data.connected": true}})
+      .then(data => {
+        return res.status(201).json(data);
+      })
+      .catch(err => {
+        return res.status(400).send(err);
+      });
   })
 }
 
-ctrl.disconnectBoards = (req, res, next) => {
-  console.log("Controol: ",req.body.boardKeys);
-  if (!req.body.boardKeys) return next({data: req.body.boardKeys, code: 422, messageKeys: ['not-found'] });
+ctrl.toggleEquipmentsStatus = (req, res, next) => {
+  console.log("Controol: ",req.body.keys);
+  if (!req.body.keys) return next({data: req.body.keys, code: 422, messageKeys: ['not-found'] });
 
-  boardDecorator.disconnectBoards(req.body.boardKeys, function(data){
-    return res.status(201).json(data);
+  equipmentDecorator.toggleEquipmentsStatus(req.body.keys, function(data){
+    console.log("update request");
+    KnowledgeModel.update({"_id": ObjectId(req.body.keys[0].keyId)}, {"$set": {"sync":  Date.now(), "data.connected": false}})
+      .then(data => {
+        return res.status(201).json(data);
+      })
+      .catch(err => {
+        return res.status(400).send(err);
+      });
   })
 }
-
 
 ctrl.startTopic = (req, res, next) => {
   console.log("topics: ",req.body.topicKeys);

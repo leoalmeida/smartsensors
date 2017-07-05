@@ -9,8 +9,8 @@ module.exports = function(app){
 
   router.get('/', ctrl.getById);
 
-  router.post('/boards/connect',  ctrl.connectBoards);
-  router.post('/boards/disconnect',  ctrl.disconnectBoards);
+  router.post('/equipment/connect',  ctrl.connectEquipments);
+  router.post('/equipment/toggle',  ctrl.toggleEquipmentsStatus);
   router.post('/topic/dynamic',  ctrl.processDynamic);
 
 
