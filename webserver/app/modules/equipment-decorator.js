@@ -108,12 +108,17 @@ function getEquipmentDecorateIO(db) {
       for (let conf of equipment.data.configurations){
         confs[conf.attribute] = conf.value;
       }
+      if (confs["digital"]){
+      let object = new five.Sensor.Digital(confs["pin"])
+      }
+      else{
       let object = new five.Sensor({
           pin: confs["pin"],
           freq: confs["loop"],
           threshold: confs["threshold"],
           id: equipment._id
       });
+      };
       object.label = equipment.label;
       object.type = equipment.type;
       object.category = equipment.category;
