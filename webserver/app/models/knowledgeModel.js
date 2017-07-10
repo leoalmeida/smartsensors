@@ -13,14 +13,28 @@ const KnowledgeSchema = new mongoose.Schema({
     trim: true
   },
   relations: {
-    abstraction : { type: Boolean, default: false},
-    parent : [{
+    abstractions : [{
          id: mongoose.Schema.Types.ObjectId,
-         sync: { type: Number, default: Date.now()},
-         access: { type: String, default: "public"},
-         publish: { type: Boolean, default: false},
-         view: { type: Boolean, default: false}
-     }],
+         sync: { type: Number, default: Date.now()}
+    }],
+    elements : [{
+         id: mongoose.Schema.Types.ObjectId,
+         sync: { type: Number, default: Date.now()}
+    }],
+    subscribedBy: [{
+       id: mongoose.Schema.Types.ObjectId,
+       sync: { type: Number, default: Date.now()},
+       access: { type: String, default: "public"},
+       publish: { type: Boolean, default: false},
+       view: { type: Boolean, default: false}
+    }],
+    subscriberAt : [{
+     id: mongoose.Schema.Types.ObjectId,
+     sync: { type: Number, default: Date.now()},
+     access: { type: String, default: "public"},
+     publish: { type: Boolean, default: false},
+     view: { type: Boolean, default: false}
+    }],
     ownedBy : [{
          id: mongoose.Schema.Types.ObjectId,
          sync: { type: Number, default: Date.now()},
@@ -28,59 +42,42 @@ const KnowledgeSchema = new mongoose.Schema({
          publish: { type: Boolean, default: false},
          view: { type: Boolean, default: false}
      }],
-    connectedTo : [{
-         id: mongoose.Schema.Types.ObjectId,
-         sync: { type: Number, default: Date.now()},
-         access: { type: String, default: "public"},
-         publish: { type: Boolean, default: false},
-         view: { type: Boolean, default: false}
-     }],
-    subscriberAt : [{
-      id: mongoose.Schema.Types.ObjectId,
-      sync: { type: Number, default: Date.now()},
-      access: { type: String, default: "public"},
-      publish: { type: Boolean, default: false},
-      view: { type: Boolean, default: false}
-     }],
-    likedBy : [{
-       id: mongoose.Schema.Types.ObjectId,
-       sync: { type: Number, default: Date.now()},
-       access: { type: String, default: "public"},
-       publish: { type: Boolean, default: false},
-       view: { type: Boolean, default: false}
-      }],
-    likedTo : [{
-      id: mongoose.Schema.Types.ObjectId,
-      sync: { type: Number, default: Date.now()},
-      access: { type: String, default: "public"},
-      publish: { type: Boolean, default: false},
-      view: { type: Boolean, default: false}
-     }],
-    commentedBy : [{
-       id: mongoose.Schema.Types.ObjectId,
-       sync: { type: Number, default: Date.now()},
-       access: { type: String, default: "public"},
-       publish: { type: Boolean, default: false},
-       view: { type: Boolean, default: false}
-      }],
+    presentedBy : [{
+          id: mongoose.Schema.Types.ObjectId,
+          sync: { type: Number, default: Date.now()},
+          access: { type: String, default: "public"},
+          publish: { type: Boolean, default: false},
+          view: { type: Boolean, default: false}
+    }],
     commentedAt : [{
       id: mongoose.Schema.Types.ObjectId,
       sync: { type: Number, default: Date.now()},
       access: { type: String, default: "public"},
       publish: { type: Boolean, default: false},
       view: { type: Boolean, default: false}
-     }],
-    subscribedBy: [{
+    }],
+    commentedBy : [{
       id: mongoose.Schema.Types.ObjectId,
       sync: { type: Number, default: Date.now()},
       access: { type: String, default: "public"},
       publish: { type: Boolean, default: false},
       view: { type: Boolean, default: false}
-     }]
-  },
-  connection: {
-    type: mongoose.Schema.Types.Mixed,
-    default: {}
+    }],
+    statedTo : [{
+       id: mongoose.Schema.Types.ObjectId,
+       sync: { type: Number, default: Date.now()}
+    }],
+    actedAt : [{
+       id: mongoose.Schema.Types.ObjectId,
+       sync: { type: Number, default: Date.now()}
+    }],
+    likedTo : [{
+       id: mongoose.Schema.Types.ObjectId,
+       sync: { type: Number, default: Date.now()},
+       access: { type: String, default: "public"},
+       publish: { type: Boolean, default: false},
+       view: { type: Boolean, default: false}
+    }]
   },
   data: {
     type: mongoose.Schema.Types.Mixed,
@@ -99,6 +96,10 @@ const KnowledgeSchema = new mongoose.Schema({
     type: {type: String, enum: ['Point'], required: true},
     coordinates: [],
     text: { type: String, default: "", trim: true}
+  },
+  connection: {
+    host: { type: String, default: "0.0.0.0", trim: true },
+    port: { type: Number, default: 0 }
   },
   version: {
     type: String,

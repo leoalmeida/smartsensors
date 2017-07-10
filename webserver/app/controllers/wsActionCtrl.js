@@ -4,10 +4,10 @@ var mongoose = require('mongoose');
 var Action = mongoose.model('Action');
 var KnowledgeModel = mongoose.model('Knowledge');
 
-const getBoardDecorateIO = require('../modules/equipments');
+const getBoardDecorateIO = require('../decorators/equipments');
 let boardDecorator = getBoardDecorateIO();
 
-const getTopicDecorateIO = require('../modules/topic');
+const getTopicDecorateIO = require('../decorators/topic');
 let topicDecorator = getTopicDecorateIO();
 
 const ctrl = {};

@@ -19,13 +19,12 @@ function getEquipmentDecorateIO(db) {
   function startMotion (equipment, socket) {
     console.log('Starting Motion');
     let confs = {};
+    confs.id = equipment._id;
     for (let conf of equipment.data.configurations){
-      confs[conf.attribute] = conf.value;
+      if (!conf.default) confs[conf.attribute] = conf.value;
     }
-    let object = new five.Motion({
-        pin: confs["pin"],
-        id: equipment._id
-    });
+    let object = new five.Motion(confs);
+
     object.label = equipment.label;
     object.type = equipment.type;
     object.category = equipment.category;
@@ -34,15 +33,16 @@ function getEquipmentDecorateIO(db) {
     object.location = equipment.location;
     object.equipment = equipment.equipment;
     object.root = equipment.root;
+    object.unit = equipment.data.unit;
     object.lastReading = object.detectedMotion;
 
-    object.toggleConnect = function (updated){
+    object.toggle = function (updated){
         //this.connected ? false : true;
         object.connected = updated.connected;
     };
 
     object.toggleEnable = function (updated){
-        object.toggleConnect(updated);
+        object.toggle(updated);
     };
 
 
@@ -103,22 +103,14 @@ function getEquipmentDecorateIO(db) {
     return object;
   };
   function startSensor(equipment, socket) {
-      console.log('Starting Sensor');
+      console.log('Starting ', equipment.data.name);
       let confs = {};
+      confs.id = equipment._id;
       for (let conf of equipment.data.configurations){
-        confs[conf.attribute] = conf.value;
+        if (!conf.default) confs[conf.attribute] = conf.value;
       }
-      if (confs["digital"]){
-      let object = new five.Sensor.Digital(confs["pin"])
-      }
-      else{
-      let object = new five.Sensor({
-          pin: confs["pin"],
-          freq: confs["loop"],
-          threshold: confs["threshold"],
-          id: equipment._id
-      });
-      };
+      let object = (equipment.data.digital)?new five.Sensor.Digital(confs):new five.Sensor(confs);
+
       object.label = equipment.label;
       object.type = equipment.type;
       object.category = equipment.category;
@@ -127,14 +119,14 @@ function getEquipmentDecorateIO(db) {
       object.location = equipment.location;
       object.equipment = equipment.equipment;
       object.root = equipment.root;
-      object.unit = confs["unit"];
-      object.toggleConnect = function (updated){
+      object.unit = equipment.data.unit;
+      object.toggle = function (updated){
           //this.connected ? false : true;
           object.connected = updated.connected;
       };
 
       object.toggleEnable = function (updated){
-          object.toggleConnect(updated);
+          object.toggle(updated);
       };
       console.log('Sensor sockets on connection');
 
@@ -175,37 +167,37 @@ function getEquipmentDecorateIO(db) {
   function startFlow(equipment, socket) {
     console.log('Starting Flow');
     let confs = {};
-
+    confs.id = equipment._id;
     for (let conf of equipment.data.configurations){
-      confs[conf.attribute] = conf.value;
+      if (!conf.default) confs[conf.attribute] = conf.value;
     }
-    let object = new five.Sensor.Digital({
-        id: equipment._id,
-        pin: confs["pin"],
-    });
+
+    let object = new five.Sensor.Digital(confs);
     object.label = equipment.label;
     object.type = equipment.type;
     object.category = equipment.category;
     object.enabled = equipment.enabled;
     object.connected = equipment.connected;
     object.root = equipment.root;
+    object.unit = equipment.data.unit;
+
     object.lastReading = [{x: [], y: []}];
     object.pulses = 0;
     object.lastFlowRateTimer = 0;
     object.lastFlowPinState = false;
     object.template = equipment;
-    object.maxval = confs["maxval"];
+    object.maxval = equipment.maxval;
     object.lastval = 0;
 
     object.location = equipment.location;
     object.equipment = equipment.equipment;
 
-    object.toggleConnect = function (updated){
+    object.toggle = function (updated){
         object.connected = updated.connected;
     };
 
     object.toggleEnable = function (updated){
-        object.toggleConnect(updated);
+        object.toggle(updated);
     };
 
     board.digitalRead(confs["pin"], function(value) {
@@ -230,7 +222,7 @@ function getEquipmentDecorateIO(db) {
 
         if (socket) socket.emit('flowData', object.lastReading.y + "l" );
 
-    }, confs["loop"]);
+    }, confs["freq"]);
 
     if (socket) socket.emit('flowData', 'On');
 
@@ -239,39 +231,37 @@ function getEquipmentDecorateIO(db) {
   function startHygrometer(equipment, socket) {
     console.log('Starting Hygrometer');
     let confs = {};
+    confs.id = equipment._id;
     for (let conf of equipment.data.configurations){
-      confs[conf.attribute] = conf.value;
+      if (!conf.default) confs[conf.attribute] = conf.value;
     }
-    let object = new five.Sensor({
-        pin: confs["pin"],
-        freq: confs["loop"],
-        threshold: confs["threshold"],
-        id: equipment._id
-    });
+    let object = new five.Sensor(confs);
     object.label = equipment.label;
     object.type = equipment.type;
     object.category = equipment.category;
     object.enabled= equipment.enabled
     object.connected = equipment.connected;
-    object.key = equipment.key;
+    object.root = equipment.root;
+    object.unit = equipment.data.unit;
+
+
     object.lastReading = -1;
     object.quantity = 0;
     object.loops = 0;
     object.value = 0;
     object.template = equipment;
-    object.maxval = confs["maxval"];
-    object.action = confs["action"];
+    object.maxval = equipment.maxval;
 
     object.location = equipment.location;
     object.equipment = equipment.equipment;
 
-    object.toggleConnect = function (updated){
+    object.toggle = function (updated){
         //this.connected ? false : true;
         object.connected = updated.connected;
     };
 
     object.toggleEnable = function (updated){
-        object.toggleConnect(updated);
+        object.toggle(updated);
     };
 
     console.log('Hygrometer sockets on connection');
@@ -288,7 +278,7 @@ function getEquipmentDecorateIO(db) {
       object.average = ((object.average * (object.quantity - 1)) + object.scaledValue) / object.quantity;
 
       //console.log("Hygrometer");
-      //console.log("  Sensor: " + object.key);
+      //console.log("  Sensor: " + object.root);
       console.log("  Humidity : " + object.scaledValue);
       //console.log("  Average: " + object.average);
       let lastUpdate = {
@@ -321,39 +311,38 @@ function getEquipmentDecorateIO(db) {
     // 10mV = 1°C
     console.log('Starting Thermometer');
     let confs = {};
+    confs.id = equipment._id;
     for (let conf of equipment.data.configurations){
-      confs[conf.attribute] = conf.value;
-    };
+      if (!conf.default) confs[conf.attribute] = conf.value;
+    }
+    confs.toCelsius = function(raw) {
+      if (confs["controller"] === "ANALOGIC")
+        return Math.round((raw * 180 ) / 1024) - 55;
+      else
+        return Math.round(( raw * 100 ) / 1024);
+    }
+
     console.log(confs);
-    let object = new five.Thermometer({
-        controller: confs["controller"],
-        pin: confs["pin"],
-        freq: confs["loop"],
-        id: equipment._id,
-        toCelsius: function(raw) {
-            if (confs["controller"] === "ANALOGIC")
-              return Math.round((raw * 180 ) / 1024) - 55;
-            else
-              return Math.round(( raw * 100 ) / 1024);
-        }
-    });
+    let object = new five.Thermometer(confs);
     object.label = equipment.label;
     object.type = equipment.type;
     object.category = equipment.category;
     object.enabled = equipment.enabled;
     object.connected = equipment.connected;
     object.root = equipment.root;
+    object.unit = equipment.data.unit;
+
     object.lastReading = 0;
     object.location = equipment.location;
     object.equipment = equipment.equipment;
 
-    object.toggleConnect = function (updated){
+    object.toggle = function (updated){
         //this.connected ? false : true;
         object.connected = updated.connected;
     };
 
     object.toggleEnable = function (updated){
-        object.toggleConnect(updated);
+        object.toggle(updated);
     };
 
 
@@ -366,7 +355,7 @@ function getEquipmentDecorateIO(db) {
 
         object.lastReading = celsius;
 
-        //console.log("Sensor: " + object.key);
+        //console.log("Sensor: " + object.root);
         console.log("Temp: " + celsius);
 
         let lastUpdate = {
@@ -399,15 +388,11 @@ function getEquipmentDecorateIO(db) {
   function startLight(equipment, socket) {
     console.log('Starting Light');
     let confs = {};
+    confs.id = equipment._id;
     for (let conf of equipment.data.configurations){
-      confs[conf.attribute] = conf.value;
+      if (!conf.default) confs[conf.attribute] = conf.value;
     }
-    let object = new five.Light({
-        pin: confs["pin"],
-        freq: confs["freq"],
-        threshold: confs["threshold"],
-        id: equipment._id
-    });
+    let object = new five.Light(confs);
     object.label = equipment.label;
     object.type = equipment.type;
     object.category = equipment.category;
@@ -416,18 +401,19 @@ function getEquipmentDecorateIO(db) {
     object.location = equipment.location;
     object.equipment = equipment.equipment;
     object.root = equipment.root;
+    object.unit = equipment.data.unit;
     object.lastReading = 0;
 
     console.log("    object.connected: ",     object.connected);
     console.log("    equipment.connected: ",     equipment.connected);
 
-    object.toggleConnect = function (updated){
+    object.toggle = function (updated){
         //this.connected ? false : true;
         object.connected = updated.connected;
     };
 /*
     object.toggleEnable = function (updated){
-        object.toggleConnect(updated);
+        object.toggle(updated);
     };*/
 
     console.log('Light sockets on connection');
@@ -463,15 +449,12 @@ function getEquipmentDecorateIO(db) {
   function startRelay(equipment, socket) {
     console.log('Starting Relay');
     let confs = {};
+    confs.id = equipment._id;
     for (let conf of equipment.data.configurations){
-      confs[conf.attribute] = conf.value;
+      if (!conf.default) confs[conf.attribute] = conf.value;
     }
+    let object = new five.Relay(confs);
 
-    let object = new five.Relay({
-      pin: confs["pin"],
-      type: confs["type"],
-      id: equipment._id
-    });
     object.label = equipment.label;
     object.type = equipment.type;
     object.category = equipment.category;
@@ -481,7 +464,7 @@ function getEquipmentDecorateIO(db) {
     object.equipment = equipment.equipment;
     object[this.isOn ? "off" : "on"]();
 
-    object.toggleConnect = function(updatedItem) {
+    object.toggle = function(updatedItem) {
         //this.connected ? false : true;
         object.connected = updatedItem.connected;
         object[object.isOn ? "off" : "on"]();
@@ -506,7 +489,7 @@ function getEquipmentDecorateIO(db) {
     }
 
     object.toggleEnable = function (updated) {
-        object.toggleConnect(updated)
+        object.toggle(updated)
     };
 
     return object;
@@ -514,14 +497,12 @@ function getEquipmentDecorateIO(db) {
   function startLed(equipment, socket) {
     console.log('Starting Led');
     let confs = {};
+    confs.id = equipment._id;
     for (let conf of equipment.data.configurations){
-      confs[conf.attribute] = conf.value;
+      if (!conf.default) confs[conf.attribute] = conf.value;
     }
+    let object = new five.led(confs);
 
-    let object = new five.Led({
-        pin: confs["pin"],
-        id: equipment._id
-    });
     object.label = equipment.label;
     object.type = equipment.type;
     object.category = equipment.category;
@@ -529,11 +510,11 @@ function getEquipmentDecorateIO(db) {
     object.connected = equipment.connected;
     object.location = equipment.location;
     object.equipment = equipment.equipment;
-    object.loop = confs["loop"];
-    object.ledStyle = confs["ledStyle"];
-    object.duration = confs["duration"];
+    object.loop = equipment.freq;
+    object.ledStyle = equipment.ledStyle;
+    object.duration = equipment.duration;
 
-    object.toggleConnect = function(updatedItem) {
+    object.toggle = function(updatedItem) {
       if (updatedItem.connected) object.on();
       else object.stop().off();
       object.connected = updatedItem.connected;
@@ -582,7 +563,7 @@ function getEquipmentDecorateIO(db) {
     }
 
     object.toggleEnable = function (updatedItem) {
-        object.toggleConnect(updatedItem);
+        object.toggle(updatedItem);
     };
 
     return object;

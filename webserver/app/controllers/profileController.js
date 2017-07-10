@@ -89,7 +89,7 @@ ctrl.createProfile = (req, res, next) => {
           req.params.type = "object";
           req.params.subtype = "profile";
           req.params.owner = resultdata.key;
-          req.params.relations = {"abstraction" : "","parent" : ""};
+          req.params.relations = {"abstractions" : [],"elements" : []};
           next();
         })
         .catch(err => {
@@ -138,7 +138,7 @@ ctrl.removeProfile = (req, res, next) => {
         req.params.type = "object";
         req.params.subtype = "profile";
         req.params.username = req.params.username;
-        req.params.relations = {"abstraction" : "","parent" : ""};
+        req.params.relations = {"abstractions" : [],"elements" : []};
         next();
       })
       .catch(err => {

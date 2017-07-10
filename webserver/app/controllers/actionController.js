@@ -5,10 +5,10 @@ var Action = mongoose.model('Action');
 var KnowledgeModel = mongoose.model('Knowledge');
 var ObjectId = require('mongodb').ObjectID;
 
-const getEquipmentDecorateIO = require('../modules/equipments');
+const getEquipmentDecorateIO = require('../decorators/equipments');
 let equipmentDecorator = getEquipmentDecorateIO();
 
-const getTopicDecorateIO = require('../modules/topic');
+const getTopicDecorateIO = require('../decorators/topic');
 let topicDecorator = getTopicDecorateIO();
 
 
