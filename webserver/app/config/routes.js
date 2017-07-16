@@ -10,6 +10,7 @@ module.exports = function (app){
       app.use('/api/profile', app.routes.profile);
       app.use('/api/action', app.routes.action);
       app.use('/api/reference', app.routes.reference);
+      app.use('/api/connection', app.routes.connection);
       app.use('/api/association', app.routes.association);
       app.use('/api/channel', app.routes.channel);
       app.use('/api/knowledge', app.routes.knowledge);

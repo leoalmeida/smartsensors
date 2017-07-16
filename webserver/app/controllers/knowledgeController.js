@@ -193,6 +193,32 @@ ctrl.getByTypeCategory = (req, res, next) => {
   });
 };
 
+ctrl.getNotSetRelations = (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
+
+  var expression = {};
+
+  if (Object.keys(req.query).length){
+    console.log(req.query);
+    expression['sync'] = req.query;
+  }
+  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$ne: ObjectId(req.params.id)}}}
+
+  KnowledgeModel.find(expression).then(data => {
+    if (!data) {
+      return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
+    }
+    console.log("getRelations request");
+    //.once("value", data => {
+    return res.status(200).json(data);
+  })
+  .catch(err => {
+    console.log("err" + err);
+    return res.status(500).send({data: err, code: 500, messageKeys: ['unexpected-error'] });
+  });
+};
+
 ctrl.getByRelations = (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
@@ -202,8 +228,11 @@ ctrl.getByRelations = (req, res, next) => {
     console.log(req.query);
     expression['sync'] = req.query;
   }
-
-  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$eq: ObjectId(req.params.id)}}}
+  let selector = (req.params.selector==="not")?"$ne":"$eq";
+  console.log(selector);
+  //expression["relations." + req.params.relation] = { $elemMatch: { "id": {[selector]: ObjectId(req.params.id)}}}
+  expression["relations." + req.params.relation + ".id"] = {[selector]: ObjectId(req.params.id)};
+  console.log(expression);
   KnowledgeModel.find(expression).then(data => {
     if (!data) {
       return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
@@ -231,9 +260,11 @@ ctrl.getByTypeRelations = (req, res, next) => {
     expression['sync'] = req.query;
   }
 
+  let selector = (req.params.selector==="not")?"$ne":"$eq";
+
       //if (req.params.relation === "connectedTo")
       //expression["relations." + req.params.relation] = {$eq: ObjectId(req.params.id)};
-  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$eq: ObjectId(req.params.id)}}}
+  expression["relations." + req.params.relation] = { $elemMatch: { "id": {[selector]: ObjectId(req.params.id)}}}
   console.log("express: ", expression);
 
   KnowledgeModel.find(expression).then(data => {
@@ -249,7 +280,6 @@ ctrl.getByTypeRelations = (req, res, next) => {
   });
 };
 
-
 ctrl.getByTypeCategoryRelations = (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
@@ -261,10 +291,12 @@ ctrl.getByTypeCategoryRelations = (req, res, next) => {
     console.log(req.query);
     expression['sync'] = req.query;
   }
+  let selector = (req.params.selector==="not")?"$ne":"$eq";
+
           //if (req.params.relation === "connectedTo")
           //expression["relations." + req.params.relation] = {$eq: ObjectId(req.params.id)};
 
-  expression["relations." + req.params.relation] = { $elemMatch: { "id": {$eq: ObjectId(req.params.id)}}}
+  expression["relations." + req.params.relation] = { $elemMatch: { "id": { [selector]: ObjectId(req.params.id)}}}
   KnowledgeModel.find(expression).then(data => {
     if (!data) {
       return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
@@ -434,14 +466,12 @@ ctrl.pushRelations = (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) return  res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
     if (!req.params.relation) return res.status(422).send({ data: req.params.relation, code: 422, messageKeys: ['not-found'] });
     if (!req.body) return res.status(422).send({ data: req.body, code: 422, messageKeys: ['not-found'] });
-
+console.log("pushRelations request", req.body);
     var access="public";
     KnowledgeModel.findOne({_id: ObjectId(req.params.id)}).then(data => {
-      //console.log("pushRelations request", data);
+      console.log("pushRelations request", data);
       if (!data) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
 
-      console.log(req.body);
-      console.log(data.root);
       if (data.root != req.body.keyId) return res.status(409).send({ data: req.body.keyId, code: 409, messageKeys: ['conflict-relation'] });
 
       for (let item in data['relations'][req.params.relation])
@@ -462,13 +492,11 @@ ctrl.pushRelations = (req, res, next) => {
 };
 ctrl.pushAttrInfo = (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-    if (!req.params.name) return res.status(422).send({ data: req.params.name, code: 422, messageKeys: ['not-found'] });
+    if (!req.params.datatype) return res.status(422).send({ data: req.params.datatype, code: 422, messageKeys: ['not-found'] });
     if (!req.body) return res.status(422).send({ data: req.body, code: 422, messageKeys: ['not-found'] });
-
     var expression = {};
-    expression["data.info"] = req.body;
-    expression["data.info"].name = req.params.name;
-
+    expression["data."+req.params.datatype] = req.body;
+    console.log(expression);
     KnowledgeModel.update({ _id: req.params.id }, {$set: {sync: Date.now()}, $push: expression })
       .then(data => {
         console.log("create request");
@@ -623,11 +651,11 @@ ctrl.removeAttribute = (req, res , next) => {
 };
 ctrl.removeAttrInfo = (req, res , next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
-  if (req.params.attr==="") return res.status(422).send({ data: req.params.attr, code: 422, messageKeys: ['not-found'] });
+  if (!req.params.datatype) return res.status(422).send({ data: req.params.datatype, code: 422, messageKeys: ['not-found'] });
   if (!req.params.name) return res.status(422).send({ data: req.params.name, code: 422, messageKeys: ['not-found'] });
 
   var expression = {};
-  expression["data.info"] = {"name":req.params.name};
+  expression["data."+ req.params.datatype] = {"name":req.params.name};
   console.log("delete info request");
   KnowledgeModel.update({_id: req.params.id}, {$set: {sync: Date.now()}, $pull: expression})
     .then(data => {
@@ -648,8 +676,8 @@ ctrl.removeRelation = (req, res , next) => {
 
   //console.log("delete relation request", expression);
   console.log("params: ", req.params);
-
-  KnowledgeModel.update({_id: ObjectId(req.params.id)}, {$set: {sync: Date.now()}, $pull: { ['relations.'+ req.params.relation +'.id']: ObjectId(req.params.relid) }})
+  //KnowledgeModel.update({_id: ObjectId(req.params.id)}, {$set: {sync: Date.now()}, $pull: { ['relations.'+ req.params.relation +'.id']: ObjectId(req.params.relid) }})
+  KnowledgeModel.update({_id: ObjectId(req.params.id)}, {$set: {sync: Date.now()}, $pull: { ['relations.'+ req.params.relation]: { $in: [ObjectId(req.params.relid)]}}})
     .then(data => {
       data.id = req.params.id;
       return res.status(200).send(data);

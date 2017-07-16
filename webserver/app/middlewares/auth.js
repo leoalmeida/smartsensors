@@ -52,6 +52,10 @@ module.exports = (req, res, next) => {
 
     if (metadata.data.app_id !== "734dd7bf" || metadata.data.details.password !== req.params.password)
       return res.status(404).send({ message: 'invalid-credentials' });
+
+    //if (req.params.token != profile.token.value)
+    //  return res.status(404).send({ message: 'invalid-credentials' });
+
     /*if (profile.token.value!==req.params.token || profile.token.expirationDate < Date.now())
         return res.status(404).send({ message: 'invalid-credentials' });
 */

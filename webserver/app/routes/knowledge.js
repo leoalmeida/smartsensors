@@ -20,23 +20,23 @@ module.exports = function(app){
   //router.get('/:type/:relation/:id',  ctrl.getByCategoryKey);
 
   router.get('/:id',  ctrl.getById);
-  router.get('/:relation/:id',  ctrl.getByRelations);
-  router.get('/:type/:relation/:id',  ctrl.getByTypeRelations);
-  router.get('/:type/:category/:relation/:id',  ctrl.getByTypeCategoryRelations);
+  router.get('/:selector/:relation/:id',  ctrl.getByRelations);
+  router.get('/:selector/:type/:relation/:id',  ctrl.getByTypeRelations);
+  router.get('/:selector/:type/:category/:relation/:id',  ctrl.getByTypeCategoryRelations);
 
   //router.put('/:id', ctrl.update);
   router.post('/relations/subscribe',  ctrl.pushTopics);
-  router.post('/:id/attr/:relation',  ctrl.pushAttrInfo);
+  router.post('/:id/attr/:datatype',  ctrl.pushAttrInfo);
   router.post('/:id/relation/:relation',  ctrl.pushRelations);
   router.post('/:id', ctrl.updateAttribute);
 
 
   router.delete('/:id',  ctrl.remove);
+  router.delete('/:id/attr/:datatype/:name',  ctrl.removeAttrInfo);
   router.delete('/relations/unsubscribe',  ctrl.pullTopics);
   router.delete('/relations/:relation',  ctrl.pullRelations);
 
   router.delete('/:id/:query',  ctrl.removeAttribute);
-  router.delete('/:id/attr/:name',  ctrl.removeAttrInfo);
   router.delete('/:id/:relation/:relid',  ctrl.removeRelation);
   router.delete('/:type/:category/:relation/:id',  ctrl.removeByTypeCategoryRelations);
 

@@ -13,6 +13,8 @@ const options = {
 };
 
 const app = require('../app');
+const mqttServ = require('../mqttserver');
+mqttServ.attachHttpServer(app);
 
 app.set('port', process.env.PORT || 3001);
 app.set('httpsport', process.env.PORT || 3002);
@@ -33,15 +35,15 @@ var app = require('../app');
 
 app.set('port', process.env.PORT || 3001);
 */
-var server = app.listen(app.get('port'), function() {
-  console.log('Express server is in '+process.env.NODE_ENV+' mode and listening on port ' + server.address().port);
 
-  var host = server.address().address;
-  var port = server.address().port;
+var httpServ = app.listen(app.get('port'), function() {
+  console.log('Express server is in '+process.env.NODE_ENV+' mode and listening on port ' + httpServ.address().port);
+
+  var host = httpServ.address().address;
+  var port = httpServ.address().port;
 
   console.log('Example app listening at http://%s:%s', host, port);
 });
-
 
 const async = require('async');
 const actionCtrl = require('../app/controllers/wsActionCtrl');
