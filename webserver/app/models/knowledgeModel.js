@@ -26,42 +26,39 @@ const KnowledgeSchema = new mongoose.Schema({
        sync: { type: Number, default: Date.now()},
        access: { type: String, default: "public"},
        publish: { type: Boolean, default: false},
-       view: { type: Boolean, default: false}
+       subscribe: { type: Boolean, default: false}
     }],
     subscriberAt : [{
      id: mongoose.Schema.Types.ObjectId,
      sync: { type: Number, default: Date.now()},
      access: { type: String, default: "public"},
      publish: { type: Boolean, default: false},
-     view: { type: Boolean, default: false}
+     subscribe: { type: Boolean, default: false}
     }],
     ownedBy : [{
          id: mongoose.Schema.Types.ObjectId,
-         sync: { type: Number, default: Date.now()},
-         access: { type: String, default: "public"},
-         publish: { type: Boolean, default: false},
-         view: { type: Boolean, default: false}
+         sync: { type: Number, default: Date.now()}
      }],
     presentedBy : [{
           id: mongoose.Schema.Types.ObjectId,
           sync: { type: Number, default: Date.now()},
           access: { type: String, default: "public"},
           publish: { type: Boolean, default: false},
-          view: { type: Boolean, default: false}
+          subscribe: { type: Boolean, default: false}
     }],
     commentedAt : [{
       id: mongoose.Schema.Types.ObjectId,
       sync: { type: Number, default: Date.now()},
       access: { type: String, default: "public"},
       publish: { type: Boolean, default: false},
-      view: { type: Boolean, default: false}
+      subscribe: { type: Boolean, default: false}
     }],
     commentedBy : [{
       id: mongoose.Schema.Types.ObjectId,
       sync: { type: Number, default: Date.now()},
       access: { type: String, default: "public"},
       publish: { type: Boolean, default: false},
-      view: { type: Boolean, default: false}
+      subscribe: { type: Boolean, default: false}
     }],
     statedTo : [{
        id: mongoose.Schema.Types.ObjectId,
@@ -76,7 +73,7 @@ const KnowledgeSchema = new mongoose.Schema({
        sync: { type: Number, default: Date.now()},
        access: { type: String, default: "public"},
        publish: { type: Boolean, default: false},
-       view: { type: Boolean, default: false}
+       subscribe: { type: Boolean, default: false}
     }]
   },
   data: {

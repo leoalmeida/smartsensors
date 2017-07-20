@@ -2,18 +2,21 @@ var mosca = require('mosca');
 
 let dbUrl = 'mongodb://localhost:27017/';
 
+var SECURE_KEY = __dirname + '/key.pem';
+var SECURE_CERT = __dirname + '/cert.pem';
+
 let mqttConfig = {
   id: 'smartSensors', // used to publish in the $SYS/<id> topicspace
   stats: false,  //(optional) if set to true mosca keep informing about the server status $SYS/<id> topicspace
   logger: {
     level: 'trace'
   },
-  port: 1883, // default port is 1883 for mqtt
+  port: 1880, // default port is 1883 for mqtt
   /*** database settings for mongodb***/
   backend: {
     type: 'mongo',
     url: dbUrl + 'mqtt',
-    pubsubCollection: 'smartSensors',
+    pubsubCollection: 'ascoltatori',
     mongo: {}
   },
   /*##########################*/
@@ -36,13 +39,14 @@ let mqttConfig = {
     }
   },
   //======== use these options for mqtts =======//
-    /*
+
     secure : {
-    	 port: 8884               //provide secure port if any (default 8883 ssl)
-  	 keyPath: {your keypath}, //path of .pem file
-       certPath: {your certpath} //path of .pem file
-    }
-     */
+    	 port: 1883,               //provide secure port if any (default 8883 ssl)
+  	   keyPath: SECURE_KEY, //path of .pem file
+       certPath: SECURE_CERT, //path of .pem file
+       passphrase: 'testepem'
+    },
+
     //============= end =================//
 
   //allowNonSecure: true,
@@ -58,19 +62,20 @@ let mqttConfig = {
     port: 3004,
     bundle: true,
     static: './public'
-  }
+  },
 
   //======== use these options for https =======//
-  /*
+
   credentials: {
-	keyPath: {your keypath}, //path of .pem file
-     certPath: {your certpath} //path of .pem file
-  },*/
-  /* https:{
-  port : 3030, //(optional default 3001)
-  bundle : true,
-  static : ‘/’,
-  },*/
+      keyPath: SECURE_KEY, //path of .pem file
+      certPath: SECURE_CERT, //path of .pem file
+      passphrase: 'testepem'
+  },
+  https:{
+    port : 3030, //(optional default 3001)
+    bundle : true,
+    static : './public',
+  }
   //============= end =================//
 };
 

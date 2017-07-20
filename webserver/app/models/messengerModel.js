@@ -85,13 +85,13 @@ const MessengerSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['action', 'reading', 'alert'],
+    enum: ['action', 'update', 'alert'],
     required: true,
     trim: true
   },
   category: {
     type: String,
-    enum: ['message'],
+    enum: ['message', 'command', 'profiles'],
     required: true,
     trim: true
   },

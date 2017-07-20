@@ -10,6 +10,9 @@ var Knowledge = mongoose.model('Knowledge');
 
 var request = require("request");
 var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzOWRhOTNjZi01YmMxLTRmZWYtYWE5Mi02MDkxODhkNGU2ZDMifQ.2fOWOPw8DsNkssI9OQUAuJ0TzBFaOxq_fIbD02AIfew'
+//var UUID  = "6dffcf5a-8be1-42dc-822d-e4aafa40223d";
+//var TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzOWRhOTNjZi01YmMxLTRmZWYtYWE5Mi02MDkxODhkNGU2ZDMifQ.2fOWOPw8DsNkssI9OQUAuJ0TzBFaOxq_fIbD02AIfew";
+
 
 module.exports = (req, res, next) => {
   if(!req.headers.authorization) {
