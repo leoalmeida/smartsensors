@@ -11,7 +11,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prestart": "npm install",
-    "start": "NODE_ENV=development node ./server/bin/heroku",
+    "start": "NODE_ENV=development node ./webserver/bin/heroku",
+    "bgstart": "NODE_ENV=development forever --killSignal=SIGTERM -w start ./webserver/bin/complex.js",
+    "bglist": "NODE_ENV=development forever list",
+    "bgstop": "NODE_ENV=development forever stop ./webserver/bin/complex.js",
     "build": "nwbuild -p ['osx64', 'win64', 'linux64']"
   },
   "keywords": [],

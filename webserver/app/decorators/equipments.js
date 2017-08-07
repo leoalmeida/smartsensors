@@ -346,9 +346,6 @@ function startEquipment(equipment){
     case "motion":
       return equipmentDecorator.startMotion(equipment, null);
       break;
-    case "motion":
-      return equipmentDecorator.startMotion(equipment, null);
-      break;
     case "light":
       return equipmentDecorator.startLight(equipment, null);
       break;

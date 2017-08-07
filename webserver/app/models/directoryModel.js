@@ -1,7 +1,7 @@
 'use strict'
 
 const mongoose = require('mongoose');
-const ConnectionSchema = new mongoose.Schema({
+const DirectorySchema = new mongoose.Schema({
   name:{
     type: String,
     required: true,
@@ -9,7 +9,7 @@ const ConnectionSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['webserver','pubsub','mqttserver','database'],
+    enum: ['domainCatalog','resolution','enabler','resources'],
     required: true
   },
   access: {
@@ -38,29 +38,29 @@ const ConnectionSchema = new mongoose.Schema({
   statistics: {quality: {type: Number, default: 100}}
 })
 
-ConnectionSchema.methods = {
+DirectorySchema.methods = {
   getAll: () => {
-    return Reference.find({});
+    return Directory.find({});
   },
 
   getById: (_id) => {
-    return Reference.findOne({ _id });
+    return Directory.findOne({ _id });
   },
 
   create: (transaction) => {
-    return Reference.create(transaction);
+    return Directory.create(transaction);
   },
 
   update: (_id, transaction) => {
-    return Reference.update({ _id }, transaction);
+    return Directory.update({ _id }, transaction);
   },
 
   remove: (_id) => {
-    return Reference.update({ _id }, {active: false});
+    return Directory.update({ _id }, {active: false});
   }
 }
 
-mongoose.model('Connection', ConnectionSchema);
+mongoose.model('Directory', DirectorySchema);
 
 /*
 class Knowledge {

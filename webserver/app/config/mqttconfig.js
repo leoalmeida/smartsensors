@@ -11,7 +11,7 @@ let mqttConfig = {
   logger: {
     level: 'trace'
   },
-  port: 1880, // default port is 1883 for mqtt
+  port: 1884, // default port is 1883 for mqtt
   /*** database settings for mongodb***/
   backend: {
     type: 'mongo',
@@ -40,16 +40,10 @@ let mqttConfig = {
   },
   //======== use these options for mqtts =======//
 
-    secure : {
-    	 port: 1883,               //provide secure port if any (default 8883 ssl)
-  	   keyPath: SECURE_KEY, //path of .pem file
-       certPath: SECURE_CERT, //path of .pem file
-       passphrase: 'testepem'
-    },
 
-    //============= end =================//
+  //============= end =================//
 
-  //allowNonSecure: true,
+  allowNonSecure: true,
   /*
      - this option will create a http server with mqtt attached.
        - `port`   (optional)   the http port to listen. default 3000
@@ -65,17 +59,24 @@ let mqttConfig = {
   },
 
   //======== use these options for https =======//
+  secure : {
+  	 port: 1883,               //provide secure port if any (default 8883 ssl)
+	   keyPath: SECURE_KEY, //path of .pem file
+     certPath: SECURE_CERT, //path of .pem file
+     passphrase: 'testepem'
+  },
 
   credentials: {
       keyPath: SECURE_KEY, //path of .pem file
       certPath: SECURE_CERT, //path of .pem file
       passphrase: 'testepem'
-  },
+  }
+  /*
   https:{
     port : 3030, //(optional default 3001)
     bundle : true,
     static : './public',
-  }
+  }*/
   //============= end =================//
 };
 

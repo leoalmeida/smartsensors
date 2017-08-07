@@ -23,8 +23,18 @@ console.log('Mongo db connected');
 var Knowledge = mongoose.model('Knowledge');
 var ObjectId = require('mongodb').ObjectID;
 
+// Topics Collection
+var topics = {};
+
+let broker = new mosca.Server(serverSettings.mqtt, (err, broker) => {
+  // assume no errors
+  console.log('MQTT broker is up and running');
+  //setInterval(publishMessage, 30000);
+  //setInterval(verifyConnected, 1000);
+});
+
 // Accepts the connection if the username and password are valid
-var authenticate = function(client, username, password, callback) {
+broker.authenticate = (client, username, password, callback) => {
   console.log('autenticando: ',client.id);
   //console.log('username: ',username);
   //console.log('password: ',password.toString());
@@ -46,16 +56,20 @@ var authenticate = function(client, username, password, callback) {
     return callback(err, false);
   });
 }
-
 // In this case the client authorized as alice can publish to /users/alice taking
 // the username from the topic and verifing it is the same of the authorized user
-var authorizePublish = function(client, topic, payload, callback) {
+broker.authorizePublish = (client, topic, payload, callback) => {
   console.log("client: " + client.id);
   console.log("topic: " + topic);
 
-  if (!mongoose.Types.ObjectId.isValid(client.id)) return callback({ data: client.id, code: 422, messageKeys: ['not-found'] }, false);
-  let topicSplitted = topic.split('/')
-  if (!mongoose.Types.ObjectId.isValid(topicSplitted[0])) return callback({ data: client.id, code: 422, messageKeys: ['not-found'] }, false);
+  let topicSplitted = topic.split('/');
+  if (client.id !== "complexServer" && client.id !== "processServer"){
+    if (!mongoose.Types.ObjectId.isValid(client.id)) return callback({ data: client.id, code: 422, messageKeys: ['not-found'] }, false);
+    if (!mongoose.Types.ObjectId.isValid(topicSplitted[0])) return callback({ data: client.id, code: 422, messageKeys: ['not-found'] }, false);
+  }else if (topicSplitted[1] === "processTopicSub" || topicSplitted[1] === "processTopicPub"){
+    console.log("public complexServer");
+    return callback(null, true);
+  }
 
   if (topicSplitted.length > 2) return callback(null, false);
   else if (topicSplitted.length === 1) return callback(null, (topicSplitted[0] === client.id));
@@ -76,10 +90,9 @@ var authorizePublish = function(client, topic, payload, callback) {
     });
   }else return callback(null, false);
 }
-
 // In this case the client authorized as alice can subscribe to /users/alice taking
 // the username from the topic and verifing it is the same of the authorized user
-var authorizeSubscribe = function(client, topic, callback) {
+broker.authorizeSubscribe = (client, topic, callback) => {
   //console.log("client: " + client.id);
   //console.log("topic: " + topic);
   if (!mongoose.Types.ObjectId.isValid(client.id)) return callback({ data: client.id, code: 422, messageKeys: ['not-found'] }, false);
@@ -88,17 +101,26 @@ var authorizeSubscribe = function(client, topic, callback) {
 
   if (topicSplitted.length > 2) return callback(null, false);
   else if (topicSplitted.length === 1){
-    //console.log("_id: " + topicSplitted[0]);
-    //console.log("subscriber: " + client.id);
-    Knowledge.findOne({"_id": ObjectId(topicSplitted[0]), "relations.subscribedBy.id": ObjectId(client.id)},{"relations.subscribedBy.id":1,"relations.subscribedBy.view":1}).then(topicKldg => {
+    console.log("_id: " + topicSplitted[0]);
+    console.log("subscriber: " + client.id);
+
+    Knowledge.aggregate(
+        [{$match : {"_id": ObjectId(topicSplitted[0])}},
+        { $unwind : "$relations.subscribedBy" },
+        { $project : { id : "$relations.subscribedBy.id" , view : "$relations.subscribedBy.view", "_id" : 0 } },
+        { $match : {"id": ObjectId(client.id)}}]).then(topicKldg => {
+
+    //Knowledge.findOne({"_id": ObjectId(topicSplitted[0]), "relations.subscribedBy.id": ObjectId(client.id)},{"relations.subscribedBy.id":1,"relations.subscribedBy.view":1}).then(topicKldg => {
       if (!topicKldg) return callback(null, false);
-      //console.log("knldg: ", topicKldg);
-      for (let relation of topicKldg.relations.subscribedBy){
+      console.log("knldg: ", topicKldg[0]);
+
+      //for (let relation of topicKldg.relations.subscribedBy){
         //console.log("relation: ", relation.id);
         //console.log("subscriber: ", client.id);
-        if (relation.id == client.id) return callback(null, relation.view);
-      }
-      return callback(null, false);
+        //if (relation.id == client.id) return callback(null, relation.view);
+      //}
+      //return callback(null, false);
+      return callback(null, topicKldg[0].view);
     })
     .catch(err => {
       console.log("err" + err);
@@ -108,42 +130,12 @@ var authorizeSubscribe = function(client, topic, callback) {
   else return callback(err, false);
 }
 
-let broker = new mosca.Server(serverSettings.mqtt, function onCreated(err, broker) {
-  // assume no errors
-  console.log('MQTT broker is up and running');
-});
-
-broker.on('ready', setup);
-
-var topics = {};
-
-function setup() {
-  console.log('MQTT broker is ready');
-  broker.authenticate = authenticate;
-  broker.authorizePublish = authorizePublish;
-  broker.authorizeSubscribe = authorizeSubscribe;
-
-  //setInterval(publishMessage, 30000);
-  //setInterval(verifyConnected, 30000);
-}
-
-broker.on('clientConnected', (client) => {
+broker.clientConnected = (client) => {
     console.log('client connected', client.id);
-    topics[client.id] = {};
-    topics[client.id].type = "push";
-    console.log('type: ', topics[client.id]);
+    //startBasicTopic(client.id);
+};
 
-    Knowledge.findOne({"_id": ObjectId(client.id)}).then(profile => {
-      if (profile) {
-        console.log('profile: ', profile.relations);
-        topics[client.id].profiles = profile.relations.subscribedBy;
-        publishMessage([client.id,"action"].join("/"), profile.relations.subscribedBy, "profiles");
-      }
-    }).catch(err => console.log("err" + err));
-
-});
-
-broker.published = function(packet, client, cb) {
+broker.published = (packet, client, cb) => {
   if(!client){
     // new subscription
     console.log('Server internals!!');
@@ -156,13 +148,14 @@ broker.published = function(packet, client, cb) {
   }else{
     // regular client message
     //if (!client) {}
+    console.log('Regular message');
     console.log('publish client: ', client.id);
-    console.log('published packet: ', packet);
+    //console.log('published packet: ', packet);
     const buf = Buffer.from(packet.payload);
     let message = buf.toString('utf8');
-    console.log("mensagem: ", message);
+    //console.log("mensagem: ", message);
     let messageObject = {};
-    console.log('client published message from type: ', typeof message);
+    //console.log('client published message from type: ', typeof message);
     if (typeof message !== 'object'){
       messageObject = JSON.parse(message);
       //console.log('published value: ', messageObject.data);
@@ -170,7 +163,7 @@ broker.published = function(packet, client, cb) {
       messageObject = message;
       //console.log('published value: ', messageObject);
     }
-  if (messageObject.type === "update"){
+  if (messageObject.type === "update" && client.id !== "processServer"){
     console.log('atualizando: ', messageObject.data.profile);
     Knowledge.update({_id: ObjectId(messageObject._id)}, {$set: {sync: Date.now(), "data.updatedValue": messageObject.data.updatedValue}})
       .then(data => {
@@ -198,40 +191,46 @@ broker.published = function(packet, client, cb) {
 };
 
 // fired when a client subscribes to a topic
-broker.on('subscribed', function(topic, client) {
+broker.subscribed = (topic, client) => {
   console.log('subscribed : ', topic);
   console.log('client : ', client.id);
   //publishMessage();
-});
+};
 
 // fired when a client subscribes to a topic
-broker.on('unsubscribed', function(topic, client) {
+broker.unsubscribed = (topic, client) => {
   console.log('unsubscribed : ', topic);
   console.log('client : ', client.id);
-});
-
-
+};
 // fired when a client is disconnecting
-broker.on('clientDisconnecting', function(client) {
+broker.clientDisconnecting = (client) => {
   console.log('clientDisconnecting : ', client.id);
-});
+};
 // fired when a client disconnects
-broker.on('clientDisconnected', function(client) {
+broker.clientDisconnected = (client) => {
   console.log('Client Disconnected:', client.id);
   delete topics[client.id];
-});
+};
 
-//var topicOfInterest = '58f3ac46866064c6189ec932';
+broker.forwardRetained = (topic, client, cb) => {
+  cb(true);
+}
 
-function publishMessage(topic, data, type) {
+broker.forwardOfflinePackets = (client, cb) => {
+  cb(true);
+}
+
+/*
+function publishMessage(topic, data, category) {
   console.log("data:   ",data);
 
   if (!data) return;
   var id = topic.split('/')[0];
+  var type = topic.split('/')[1];
   var objectPayload = {
     _id: id,
-    type: 'action',
-    category: 'profiles',
+    type: type,
+    category: category,
     data: data,
     sync: Date.now(),
     access: id
@@ -241,21 +240,21 @@ function publishMessage(topic, data, type) {
   //objectPayload.sync = Date.now();
   //objectPayload.data.message = "Atualização de leitura: " + ((status)?"Movimentação Identificada":"Fim de movimentação");
 
-  var textPayload = JSON.stringify(objectPayload);
-  var bufferPayload = new Buffer(textPayload, 'utf-8');
+  var messagePayload = JSON.stringify(objectPayload);
+  //var bufferPayload = new Buffer(messagePayload, 'utf-8');
 
-  console.log("text:   ",textPayload);
+  //console.log("message:   ",messagePayload);
 
   var packet = {
-    topic: topic,
-    payload: textPayload,
+    topic: (category === "process")?"processServer":topic,
+    payload: messagePayload,
     //payload: bufferPayload,
-    qos: 1,
-    retain: true,
+    qos: 0,
+    retain: false,
   };
 
   console.log('\n\n#########################################');
-  console.log('MQTT broker sending message to board ..\n');
+  console.log(' broker sending action message ..\n');
 
   console.log("pack:   ",packet);
 
@@ -263,21 +262,24 @@ function publishMessage(topic, data, type) {
     console.log('MQTT broker message sent');
   });
 }
-
+*/
+/*
 function verifyConnected() {
   var topicList = Object.keys(topics);
-  console.log('Topic list: ', topicList);
+  //console.log('Topic list: ', topicList);
   for (let topic of topicList){
-    if (topics[topic] === "pull") requestUpdate(topic)
+    var topicItem = topics[topic];
+    if (!topicItem.processing && (topicItem.lastSync + topicItem.frequency < Date.now()))
+      if (topicItem.type === "pull") requestUpdate(topic);
   }
 }
-
-var value = 0;
-
+*/
+/*
 function requestUpdate(topic){
+  topics[topic].processing = true;
   let payload = objectPayload;
-  console.log('new Update');
-/*  payload.data["updatedValue"] = value++;
+  console.log('new Update request');
+  payload.data["updatedValue"] = value++;
   var textPayload = JSON.stringify(payload);
   //var bufferPayload = new Buffer(textPayload, 'utf-8');
 
@@ -294,10 +296,9 @@ function requestUpdate(topic){
 
   broker.publish(packet, function() {
     console.log('MQTT broker message sent');
-  });*/
+  });
 }
-
-
+*/
 console.log(process.pid);
 
 module.exports = broker;

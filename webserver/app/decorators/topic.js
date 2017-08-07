@@ -118,6 +118,93 @@ function getTopicDecorateIO() {
     });
   };
 
+  methods.generateStaticComplexRequest = (paramsData, cb) => {
+    console.log('Topic started doing the job!');
+    let topicsItems = [];
+
+    let processTopic = function(id, callback) {
+      verifyTopicEnabled(topicKeys[id].topicId, function(err, status){
+        if (!status) {
+          console.log('Topic ' +  topicKeys[id].topicId + ' is not enabled.');
+          callback({"err": 'Topic ' +  topicKeys[id].topicId + ' is not enabled.'}, null);
+        }else{
+          let requiredTopic = {
+            topicId: topicKeys[id].topicId,
+            coords: coords,
+            radius: radius
+          }
+
+          requestTopics(requiredTopic, function(err, topicInfo){
+            //console.log("xxxxx",topic);
+            //evaluateTopics(topicInfo , function(err, evaluation){
+              console.log('configurations: ',  topicInfo);
+              //evaluation.equipments = topicInfo.equipmentsObj;
+              callback(err, topicInfo);
+            //})
+          });
+        };
+      });
+    };
+
+    asyncObj.times(topicKeys.length, function(n, next) {
+      processTopic(n, function(err, topic) {
+        next(err, topic);
+      });
+    }, function(err, topics) {
+        cb(topics);
+    });
+  };
+  methods.generateDynamicComplexRequest = (paramsData, cb) => {
+    let topicKeys = paramsData.topicKeys;
+    let coords = paramsData.coords;
+    let radius = paramsData.radius;
+
+    //console.log(topicKeys);
+
+    let processTopic = function(id, callback) {
+      verifyTopicStatus(topicKeys[id].topicId, function(err, result){
+        //console.log(status);
+        if (!result.enabled) {
+          console.log('Topic ' +  topicKeys[id].topicId + ' is not enabled.');
+          callback({"err": 'Topic ' +  topicKeys[id].topicId + ' is not enabled.'}, null);
+        }else{
+          let requiredTopic = {
+            topicId: topicKeys[id].topicId,
+            coords: coords,
+            radius: radius
+          }
+          requestTopics(requiredTopic, function(err, topicInfo){
+            //console.log("xxxxx",topic);
+            //console.log('Processing Topic: ',  topicInfo);
+            topicInfo.location = {
+              type: "Point",
+              coordinates: coords,
+              text: ""
+            };
+            console.log('result: ',  result);
+            topicInfo.status = result;
+
+            callback(err, topicInfo);
+            /*evaluateTopics(topicInfo , function(err, evaluation){
+              console.log('Subscriptions: ',  topicInfo.equipmentsObj);
+              evaluation.equipments = topicInfo.equipmentsObj;
+              evaluation.status = result.status;
+              callback(err, evaluation);
+            })*/
+          });
+        };
+      });
+    };
+
+    asyncObj.times(topicKeys.length, function(n, next) {
+      processTopic(n, function(err, topic) {
+        next(err, topic);
+      });
+    }, function(err, topics) {
+        cb(err, topics);
+    });
+  };
+
   methods.verifyTopicStatus = verifyTopicStatus;
 
   return methods;
@@ -211,7 +298,7 @@ function requestDynamicSubscriptions(topic, staticExpression, task, cbsub){
   console.log('Get related equipments');
   var expression = {};
   if (task.coords) expression["location"] = {$geoWithin: { $centerSphere: [task.coords, task.radius/7871100]}};
-  else expression["relations.subscribedBy"] = staticExpression;
+  else expression["relations.abstractions"] = staticExpression;
   if (topic.data.types) expression["type"] = { $in: topic.data.types};
   if (topic.data.categories) expression["category"] = { $in: topic.data.categories};
   //expression["data.connected"] = true;
@@ -239,7 +326,7 @@ function requestDynamicSubscriptions(topic, staticExpression, task, cbsub){
 function requestStaticSubscriptions(topic, staticExpression, task, cbsub){
   console.log('Get related equipments');
   var expression = {};
-  expression["relations.subscribedBy"] = staticExpression;
+  expression["relations.abstractions"] = staticExpression;
 
   console.log(expression);
 
@@ -269,11 +356,15 @@ function prepareReadingsList(task, callback){
   for (let sub of task.subscriptions.connected){
     listSubscriptions.push(sub._id)
   }
-  let expression = {};
+  let expression = {}, items = {};
+
+  console.log(listSubscriptions);
   expression["root"] = { $in: listSubscriptions };
-  Messenger.find(expression)
+
+  for (column of ["root", "type", "category", "sync", "location", "data.kngtype", "data.kngcategory", "data.value"]) items[column] = 1;
+  Messenger.find(expression, items)
     .then(messages => {
-      //console.log(messages);
+      console.log(messages);
       let msgs = {};
       if (!task.topic.category==="dynamic")
         for (let msg of messages) {

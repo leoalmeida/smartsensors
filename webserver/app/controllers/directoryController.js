@@ -1,7 +1,7 @@
 'use strict'
 
 var mongoose = require('mongoose');
-var ConnectionModel = mongoose.model('Connection');
+var DirectoryModel = mongoose.model('Directory');
 var ObjectId = require('mongodb').ObjectID;
 
 const ctrl = {};
@@ -22,8 +22,8 @@ ctrl.getByLocation = (req, res, next) => {
   expression["location"]["$nearSphere"] = {}
   expression["location"]["$nearSphere"]["$geometry"] = {type: "Point", coordinates: [req.params.lng, req.params.lat]};
   if (req.params.maxdistance) expression["location"]["$nearSphere"]["$maxDistance"] = req.params.maxdistance/7871100;;
-//console.log("Exp: ", expression);
-  ConnectionModel.find(expression,{"type" : 1,"name" : 1, "properties" : 1, "statistics": 1, "sync": 1}).limit(1).then(data => {
+console.log("Exp: ", expression);
+  DirectoryModel.find(expression,{"type" : 1,"name" : 1, "properties" : 1, "statistics": 1, "sync": 1}).limit(1).then(data => {
     if (!data) {
       return res.status(404).send({data: data, code: 404, messageKeys: ['not-found'] });
     }
@@ -44,7 +44,7 @@ ctrl.updateServer = (req, res, next) => {
   expression["sync"] = Date.now();
 
   console.log("update request");
-  ConnectionModel.update({_id: ObjectId(req.params.id)}, {"$set": expression})
+  DirectoryModel.update({_id: ObjectId(req.params.id)}, {"$set": expression})
     .then(data => {
       return res.status(200).json(data);
     })
@@ -57,7 +57,7 @@ ctrl.addNewServer = (req, res, next) => {
   if (!req.body) return res.status(422).send({ data: req.body, code: 422, messageKeys: ['not-found'] });
   //let newVal = new KnowledgeModel(req.body);
   console.log(req.body);
-  ConnectionModel.create(req.body)
+  DirectoryModel.create(req.body)
     .then(data => {
       console.log("create request");
       return res.status(201).send(data);
@@ -71,7 +71,7 @@ ctrl.addNewServer = (req, res, next) => {
 ctrl.removeServer = (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(422).send({ data: req.params.id, code: 422, messageKeys: ['not-found'] });
   console.log("remove request");
-  ConnectionModel.remove({"_id": ObjectId(req.params.id)}).then(data => {
+  DirectoryModel.remove({"_id": ObjectId(req.params.id)}).then(data => {
     return res.status(200).json(data);
   })
   .catch(err => {

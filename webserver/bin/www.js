@@ -13,28 +13,15 @@ const options = {
 };
 
 const app = require('../app');
-const mqttServ = require('../mqttserver');
-mqttServ.attachHttpServer(app);
-
 app.set('port', process.env.PORT || 3001);
 app.set('httpsport', process.env.PORT || 3002);
 
-//const httpServer = http.createServer(app);
-/*
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Listen Http on port ' + app.get('port'));
-});*/
 https.createServer(options, app).listen(app.get('httpsport'), function(){
   console.log('Listen Https on port ' + app.get('httpsport'));
 });
 
-//const sockets = require('../sensors')(httpServer);
-
-/*
-var app = require('../app');
-
-app.set('port', process.env.PORT || 3001);
-*/
+const mqttServ = require('../mqttserver');
+mqttServ.attachHttpServer(app);
 
 var httpServ = app.listen(app.get('port'), function() {
   console.log('Express server is in '+process.env.NODE_ENV+' mode and listening on port ' + httpServ.address().port);
@@ -45,6 +32,7 @@ var httpServ = app.listen(app.get('port'), function() {
   console.log('Example app listening at http://%s:%s', host, port);
 });
 
+/*
 const async = require('async');
 const actionCtrl = require('../app/controllers/wsActionCtrl');
 
@@ -135,36 +123,4 @@ var wsServer = ws.createServer(function (conn) {
 }).listen(3005, function () {
 	console.log('Web Socket Server running on localhost:3005');
 });
-
-// 3. Server for emitting random data.
-// Is this best practice? Starting new server on another port, or can
-// the original server (on 3005) listen to different URL for example and
-// emit other data?
-var dataServer = ws.createServer(function (conn) {
-	console.log('New Random number connection established, ', new Date().toLocaleTimeString());
-
-	conn.on('close', function (code, reason) {
-		console.log('Data connection closed.', new Date().toLocaleTimeString(), 'code: ', code);
-	});
-
-	conn.on('error', function (err) {
-		// only throw if something else happens than Connection Reset
-		if (err.code !== 'ECONNRESET') {
-			console.log('Error in random number server', err);
-		}
-	})
-}).listen(3006, function () {
-	console.log('Random number server running on localhost:3006');
-});
-
-// 4. Generate a random number between 0-10,000, every second
-setInterval(function () {
-	// Only emit numbers if there are active connections
-	if (dataServer.connections.length > 0) {
-		var randomNumber = (Math.floor(Math.random() * 10000) + 1).toString();
-		console.log(randomNumber);
-		dataServer.connections.forEach((function (conn) {
-			conn.send(randomNumber)
-		}));
-	}
-}, 1000);
+*/

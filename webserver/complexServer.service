@@ -1,0 +1,14 @@
+[Unit]
+Description=Complex Server
+
+[Service]
+ExecStart=/var/www/ss/complex.js
+Restart=always
+User=nobody
+Group=nobody
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=dev
+WorkingDirectory=/var/www/ss
+
+[Install]
+WantedBy=multi-user.target
